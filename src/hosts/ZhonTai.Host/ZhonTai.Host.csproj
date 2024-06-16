@@ -37,6 +37,8 @@
 	</ItemGroup>
 	
 	<ItemGroup>
+		<ProjectReference Include="..\..\modules\ZhonTai.Module.Dev\ZhonTai.Module.Dev.csproj" />
+		<ProjectReference Include="..\..\modules\ZhonTai.Module.Homely\ZhonTai.Module.Homely.csproj" />
 		<ProjectReference Include="..\..\platform\ZhonTai.Admin\ZhonTai.Admin.csproj" />
 		<ProjectReference Include="..\..\platform\ZhonTai.ApiUI\ZhonTai.ApiUI.csproj" />
 	</ItemGroup>

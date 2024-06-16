@@ -1,0 +1,950 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>ZhonTai.Module.Dev</name>
+    </assembly>
+    <members>
+        <member name="P:ZhonTai.Module.Dev.Configs.DefaultCodegenOption.MenuAfterText">
+            <summary>
+            菜单后缀
+            </summary>
+        </member>
+        <member name="F:ZhonTai.Module.Dev.Core.Consts.DevConsts.AreaName">
+            <summary>
+            默认域
+            </summary>
+        </member>
+        <member name="P:ZhonTai.Module.Dev.Domain.CodeGen.CodeGenEntity.AuthorName">
+            <summary>
+            作者姓名
+            </summary>
+        </member>
+        <member name="P:ZhonTai.Module.Dev.Domain.CodeGen.CodeGenEntity.TablePrefix">
+            <summary>
+            是否移除表前缀
+            </summary>
+        </member>
+        <member name="P:ZhonTai.Module.Dev.Domain.CodeGen.CodeGenEntity.GenerateType">
+            <summary>
+            生成方式 1 CodeFirst 2 DbFirst
+            </summary>
+        </member>
+        <member name="P:ZhonTai.Module.Dev.Domain.CodeGen.CodeGenEntity.DbKey">
+            <summary>
+            库定位器名
+            </summary>
+        </member>
+        <member name="P:ZhonTai.Module.Dev.Domain.CodeGen.CodeGenEntity.DbName">
+            <summary>
+            数据库名(保留字段)
+            </summary>
+        </member>
+        <member name="P:ZhonTai.Module.Dev.Domain.CodeGen.CodeGenEntity.DbType">
+            <summary>
+            数据库类型
+            </summary>
+        </member>
+        <member name="P:ZhonTai.Module.Dev.Domain.CodeGen.CodeGenEntity.TableName">
+            <summary>
+            数据库表名
+            </summary>
+        </member>
+        <member name="P:ZhonTai.Module.Dev.Domain.CodeGen.CodeGenEntity.Namespace">
+            <summary>
+            命名空间
+            </summary>
+        </member>
+        <member name="P:ZhonTai.Module.Dev.Domain.CodeGen.CodeGenEntity.EntityName">
+            <summary>
+            实体名称
+            </summary>
+        </member>
+        <member name="P:ZhonTai.Module.Dev.Domain.CodeGen.CodeGenEntity.BusName">
+            <summary>
+            业务名
+            </summary>
+        </member>
+        <member name="P:ZhonTai.Module.Dev.Domain.CodeGen.CodeGenEntity.ApiAreaName">
+            <summary>
+            Api分区名称
+            </summary>
+        </member>
+        <member name="P:ZhonTai.Module.Dev.Domain.CodeGen.CodeGenEntity.BaseEntity">
+            <summary>
+            基类名称
+            </summary>
+        </member>
+        <member name="P:ZhonTai.Module.Dev.Domain.CodeGen.CodeGenEntity.MenuPid">
+            <summary>
+            菜单编码
+            </summary>
+        </member>
+        <member name="P:ZhonTai.Module.Dev.Domain.CodeGen.CodeGenEntity.MenuAfterText">
+            <summary>
+            菜单后缀
+            </summary>
+        </member>
+        <member name="P:ZhonTai.Module.Dev.Domain.CodeGen.CodeGenEntity.BackendOut">
+            <summary>
+            后端输出目录
+            </summary>
+        </member>
+        <member name="P:ZhonTai.Module.Dev.Domain.CodeGen.CodeGenEntity.FrontendOut">
+            <summary>
+            前端输出目录
+            </summary>
+        </member>
+        <member name="P:ZhonTai.Module.Dev.Domain.CodeGen.CodeGenEntity.Comment">
+            <summary>
+            备注说明
+            </summary>
+        </member>
+        <member name="P:ZhonTai.Module.Dev.Domain.CodeGen.CodeGenEntity.Usings">
+            <summary>
+            实体导入的命令空间
+            </summary>
+        </member>
+        <member name="P:ZhonTai.Module.Dev.Domain.CodeGen.CodeGenEntity.GenEntity">
+            <summary>
+            生成Entity实体类
+            </summary>
+        </member>
+        <member name="P:ZhonTai.Module.Dev.Domain.CodeGen.CodeGenEntity.GenRepository">
+            <summary>
+            生成Repository仓储类
+            </summary>
+        </member>
+        <member name="P:ZhonTai.Module.Dev.Domain.CodeGen.CodeGenEntity.GenService">
+            <summary>
+            生成Service服务类
+            </summary>
+        </member>
+        <member name="P:ZhonTai.Module.Dev.Domain.CodeGen.CodeGenEntity.GenAdd">
+            <summary>
+            生成新增服务
+            </summary>
+        </member>
+        <member name="P:ZhonTai.Module.Dev.Domain.CodeGen.CodeGenEntity.GenUpdate">
+            <summary>
+            生成更新服务
+            </summary>
+        </member>
+        <member name="P:ZhonTai.Module.Dev.Domain.CodeGen.CodeGenEntity.GenDelete">
+            <summary>
+            新增删除服务
+            </summary>
+        </member>
+        <member name="P:ZhonTai.Module.Dev.Domain.CodeGen.CodeGenEntity.GenGetList">
+            <summary>
+            生成列表查询服务
+            </summary>
+        </member>
+        <member name="P:ZhonTai.Module.Dev.Domain.CodeGen.CodeGenEntity.GenSoftDelete">
+            <summary>
+            生成软删除服务
+            </summary>
+        </member>
+        <member name="P:ZhonTai.Module.Dev.Domain.CodeGen.CodeGenEntity.GenBatchDelete">
+            <summary>
+            生成批量删除服务
+            </summary>
+        </member>
+        <member name="P:ZhonTai.Module.Dev.Domain.CodeGen.CodeGenEntity.GenBatchSoftDelete">
+            <summary>
+            生成批量软删除服务
+            </summary>
+        </member>
+        <member name="P:ZhonTai.Module.Dev.Domain.CodeGen.CodeGenFieldEntity.DbKey">
+            <summary>
+            库定位器名
+            </summary>
+        </member>
+        <member name="P:ZhonTai.Module.Dev.Domain.CodeGen.CodeGenFieldEntity.ColumnName">
+            <summary>
+            字段名
+            </summary>
+        </member>
+        <member name="P:ZhonTai.Module.Dev.Domain.CodeGen.CodeGenFieldEntity.ColumnRawName">
+            <summary>
+            数据库列名(物理字段名)
+            </summary>
+        </member>
+        <member name="P:ZhonTai.Module.Dev.Domain.CodeGen.CodeGenFieldEntity.NetType">
+            <summary>
+            .NET数据类型
+            </summary>
+        </member>
+        <member name="P:ZhonTai.Module.Dev.Domain.CodeGen.CodeGenFieldEntity.DbType">
+            <summary>
+            数据库中类型（物理类型）
+            </summary>
+        </member>
+        <member name="P:ZhonTai.Module.Dev.Domain.CodeGen.CodeGenFieldEntity.Comment">
+            <summary>
+            字段描述
+            </summary>
+        </member>
+        <member name="P:ZhonTai.Module.Dev.Domain.CodeGen.CodeGenFieldEntity.DefaultValue">
+            <summary>
+            默认值
+            </summary>
+        </member>
+        <member name="P:ZhonTai.Module.Dev.Domain.CodeGen.CodeGenFieldEntity.Title">
+            <summary>
+            字段标题
+            </summary>
+        </member>
+        <member name="P:ZhonTai.Module.Dev.Domain.CodeGen.CodeGenFieldEntity.IsPrimary">
+            <summary>
+            主键
+            </summary>
+        </member>
+        <member name="P:ZhonTai.Module.Dev.Domain.CodeGen.CodeGenFieldEntity.IsNullable">
+            <summary>
+            可空
+            </summary>
+        </member>
+        <member name="P:ZhonTai.Module.Dev.Domain.CodeGen.CodeGenFieldEntity.Length">
+            <summary>
+            长度
+            </summary>
+        </member>
+        <member name="P:ZhonTai.Module.Dev.Domain.CodeGen.CodeGenFieldEntity.Editor">
+            <summary>
+            编辑器
+            </summary>
+        </member>
+        <member name="P:ZhonTai.Module.Dev.Domain.CodeGen.CodeGenFieldEntity.Position">
+            <summary>
+            同步表结构时的列排序
+            </summary>
+        </member>
+        <member name="P:ZhonTai.Module.Dev.Domain.CodeGen.CodeGenFieldEntity.WhetherCommon">
+            <summary>
+            是否通用字段
+            </summary>
+        </member>
+        <member name="P:ZhonTai.Module.Dev.Domain.CodeGen.CodeGenFieldEntity.WhetherRetract">
+            <summary>
+            列表是否缩进（字典）
+            </summary>
+        </member>
+        <member name="P:ZhonTai.Module.Dev.Domain.CodeGen.CodeGenFieldEntity.WhetherQuery">
+            <summary>
+            是否是查询条件
+            </summary>
+        </member>
+        <member name="P:ZhonTai.Module.Dev.Domain.CodeGen.CodeGenFieldEntity.WhetherAdd">
+            <summary>
+            增
+            </summary>
+        </member>
+        <member name="P:ZhonTai.Module.Dev.Domain.CodeGen.CodeGenFieldEntity.WhetherUpdate">
+            <summary>
+            改
+            </summary>
+        </member>
+        <member name="P:ZhonTai.Module.Dev.Domain.CodeGen.CodeGenFieldEntity.WhetherTable">
+            <summary>
+            分布显示
+            </summary>
+        </member>
+        <member name="P:ZhonTai.Module.Dev.Domain.CodeGen.CodeGenFieldEntity.WhetherList">
+            <summary>
+            列表
+            </summary>
+        </member>
+        <member name="P:ZhonTai.Module.Dev.Domain.CodeGen.CodeGenFieldEntity.IndexMode">
+            <summary>
+            索引方式
+            </summary>
+        </member>
+        <member name="P:ZhonTai.Module.Dev.Domain.CodeGen.CodeGenFieldEntity.IsUnique">
+            <summary>
+            唯一键
+            </summary>
+        </member>
+        <member name="P:ZhonTai.Module.Dev.Domain.CodeGen.CodeGenFieldEntity.QueryType">
+            <summary>
+            查询方式
+            </summary>
+        </member>
+        <member name="P:ZhonTai.Module.Dev.Domain.CodeGen.CodeGenFieldEntity.DictTypeCode">
+            <summary>
+            字典编码
+            </summary>
+        </member>
+        <member name="P:ZhonTai.Module.Dev.Domain.CodeGen.CodeGenFieldEntity.IncludeEntity">
+            <summary>
+            外联实体名
+            </summary>
+        </member>
+        <member name="P:ZhonTai.Module.Dev.Domain.CodeGen.CodeGenFieldEntity.IncludeMode">
+            <summary>
+            外联对应关系 0 1对1 1 1对多
+            </summary>
+        </member>
+        <member name="P:ZhonTai.Module.Dev.Domain.CodeGen.CodeGenFieldEntity.IncludeEntityKey">
+            <summary>
+            外联实体关联键
+            </summary>
+        </member>
+        <member name="P:ZhonTai.Module.Dev.Domain.CodeGen.CodeGenFieldEntity.DisplayColumn">
+            <summary>
+            显示文本字段
+            </summary>
+        </member>
+        <member name="P:ZhonTai.Module.Dev.Domain.CodeGen.CodeGenFieldEntity.ValueColumn">
+            <summary>
+            选中值字段
+            </summary>
+        </member>
+        <member name="P:ZhonTai.Module.Dev.Domain.CodeGen.CodeGenFieldEntity.PidColumn">
+            <summary>
+            父级字段
+            </summary>
+        </member>
+        <member name="P:ZhonTai.Module.Dev.Domain.CodeGen.CodeGenFieldEntity.EffectType">
+            <summary>
+            作用类型（字典）
+            </summary>
+        </member>
+        <member name="P:ZhonTai.Module.Dev.Domain.CodeGen.CodeGenFieldEntity.FrontendRuleTrigger">
+            <summary>
+            前端规则检测触发时机
+            </summary>
+        </member>
+        <member name="T:ZhonTai.Module.Dev.CodeGenService">
+            <summary>
+            代码生成服务
+            </summary>
+        </member>
+        <member name="M:ZhonTai.Module.Dev.CodeGenService.GetBaseDataAsync">
+            <summary>
+            获取数据库列表
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:ZhonTai.Module.Dev.CodeGenService.GetTablesAsync(System.String)">
+            <summary>
+            获取表列表
+            </summary>
+            <param name="dbkey"></param>
+            <returns></returns>
+        </member>
+        <member name="M:ZhonTai.Module.Dev.CodeGenService.GetListAsync(System.String)">
+            <summary>
+            获取列表
+            </summary>
+            <param name="dbkey"></param>
+            <returns></returns>
+        </member>
+        <member name="M:ZhonTai.Module.Dev.CodeGenService.GetAsync(System.Int64)">
+            <summary>
+            查询
+            </summary>
+            <param name="id"></param>
+            <returns></returns>
+        </member>
+        <member name="M:ZhonTai.Module.Dev.CodeGenService.DeleteAsync(System.Int64)">
+            <summary>
+            删除
+            </summary>
+            <param name="id"></param>
+            <returns></returns>
+        </member>
+        <member name="M:ZhonTai.Module.Dev.CodeGenService.UpdateAsync(ZhonTai.Module.Dev.Dto.CodeGenUpdateInput)">
+            <summary>
+            更新
+            </summary>
+            <param name="input"></param>
+            <returns></returns>
+        </member>
+        <member name="M:ZhonTai.Module.Dev.CodeGenService.GenerateAsync(System.Int64)">
+            <summary>
+            生成
+            </summary>
+            <param name="id"></param>
+            <returns></returns>
+        </member>
+        <member name="M:ZhonTai.Module.Dev.CodeGenService.CompileAsync(System.Int64)">
+            <summary>
+            编译
+            </summary>
+            <param name="id"></param>
+            <returns></returns>
+        </member>
+        <member name="M:ZhonTai.Module.Dev.CodeGenService.GenMenu(System.Int64)">
+            <summary>
+            生成菜单
+            </summary>
+            <param name="id"></param>
+            <returns></returns>
+        </member>
+        <member name="T:ZhonTai.Module.Dev.Compiler.Reflect">
+            <summary>
+            内部反射静态类
+            </summary>
+        </member>
+        <member name="M:ZhonTai.Module.Dev.Compiler.Reflect.GetEntryAssembly">
+            <summary>
+            获取入口程序集
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:ZhonTai.Module.Dev.Compiler.Reflect.GetAssembly(System.String)">
+            <summary>
+            根据程序集名称获取运行时程序集
+            </summary>
+            <param name="assemblyName"></param>
+            <returns></returns>
+        </member>
+        <member name="M:ZhonTai.Module.Dev.Compiler.Reflect.LoadAssembly(System.String)">
+            <summary>
+            根据路径加载程序集
+            </summary>
+            <param name="path"></param>
+            <returns></returns>
+        </member>
+        <member name="M:ZhonTai.Module.Dev.Compiler.Reflect.LoadAssembly(System.IO.MemoryStream)">
+            <summary>
+            通过流加载程序集
+            </summary>
+            <param name="assembly"></param>
+            <returns></returns>
+        </member>
+        <member name="M:ZhonTai.Module.Dev.Compiler.Reflect.GetType(System.String,System.String)">
+            <summary>
+            根据程序集名称、类型完整限定名获取运行时类型
+            </summary>
+            <param name="assemblyName"></param>
+            <param name="typeFullName"></param>
+            <returns></returns>
+        </member>
+        <member name="M:ZhonTai.Module.Dev.Compiler.Reflect.GetType(System.Reflection.Assembly,System.String)">
+            <summary>
+            根据程序集和类型完全限定名获取运行时类型
+            </summary>
+            <param name="assembly"></param>
+            <param name="typeFullName"></param>
+            <returns></returns>
+        </member>
+        <member name="M:ZhonTai.Module.Dev.Compiler.Reflect.GetType(System.IO.MemoryStream,System.String)">
+            <summary>
+            根据程序集和类型完全限定名获取运行时类型
+            </summary>
+            <param name="assembly"></param>
+            <param name="typeFullName"></param>
+            <returns></returns>
+        </member>
+        <member name="M:ZhonTai.Module.Dev.Compiler.Reflect.GetAssemblyName(System.Reflection.Assembly)">
+            <summary>
+            获取程序集名称
+            </summary>
+            <param name="assembly"></param>
+            <returns></returns>
+        </member>
+        <member name="M:ZhonTai.Module.Dev.Compiler.Reflect.GetAssemblyName(System.Type)">
+            <summary>
+            获取程序集名称
+            </summary>
+            <param name="type"></param>
+            <returns></returns>
+        </member>
+        <member name="M:ZhonTai.Module.Dev.Compiler.Reflect.GetAssemblyName(System.Reflection.TypeInfo)">
+            <summary>
+            获取程序集名称
+            </summary>
+            <param name="typeInfo"></param>
+            <returns></returns>
+        </member>
+        <member name="M:ZhonTai.Module.Dev.Compiler.Reflect.GetStringType(System.String)">
+            <summary>
+            加载程序集类型，支持格式：程序集;网站类型命名空间
+            </summary>
+            <param name="str"></param>
+            <returns></returns>
+        </member>
+        <member name="P:ZhonTai.Module.Dev.Dto.CodeGenFieldGetOutput.DbKey">
+            <summary>
+            库定位器名
+            </summary>
+        </member>
+        <member name="P:ZhonTai.Module.Dev.Dto.CodeGenFieldGetOutput.ColumnName">
+            <summary>
+            字段名
+            </summary>
+        </member>
+        <member name="P:ZhonTai.Module.Dev.Dto.CodeGenFieldGetOutput.ColumnRawName">
+            <summary>
+            数据库列名(物理字段名)
+            </summary>
+        </member>
+        <member name="P:ZhonTai.Module.Dev.Dto.CodeGenFieldGetOutput.NetType">
+            <summary>
+            .NET数据类型
+            </summary>
+        </member>
+        <member name="P:ZhonTai.Module.Dev.Dto.CodeGenFieldGetOutput.DbType">
+            <summary>
+            数据库中类型（物理类型）
+            </summary>
+        </member>
+        <member name="P:ZhonTai.Module.Dev.Dto.CodeGenFieldGetOutput.Comment">
+            <summary>
+            字段描述
+            </summary>
+        </member>
+        <member name="P:ZhonTai.Module.Dev.Dto.CodeGenFieldGetOutput.DefaultValue">
+            <summary>
+            默认值
+            </summary>
+        </member>
+        <member name="P:ZhonTai.Module.Dev.Dto.CodeGenFieldGetOutput.Title">
+            <summary>
+            字段标题
+            </summary>
+        </member>
+        <member name="P:ZhonTai.Module.Dev.Dto.CodeGenFieldGetOutput.IsPrimary">
+            <summary>
+            主键
+            </summary>
+        </member>
+        <member name="P:ZhonTai.Module.Dev.Dto.CodeGenFieldGetOutput.IsNullable">
+            <summary>
+            可空
+            </summary>
+        </member>
+        <member name="P:ZhonTai.Module.Dev.Dto.CodeGenFieldGetOutput.Length">
+            <summary>
+            长度
+            </summary>
+        </member>
+        <member name="P:ZhonTai.Module.Dev.Dto.CodeGenFieldGetOutput.Editor">
+            <summary>
+            编辑器
+            </summary>
+        </member>
+        <member name="P:ZhonTai.Module.Dev.Dto.CodeGenFieldGetOutput.Position">
+            <summary>
+            同步表结构时的列排序
+            </summary>
+        </member>
+        <member name="P:ZhonTai.Module.Dev.Dto.CodeGenFieldGetOutput.WhetherCommon">
+            <summary>
+            是否通用字段
+            </summary>
+        </member>
+        <member name="P:ZhonTai.Module.Dev.Dto.CodeGenFieldGetOutput.WhetherRetract">
+            <summary>
+            列表是否缩进（字典）
+            </summary>
+        </member>
+        <member name="P:ZhonTai.Module.Dev.Dto.CodeGenFieldGetOutput.WhetherQuery">
+            <summary>
+            是否是查询条件
+            </summary>
+        </member>
+        <member name="P:ZhonTai.Module.Dev.Dto.CodeGenFieldGetOutput.WhetherAdd">
+            <summary>
+            增
+            </summary>
+        </member>
+        <member name="P:ZhonTai.Module.Dev.Dto.CodeGenFieldGetOutput.WhetherUpdate">
+            <summary>
+            改
+            </summary>
+        </member>
+        <member name="P:ZhonTai.Module.Dev.Dto.CodeGenFieldGetOutput.WhetherTable">
+            <summary>
+            分布显示
+            </summary>
+        </member>
+        <member name="P:ZhonTai.Module.Dev.Dto.CodeGenFieldGetOutput.WhetherList">
+            <summary>
+            列表
+            </summary>
+        </member>
+        <member name="P:ZhonTai.Module.Dev.Dto.CodeGenFieldGetOutput.IndexMode">
+            <summary>
+            索引方式
+            </summary>
+        </member>
+        <member name="P:ZhonTai.Module.Dev.Dto.CodeGenFieldGetOutput.IsUnique">
+            <summary>
+            唯一键
+            </summary>
+        </member>
+        <member name="P:ZhonTai.Module.Dev.Dto.CodeGenFieldGetOutput.QueryType">
+            <summary>
+            查询方式
+            </summary>
+        </member>
+        <member name="P:ZhonTai.Module.Dev.Dto.CodeGenFieldGetOutput.DictTypeCode">
+            <summary>
+            字典编码
+            </summary>
+        </member>
+        <member name="P:ZhonTai.Module.Dev.Dto.CodeGenFieldGetOutput.IncludeEntity">
+            <summary>
+            外联实体名
+            </summary>
+        </member>
+        <member name="P:ZhonTai.Module.Dev.Dto.CodeGenFieldGetOutput.IncludeMode">
+            <summary>
+            外联对应关系 0 1对1 1 1对多
+            </summary>
+        </member>
+        <member name="P:ZhonTai.Module.Dev.Dto.CodeGenFieldGetOutput.IncludeEntityKey">
+            <summary>
+            外联实体关联键
+            </summary>
+        </member>
+        <member name="P:ZhonTai.Module.Dev.Dto.CodeGenFieldGetOutput.DisplayColumn">
+            <summary>
+            显示文本字段
+            </summary>
+        </member>
+        <member name="P:ZhonTai.Module.Dev.Dto.CodeGenFieldGetOutput.ValueColumn">
+            <summary>
+            选中值字段
+            </summary>
+        </member>
+        <member name="P:ZhonTai.Module.Dev.Dto.CodeGenFieldGetOutput.PidColumn">
+            <summary>
+            父级字段
+            </summary>
+        </member>
+        <member name="P:ZhonTai.Module.Dev.Dto.CodeGenFieldGetOutput.EffectType">
+            <summary>
+            作用类型（字典）
+            </summary>
+        </member>
+        <member name="P:ZhonTai.Module.Dev.Dto.CodeGenFieldGetOutput.FrontendRuleTrigger">
+            <summary>
+            前端规则检测触发时机
+            </summary>
+        </member>
+        <member name="P:ZhonTai.Module.Dev.Dto.CodeGenGetOutput.AuthorName">
+            <summary>
+            作者姓名
+            </summary>
+        </member>
+        <member name="P:ZhonTai.Module.Dev.Dto.CodeGenGetOutput.TablePrefix">
+            <summary>
+            是否移除表前缀
+            </summary>
+        </member>
+        <member name="P:ZhonTai.Module.Dev.Dto.CodeGenGetOutput.GenerateType">
+            <summary>
+            生成方式
+            </summary>
+        </member>
+        <member name="P:ZhonTai.Module.Dev.Dto.CodeGenGetOutput.DbKey">
+            <summary>
+            库定位器名
+            </summary>
+        </member>
+        <member name="P:ZhonTai.Module.Dev.Dto.CodeGenGetOutput.DbType">
+            <summary>
+            数据库类型
+            </summary>
+        </member>
+        <member name="P:ZhonTai.Module.Dev.Dto.CodeGenGetOutput.TableName">
+            <summary>
+            数据库表名
+            </summary>
+        </member>
+        <member name="P:ZhonTai.Module.Dev.Dto.CodeGenGetOutput.Namespace">
+            <summary>
+            命名空间
+            </summary>
+        </member>
+        <member name="P:ZhonTai.Module.Dev.Dto.CodeGenGetOutput.EntityName">
+            <summary>
+            实体名称
+            </summary>
+        </member>
+        <member name="P:ZhonTai.Module.Dev.Dto.CodeGenGetOutput.BusName">
+            <summary>
+            业务名
+            </summary>
+        </member>
+        <member name="P:ZhonTai.Module.Dev.Dto.CodeGenGetOutput.ApiAreaName">
+            <summary>
+            Api分区名称
+            </summary>
+        </member>
+        <member name="P:ZhonTai.Module.Dev.Dto.CodeGenGetOutput.BaseEntity">
+            <summary>
+            基类名称
+            </summary>
+        </member>
+        <member name="P:ZhonTai.Module.Dev.Dto.CodeGenGetOutput.MenuPid">
+            <summary>
+            父菜单
+            </summary>
+        </member>
+        <member name="P:ZhonTai.Module.Dev.Dto.CodeGenGetOutput.MenuAfterText">
+            <summary>
+            菜单后缀
+            </summary>
+        </member>
+        <member name="P:ZhonTai.Module.Dev.Dto.CodeGenGetOutput.BackendOut">
+            <summary>
+            后端输出目录
+            </summary>
+        </member>
+        <member name="P:ZhonTai.Module.Dev.Dto.CodeGenGetOutput.FrontendOut">
+            <summary>
+            前端输出目录
+            </summary>
+        </member>
+        <member name="P:ZhonTai.Module.Dev.Dto.CodeGenGetOutput.Comment">
+            <summary>
+            备注说明
+            </summary>
+        </member>
+        <member name="P:ZhonTai.Module.Dev.Dto.CodeGenGetOutput.Usings">
+            <summary>
+            实体导入的命令空间
+            </summary>
+        </member>
+        <member name="P:ZhonTai.Module.Dev.Dto.CodeGenGetOutput.GenEntity">
+            <summary>
+            生成Entity实体类
+            </summary>
+        </member>
+        <member name="P:ZhonTai.Module.Dev.Dto.CodeGenGetOutput.GenRepository">
+            <summary>
+            生成Repository仓储类
+            </summary>
+        </member>
+        <member name="P:ZhonTai.Module.Dev.Dto.CodeGenGetOutput.GenService">
+            <summary>
+            生成Service服务类
+            </summary>
+        </member>
+        <member name="P:ZhonTai.Module.Dev.Dto.CodeGenGetOutput.GenAdd">
+            <summary>
+            生成新增服务
+            </summary>
+        </member>
+        <member name="P:ZhonTai.Module.Dev.Dto.CodeGenGetOutput.GenUpdate">
+            <summary>
+            生成更新服务
+            </summary>
+        </member>
+        <member name="P:ZhonTai.Module.Dev.Dto.CodeGenGetOutput.GenDelete">
+            <summary>
+            新增删除服务
+            </summary>
+        </member>
+        <member name="P:ZhonTai.Module.Dev.Dto.CodeGenGetOutput.GenGetList">
+            <summary>
+            生成列表查询服务
+            </summary>
+        </member>
+        <member name="P:ZhonTai.Module.Dev.Dto.CodeGenGetOutput.GenSoftDelete">
+            <summary>
+            生成软删除服务
+            </summary>
+        </member>
+        <member name="P:ZhonTai.Module.Dev.Dto.CodeGenGetOutput.GenBatchDelete">
+            <summary>
+            生成批量删除服务
+            </summary>
+        </member>
+        <member name="P:ZhonTai.Module.Dev.Dto.CodeGenGetOutput.GenBatchSoftDelete">
+            <summary>
+            生成批量软删除服务
+            </summary>
+        </member>
+        <member name="T:ZhonTai.Module.Dev.ICodeGenService">
+            <summary>
+            代码生成接口
+            </summary>
+        </member>
+        <member name="T:ZhonTai.Admin.Services.DictionaryTree.DictionaryTreeService">
+            <summary>
+            字典树服务
+            </summary>
+        </member>
+        <member name="M:ZhonTai.Admin.Services.DictionaryTree.DictionaryTreeService.GetAsync(System.String)">
+            <summary>
+            获取字典树
+            </summary>
+            <param name="codes">类型编号列表</param>
+            <returns></returns>
+        </member>
+        <member name="P:ZhonTai.Admin.Services.DictionaryTree.Dto.DictionaryTreeOutput.Name">
+            <summary>
+            字典名称
+            </summary>
+        </member>
+        <member name="P:ZhonTai.Admin.Services.DictionaryTree.Dto.DictionaryTreeOutput.Code">
+            <summary>
+            字典编码
+            </summary>
+        </member>
+        <member name="M:CodeGenFieldEntityExtension.IsTextColumn(ZhonTai.Module.Dev.Domain.CodeGen.CodeGenFieldEntity)">
+            <summary>
+            是否文本列
+            </summary>
+            <param name="col"></param>
+            <returns></returns>
+        </member>
+        <member name="M:CodeGenFieldEntityExtension.IsTextQueryContains(ZhonTai.Module.Dev.Domain.CodeGen.CodeGenFieldEntity)">
+            <summary>
+            是否包含
+            </summary>
+            <param name="col"></param>
+            <returns></returns>
+        </member>
+        <member name="M:CodeGenFieldEntityExtension.IsNumColumn(ZhonTai.Module.Dev.Domain.CodeGen.CodeGenFieldEntity)">
+            <summary>
+            是否数字列
+            </summary>
+            <param name="col"></param>
+            <returns></returns>
+        </member>
+        <member name="M:CodeGenFieldEntityExtension.IsIgnoreColumn(ZhonTai.Module.Dev.Domain.CodeGen.CodeGenFieldEntity)">
+            <summary>
+            返回是否在实现中忽略的字段
+            </summary>
+            <param name="col"></param>
+            <returns></returns>
+            <remarks>当列名(ColumnName)为 "- _ >" 的任意一个字符时返回 true </remarks>
+        </member>
+        <member name="M:CodeGenFieldEntityExtension.IsIncludeColumn(ZhonTai.Module.Dev.Domain.CodeGen.CodeGenFieldEntity)">
+            <summary>
+            返回是否为引入字符
+            </summary>
+            <param name="col"></param>
+            <returns></returns>
+            <remarks>当 IncludeEntity 不为空时返回 true</remarks>
+        </member>
+        <member name="M:CodeGenFieldEntityExtension.GetDefautlValueStringCS(ZhonTai.Module.Dev.Domain.CodeGen.CodeGenFieldEntity)">
+            <summary>
+            按列的类型获取CSharp对应的默认值字符串表示形式
+            </summary>
+            <param name="col"></param>
+            <remarks>
+            数字型：返回原始值
+            布尔型：1-true true-true false-false 其它值-false
+            日期型：new DateTime(Year, Month, Day, Hour, Minute, Second)
+            字符型：'默认值第一个字符'
+            字符串："默认值"
+            </remarks>
+            <returns> 默认值按字段类型的表示形式 </returns>
+        </member>
+        <member name="M:CodeGenFieldEntityExtension.FreeSqlColumnAttribute(ZhonTai.Module.Dev.Domain.CodeGen.CodeGenFieldEntity)">
+            <summary>
+            获取FreeSql列定义Attribute
+            </summary>
+            <param name="col"></param>
+            <returns></returns>
+        </member>
+        <member name="M:CodeGenFieldEntityExtension.FreeSqlNavigaetAttribute(ZhonTai.Module.Dev.Domain.CodeGen.CodeGenFieldEntity)">
+            <summary>
+            获取FreeSql导航Attribute
+            </summary>
+            <param name="col"></param>
+            <returns></returns>
+        </member>
+        <member name="M:CodeGenFieldEntityExtension.PropCs(ZhonTai.Module.Dev.Domain.CodeGen.CodeGenFieldEntity,System.Boolean)">
+            <summary>
+            获取列属性定义字符串 C#
+            </summary>
+            <param name="col"></param>
+            <param name="isNullable"></param>
+            <returns></returns>
+        </member>
+        <member name="M:CodeGenFieldEntityExtension.PropIncludeCs(ZhonTai.Module.Dev.Domain.CodeGen.CodeGenFieldEntity)">
+            <summary>
+            获取引用类型属性定义字符串 c#
+            </summary>
+            <param name="col"></param>
+            <returns></returns>
+        </member>
+        <member name="M:StringExtension.PadEndIfNot(System.String,System.String)">
+            <summary>
+            如果不是以指定的字符串结尾，则加入
+            </summary>
+            <param name="str"></param>
+            <param name="endWith"></param>
+            <returns></returns>
+            <remarks>区分大小写</remarks>
+        </member>
+        <member name="M:StringExtension.PadEndIfNotEmpty(System.String,System.String)">
+            <summary>
+            如果指定字符串不为空，则所加到目标结尾
+            </summary>
+            <param name="str"></param>
+            <param name="toConcat"></param>
+            <returns></returns>
+        </member>
+        <member name="M:StringExtension.PadEndIfNotEmpty(System.String,System.String,System.String)">
+            <summary>
+            如果指定字符串不为空，则所加另一个字符串到目标结尾
+            </summary>
+            <param name="str"></param>
+            <param name="checking"></param>
+            <param name="toConcat"></param>
+            <returns></returns>
+        </member>
+        <member name="M:StringExtension.Replace(System.String,System.String,System.Char)">
+            <summary>
+            用 新字符 替换指定指定内容中的每一个字符
+            </summary>
+            <param name="str"></param>
+            <param name="oldChars"></param>
+            <param name="newChar"></param>
+            <returns></returns>
+        </member>
+        <member name="M:StringExtension.Replace(System.String,System.Char[],System.Char)">
+            <summary>
+            用 新字符 替换字符列表中的每个字符
+            </summary>
+            <param name="str"></param>
+            <param name="oldChars"></param>
+            <param name="newChar"></param>
+            <returns></returns>
+        </member>
+        <member name="M:NamingConvention.NamingCamelCase(System.String)">
+            <summary>
+            camelCase
+            </summary>
+            <param name="name"></param>
+            <returns></returns>
+        </member>
+        <member name="M:NamingConvention.NamingPascalCase(System.String)">
+            <summary>
+            PascalCase
+            </summary>
+            <param name="name"></param>
+            <returns></returns>
+        </member>
+        <member name="M:NamingConvention.NamingKebabCase(System.String)">
+            <summary>
+            kebab-case
+            </summary>
+            <param name="name"></param>
+            <returns></returns>
+        </member>
+        <member name="M:NamingConvention.NamingSnakeCase(System.String)">
+            <summary>
+            snake_case
+            </summary>
+            <param name="name"></param>
+            <returns></returns>
+        </member>
+        <member name="M:NamingConvention.NamingExtensionCase(System.String)">
+            <summary>
+            
+            </summary>
+            <param name="name"></param>
+            <returns></returns>
+        </member>
+    </members>
+</doc>

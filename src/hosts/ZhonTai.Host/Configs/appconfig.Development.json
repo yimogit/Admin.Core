@@ -1,8 +1,35 @@
 {
   //跨域地址
-  "corUrls": [ ],
+  "corUrls": [],
   "IdentityServer": {
     //地址
     "url": "https://localhost:5000"
+  },
+  //程序集名称
+  "assemblyNames": [ "ZhonTai.Admin", "ZhonTai.Module.Dev", "ZhonTai.Module.Homely" ],
+  //Swagger文档
+  "swagger": {
+    //启用
+    "enable": true,
+    "projects": [
+      {
+        "name": "中台Admin",
+        "code": "admin",
+        "version": "v8.2.0",
+        "description": ""
+      },
+      {
+        "name": "代码生成",
+        "code": "dev",
+        "version": "v8.2.0",
+        "description": ""
+      },
+      {
+        "name": "家常管理",
+        "code": "homely",
+        "version": "v8.2.0",
+        "description": ""
+      }
+    ]
   }
 }

@@ -22,6 +22,7 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "02.build", "02.build", "{A6C50476-5236-4FD3-8C29-6449494846C0}"
 	ProjectSection(SolutionItems) = preProject
 		platform\Directory.Build.props = platform\Directory.Build.props
+		modules\Directory.Build.Modules.props = modules\Directory.Build.Modules.props
 	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ZhonTai.ApiUI", "platform\ZhonTai.ApiUI\ZhonTai.ApiUI.csproj", "{A6911102-A4F8-4000-A997-045F84F73060}"
@@ -30,6 +31,12 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "01.sln", "01.sln", "{DA553A
 	ProjectSection(SolutionItems) = preProject
 		Directory.Build.props = Directory.Build.props
 	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "modules", "modules", "{014F2915-5C88-42BE-BD6B-44E9ACACD0E7}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ZhonTai.Module.Dev", "modules\ZhonTai.Module.Dev\ZhonTai.Module.Dev.csproj", "{44BEDCB9-DF47-41A5-A96B-B65E00239463}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ZhonTai.Module.Homely", "modules\ZhonTai.Module.Homely\ZhonTai.Module.Homely.csproj", "{8B2435AA-7813-45E5-9740-59A176FA8009}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -61,6 +68,14 @@ Global
 		{A6911102-A4F8-4000-A997-045F84F73060}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A6911102-A4F8-4000-A997-045F84F73060}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A6911102-A4F8-4000-A997-045F84F73060}.Release|Any CPU.Build.0 = Release|Any CPU
+		{44BEDCB9-DF47-41A5-A96B-B65E00239463}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{44BEDCB9-DF47-41A5-A96B-B65E00239463}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{44BEDCB9-DF47-41A5-A96B-B65E00239463}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{44BEDCB9-DF47-41A5-A96B-B65E00239463}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8B2435AA-7813-45E5-9740-59A176FA8009}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8B2435AA-7813-45E5-9740-59A176FA8009}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8B2435AA-7813-45E5-9740-59A176FA8009}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8B2435AA-7813-45E5-9740-59A176FA8009}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -72,6 +87,8 @@ Global
 		{69A9CD28-39CE-415E-8150-A4A876E708FD} = {4A1F23C8-24A6-4571-B3DE-D27D024A051D}
 		{BDD8E9DB-896C-4340-A7E6-DFE341DE86C2} = {7D22DC19-78FC-4277-9768-06B5AF60FD14}
 		{A6911102-A4F8-4000-A997-045F84F73060} = {7D22DC19-78FC-4277-9768-06B5AF60FD14}
+		{44BEDCB9-DF47-41A5-A96B-B65E00239463} = {014F2915-5C88-42BE-BD6B-44E9ACACD0E7}
+		{8B2435AA-7813-45E5-9740-59A176FA8009} = {014F2915-5C88-42BE-BD6B-44E9ACACD0E7}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {AB40D0C5-E3EA-4A9B-86C2-38F0BB33FC04}

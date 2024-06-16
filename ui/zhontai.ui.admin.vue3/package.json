@@ -10,7 +10,8 @@
     "lint-fix": "eslint --fix --ext .js --ext .jsx --ext .vue src/",
     "format": "npx prettier --write .",
     "install:pkg": "npm install --registry https://registry.npmmirror.com",
-    "gen:api": "node ./gen/gen-api"
+    "gen:api": "node ./gen/gen-api",
+    "gen:module": "node ./gen/gen-module"
   },
   "dependencies": {
     "@element-plus/icons-vue": "^2.3.1",
