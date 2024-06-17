@@ -19,22 +19,22 @@ using ZhonTai.DynamicApi;
 using ZhonTai.DynamicApi.Attributes;
 using ZhonTai.Admin.Domain.Dict;
 
-using ZhonTai.Module.Homely.Domain.Thing;
-using ZhonTai.Module.Homely.Services.Thing.Dto;
+using ZhonTai.Module.Homely.Domain.ThingTag;
+using ZhonTai.Module.Homely.Services.ThingTag.Dto;
 using ZhonTai.Module.Homely.Core.Consts;
 
 
-namespace ZhonTai.Module.Homely.Services.Thing
+namespace ZhonTai.Module.Homely.Services.ThingTag
 {
     /// <summary>
-    /// 物品服务
+    /// 标签服务
     /// </summary>
     [DynamicApi(Area = HomelyConsts.AreaName)]
-    public class ThingService : BaseService, IThingService, IDynamicApi
+    public class ThingTagService : BaseService, IThingTagService, IDynamicApi
     {
-        private IThingRepository _thingRepository => LazyGetRequiredService<IThingRepository>();
+        private IThingTagRepository _thingTagRepository => LazyGetRequiredService<IThingTagRepository>();
 
-        public ThingService()
+        public ThingTagService()
         {
         }
 
@@ -44,10 +44,10 @@ namespace ZhonTai.Module.Homely.Services.Thing
         /// <param name="input"></param>
         /// <returns></returns>
         [HttpPost]
-        public async Task<long> AddAsync(ThingAddInput input)
+        public async Task<long> AddAsync(ThingTagAddInput input)
         {
-            var entity = Mapper.Map<ThingEntity>(input);
-            var id = (await _thingRepository.InsertAsync(entity)).Id;
+            var entity = Mapper.Map<ThingTagEntity>(input);
+            var id = (await _thingTagRepository.InsertAsync(entity)).Id;
 
             return id;
         }
@@ -58,9 +58,9 @@ namespace ZhonTai.Module.Homely.Services.Thing
         /// <param name="id"></param>
         /// <returns></returns>
         [HttpGet]
-        public async Task<ThingGetOutput> GetAsync(long id)
+        public async Task<ThingTagGetOutput> GetAsync(long id)
         {
-            var output = await _thingRepository.GetAsync<ThingGetOutput>(id);
+            var output = await _thingTagRepository.GetAsync<ThingTagGetOutput>(id);
             return output;
         }
 
@@ -70,20 +70,18 @@ namespace ZhonTai.Module.Homely.Services.Thing
         /// <param name="input"></param>
         /// <returns></returns>
         [HttpPost]
-        public async Task<PageOutput<ThingGetPageOutput>> GetPageAsync(PageInput<ThingGetPageInput> input)
+        public async Task<PageOutput<ThingTagGetPageOutput>> GetPageAsync(PageInput<ThingTagGetPageInput> input)
         {
             var filter = input.Filter;
-            var list = await _thingRepository.Select
+            var list = await _thingTagRepository.Select
                 .WhereDynamicFilter(input.DynamicFilter)
-                .WhereIf(filter !=null && !string.IsNullOrEmpty(filter.Name), a=> a.Name != null && a.Name.Contains(filter.Name))
-                .WhereIf(filter !=null && !string.IsNullOrEmpty(filter.Remark), a=> a.Remark != null && a.Remark.Contains(filter.Remark))
                 .Count(out var total)
                 .OrderByDescending(c => c.Id)
                 .Page(input.CurrentPage, input.PageSize)
-                .ToListAsync<ThingGetPageOutput>();
+                .ToListAsync<ThingTagGetPageOutput>();
         
 
-            var data = new PageOutput<ThingGetPageOutput> { List = list, Total = total };
+            var data = new PageOutput<ThingTagGetPageOutput> { List = list, Total = total };
         
             return data;
         }
@@ -94,16 +92,16 @@ namespace ZhonTai.Module.Homely.Services.Thing
         /// <param name="input"></param>
         /// <returns></returns>
         [HttpPut]
-        public async Task UpdateAsync(ThingUpdateInput input)
+        public async Task UpdateAsync(ThingTagUpdateInput input)
         {
-            var entity = await _thingRepository.GetAsync(input.Id);
+            var entity = await _thingTagRepository.GetAsync(input.Id);
             if (!(entity?.Id > 0))
             {
-                throw ResultOutput.Exception("物品不存在！");
+                throw ResultOutput.Exception("标签不存在！");
             }
 
             Mapper.Map(input, entity);
-            await _thingRepository.UpdateAsync(entity);
+            await _thingTagRepository.UpdateAsync(entity);
         }
 
         /// <summary>
@@ -114,24 +112,9 @@ namespace ZhonTai.Module.Homely.Services.Thing
         [HttpDelete]
         public async Task<bool> DeleteAsync(long id)
         {
-            return await _thingRepository.DeleteAsync(id) > 0;
+            return await _thingTagRepository.DeleteAsync(id) > 0;
         }
 
-        /// <summary>
-        /// 列表查询
-        /// </summary>
-        /// <param name="input"></param>
-        /// <returns></returns>
-        [HttpPost]
-        public async Task<IEnumerable<ThingGetListOutput>> GetListAsync(ThingGetListInput input)
-        {
-            var list = await _thingRepository.Select
-                .WhereIf(!string.IsNullOrEmpty(input.Name), a=>a.Name == input.Name)
-                .WhereIf(!string.IsNullOrEmpty(input.Remark), a=>a.Remark == input.Remark)
-                .OrderByDescending(a => a.Id)
-                .ToListAsync<ThingGetListOutput>();
-            return list;
-        }
 
 
         /// <summary>
@@ -142,7 +125,7 @@ namespace ZhonTai.Module.Homely.Services.Thing
         [HttpDelete]
         public async Task<bool> SoftDeleteAsync(long id)
         {
-            return await _thingRepository.SoftDeleteAsync(id);
+            return await _thingTagRepository.SoftDeleteAsync(id);
         }
 
         /// <summary>
@@ -153,7 +136,7 @@ namespace ZhonTai.Module.Homely.Services.Thing
         [HttpPut]
         public async Task<bool> BatchSoftDeleteAsync(long[] ids)
         {
-            return await _thingRepository.SoftDeleteAsync(ids);
+            return await _thingTagRepository.SoftDeleteAsync(ids);
         }
     }
 }

@@ -65,6 +65,23 @@ export interface PageInputThingGetPageInput {
   filter?: ThingGetPageInput
 }
 
+/** 分页信息输入 */
+export interface PageInputThingTagGetPageInput {
+  /**
+   * 当前页标
+   * @format int32
+   */
+  currentPage?: number
+  /**
+   * 每页大小
+   * @format int32
+   */
+  pageSize?: number
+  dynamicFilter?: DynamicFilterInfo
+  /** 标签分页查询条件输入 */
+  filter?: ThingTagGetPageInput
+}
+
 /** 分页信息输出 */
 export interface PageOutputThingCategoryGetPageOutput {
   /**
@@ -85,6 +102,17 @@ export interface PageOutputThingGetPageOutput {
   total?: number
   /** 数据 */
   list?: ThingGetPageOutput[] | null
+}
+
+/** 分页信息输出 */
+export interface PageOutputThingTagGetPageOutput {
+  /**
+   * 数据总数
+   * @format int64
+   */
+  total?: number
+  /** 数据 */
+  list?: ThingTagGetPageOutput[] | null
 }
 
 /** 结果输出 */
@@ -163,6 +191,18 @@ export interface ResultOutputPageOutputThingGetPageOutput {
 }
 
 /** 结果输出 */
+export interface ResultOutputPageOutputThingTagGetPageOutput {
+  /** 是否成功标记 */
+  success?: boolean
+  /** 编码 */
+  code?: string | null
+  /** 消息 */
+  msg?: string | null
+  /** 分页信息输出 */
+  data?: PageOutputThingTagGetPageOutput
+}
+
+/** 结果输出 */
 export interface ResultOutputThingCategoryGetOutput {
   /** 是否成功标记 */
   success?: boolean
@@ -184,6 +224,18 @@ export interface ResultOutputThingGetOutput {
   msg?: string | null
   /** 物品查询结果输出 */
   data?: ThingGetOutput
+}
+
+/** 结果输出 */
+export interface ResultOutputThingTagGetOutput {
+  /** 是否成功标记 */
+  success?: boolean
+  /** 编码 */
+  code?: string | null
+  /** 消息 */
+  msg?: string | null
+  /** 标签查询结果输出 */
+  data?: ThingTagGetOutput
 }
 
 /** 物品新增输入 */
@@ -436,6 +488,65 @@ export interface ThingGetPageOutput {
   categoryId?: number | null
   /** 标签 */
   tags?: string | null
+}
+
+/** 标签新增输入 */
+export interface ThingTagAddInput {
+  /** 标签名称 */
+  name?: string | null
+  /**
+   * 排序
+   * @format int32
+   */
+  sort?: number | null
+}
+
+/** 标签查询结果输出 */
+export interface ThingTagGetOutput {
+  /** @format int64 */
+  id?: number
+  /** 标签名称 */
+  name?: string | null
+  /**
+   * 排序
+   * @format int32
+   */
+  sort?: number | null
+}
+
+/** 标签分页查询条件输入 */
+export type ThingTagGetPageInput = object
+
+/** 标签分页查询结果输出 */
+export interface ThingTagGetPageOutput {
+  /** @format int64 */
+  id?: number
+  /** @format date-time */
+  createdTime?: string
+  createdUserName?: string | null
+  modifiedUserName?: string | null
+  /** @format date-time */
+  modifiedTime?: string | null
+  /** 标签名称 */
+  name?: string | null
+  /**
+   * 排序
+   * @format int32
+   */
+  sort?: number | null
+}
+
+/** 标签更新数据输入 */
+export interface ThingTagUpdateInput {
+  /** @format int64 */
+  id?: number
+  /** 标签名称 */
+  name?: string | null
+  /**
+   * 排序
+   * @format int32
+   */
+  sort?: number | null
 }
 
 /** 物品更新数据输入 */

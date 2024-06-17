@@ -21,6 +21,7 @@ using ZhonTai.Admin.Domain.Dict;
 
 using ZhonTai.Module.Homely.Domain.ThingCategory;
 using ZhonTai.Module.Homely.Services.ThingCategory.Dto;
+using ZhonTai.Module.Homely.Core.Consts;
 
 
 namespace ZhonTai.Module.Homely.Services.ThingCategory
@@ -28,7 +29,7 @@ namespace ZhonTai.Module.Homely.Services.ThingCategory
     /// <summary>
     /// 物品分类服务
     /// </summary>
-    [DynamicApi(Area = "homely")]
+    [DynamicApi(Area = HomelyConsts.AreaName)]
     public class ThingCategoryService : BaseService, IThingCategoryService, IDynamicApi
     {
         private IThingCategoryRepository _thingCategoryRepository => LazyGetRequiredService<IThingCategoryRepository>();
