@@ -6,6 +6,7 @@
 
     var entityNamePc = gen.EntityName?.NamingPascalCase();
     var entityNameCc = gen.EntityName?.NamingCamelCase();
+    var moduleNamePc = gen.ApiAreaName?.NamingPascalCase();
 }
 
 using System;
@@ -30,6 +31,7 @@ using ZhonTai.Admin.Domain.Dict;
 
 using @(gen.Namespace).Domain.@(entityNamePc);
 using @(gen.Namespace).Services.@(entityNamePc).Dto;
+using @(gen.Namespace).Core.Consts;
 
 
 namespace @(gen.Namespace).Services.@(entityNamePc)
@@ -37,7 +39,7 @@ namespace @(gen.Namespace).Services.@(entityNamePc)
     /// <summary>
     /// @(gen.BusName)服务
     /// </summary>
-    [DynamicApi(Area = "@gen.ApiAreaName")]
+    [DynamicApi(Area = @(moduleNamePc)Consts.AreaName)]
     public class @(entityNamePc)Service : BaseService, I@(entityNamePc)Service, IDynamicApi
     {
         private I@(entityNamePc)Repository _@(entityNameCc)Repository => LazyGetRequiredService<I@(entityNamePc)Repository>();

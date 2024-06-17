@@ -27,6 +27,10 @@
         {
           "flag": "_BO_",
           "propName": "BackendOut"
+        },
+        {
+          "flag": "_NP_",
+          "propName": "Namespace"
         }
       ],
       //模板列表
@@ -50,6 +54,14 @@
         {
           "source": "_EN_Service.cs.tpl",
           "outTo": "_BO_\\Services\\_EN_"
+        },
+        {
+          "source": "Default_Consts.cs.tpl",
+          "outTo": "_BO_\\Core\\Consts"
+        },
+        {
+          "source": "_NP_.csproj.tpl",
+          "outTo": "_BO_\\"
         }
       ]
     },
