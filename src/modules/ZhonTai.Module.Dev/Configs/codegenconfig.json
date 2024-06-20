@@ -88,6 +88,10 @@
         {
           "source": "index.vue.tpl",
           "outTo": "_FO_\\views\\_AAN_\\_EN_"
+        },
+        {
+          "source": "_EN_-form.vue.tpl",
+          "outTo": "_FO_\\views\\_AAN_\\_EN_\\components"
         }
       ]
     }

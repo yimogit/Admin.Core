@@ -1,4 +1,4 @@
-﻿@using ZhonTai.Module.Dev;
+@using ZhonTai.Module.Dev;
 @using ZhonTai.DynamicApi.Enums;
 @{
     var gen = Model as ZhonTai.Module.Dev.Domain.CodeGen.CodeGenEntity;
