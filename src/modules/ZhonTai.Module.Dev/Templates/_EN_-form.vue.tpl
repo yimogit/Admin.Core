@@ -140,7 +140,7 @@
 </template>
 
 <script lang="ts" setup name="@(areaNameCc)/@(entityNameKc)/form">
-import { reactive, toRefs, getCurrentInstance, ref } from 'vue'
+import { reactive, toRefs, getCurrentInstance, ref, defineAsyncComponent} from 'vue'
 import { @(entityNamePc)AddInput, @(entityNamePc)UpdateInput,
 @if(gen.GenGetList){
 @:  @(entityNamePc)GetListInput, @(entityNamePc)GetListOutput,
@@ -183,7 +183,7 @@ import { auth, auths, authAll } from '/@(at)/utils/authFunction'
     }
     @if (hasUpload)
     {
-// @:const MyUpload = defineAsyncComponent(() => import('/@(at)/components/my-upload/index.vue'))      
+ @:const MyUpload = defineAsyncComponent(() => import('/@(at)/components/my-upload/index.vue'))      
     }
 
 import eventBus from '/@(at)/utils/mitt'

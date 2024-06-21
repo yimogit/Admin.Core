@@ -15,7 +15,7 @@
           </el-input>
         </el-form-item>
         <el-form-item label="图片" prop="imageUrl" v-show="editItemIsShow(true, true)">
-          <my-upload  v-if='state.showDialog'  v-model="state.form.imageUrl" placeholder="" >
+          <my-upload  v-model="state.form.imageUrl" placeholder="" >
           </my-upload>
         </el-form-item>
         <el-form-item label="有效期" prop="availableDate" v-show="editItemIsShow(true, true)">
@@ -50,15 +50,16 @@
 </template>
 
 <script lang="ts" setup name="homely/thing/form">
-import { reactive, toRefs, getCurrentInstance, ref } from 'vue'
+import { reactive, toRefs, getCurrentInstance, ref, defineAsyncComponent} from 'vue'
 import { ThingAddInput, ThingUpdateInput,
   ThingGetListInput, ThingGetListOutput,
 } from '/@/api/homely/data-contracts'
 import { ThingApi } from '/@/api/homely/Thing'
 import { auth, auths, authAll } from '/@/utils/authFunction'
 
+ const MyUpload = defineAsyncComponent(() => import('/@/components/my-upload/index.vue'))      
 
-import eventBus from '/@/utils/mitt'
+ import eventBus from '/@/utils/mitt'
 
 defineProps({
   title: {
@@ -73,7 +74,7 @@ const formRef = ref()
 const state = reactive({
   showDialog: false,
   sureLoading: false,
-  form: {} as ThingAddInput | ThingUpdateInput,
+  form: {} as ThingUpdateInput,
 })
 const { form } = toRefs(state)
 
@@ -94,8 +95,9 @@ const open = async (row: any = {}) => {
   state.showDialog = true
 }
 
-const defaultToAdd = (): ThingAddInput => {
+const defaultToAdd = (): ThingUpdateInput => {
   return {
+    id:null,
     name: "",
     imageUrl: null,
     availableDate: null,
