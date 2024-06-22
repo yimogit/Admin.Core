@@ -20,31 +20,60 @@ using @(gen.Namespace).Services.@(entityNamePc).Dto;
 
 namespace @(gen.Namespace).Services.@(entityNamePc)
 {
+    /// <summary>
+    /// @(gen.BusName)服务
+    /// </summary>
     public interface I@(entityNamePc)Service
     {
+        /// <summary>
+        /// 查询
+        /// </summary>
         Task<@(entityNamePc)GetOutput> GetAsync(long id);
         
+        /// <summary>
+        /// 分页查询
+        /// </summary>
         Task<PageOutput<@(entityNamePc)GetPageOutput>> GetPageAsync(PageInput<@(entityNamePc)GetPageInput> input);
         
-        Task<long> AddAsync(@(entityNamePc)AddInput input);
-
-        Task UpdateAsync(@(entityNamePc)UpdateInput input);
-
-        Task<bool> DeleteAsync(long id);
     @if(gen.GenGetList){
         @:
+        @:/// <summary>
+        @:/// 列表查询
+        @:/// </summary>
         @:Task<IEnumerable<@(entityNamePc)GetListOutput>> GetListAsync(@(entityNamePc)GetListInput input);
     }
+    
+        /// <summary>
+        /// 新增
+        /// </summary>
+        Task<long> AddAsync(@(entityNamePc)AddInput input);
+        
+        /// <summary>
+        /// 编辑
+        /// </summary>
+        Task UpdateAsync(@(entityNamePc)UpdateInput input);
+        
+        /// <summary>
+        /// 删除
+        /// </summary>
+        Task<bool> DeleteAsync(long id);
+
     @if(gen.GenBatchDelete){
-        @:
+        @:/// <summary>
+        @:/// 批量删除
+        @:/// </summary>
         @:Task<bool> BatchDeleteAsync(long[] ids);
     }
     @if(gen.GenSoftDelete){
-        @:
+        @:/// <summary>
+        @:/// 软删除
+        @:/// </summary>
         @:Task<bool> SoftDeleteAsync(long id);
     }
     @if(gen.GenBatchSoftDelete){
-        @:
+        @:/// <summary>
+        @:/// 批量软删除
+        @:/// </summary>
         @:Task<bool> BatchSoftDeleteAsync(long[] ids);
     }
     }
@@ -52,6 +81,45 @@ namespace @(gen.Namespace).Services.@(entityNamePc)
 
 namespace @(gen.Namespace).Services.@(entityNamePc).Dto
 {
+    
+@if(gen.GenGetList){
+    @:/// <summary>@(gen.BusName)列表查询结果输出</summary>
+    @:public partial class @(entityNamePc)GetListOutput {
+        @if (!String.IsNullOrWhiteSpace(gen.BaseEntity))
+        {
+        @:public long Id { get; set; }
+        @:public DateTime CreatedTime { get; set; }
+        @:public string CreatedUserName { get; set; }
+        @:public string ModifiedUserName { get; set; }
+        @:public DateTime? ModifiedTime { get; set; }
+        }
+        @foreach(var col in gen.Fields.Where(w=>w.WhetherList))
+        {
+            if (!col.IsIgnoreColumn())
+            {
+        @:/// <summary>@(col.Title)</summary>
+        @:@col.PropCsByOutput()
+            }
+
+        ///    if (col.IsIncludeColumn())
+        ///    {
+        ///@:@col.PropIncludeCs()
+        ///    }
+
+            if (!string.IsNullOrWhiteSpace(col.DictTypeCode))
+            {
+        @:/// <summary>@(col.Title)名称</summary>
+        @:public string? @(col.ColumnName)DictName { get; set; }
+            }
+        }
+    @:}
+
+    @:/// <summary>@(gen.BusName)列表查询条件输入</summary>
+    @:public partial class @(entityNamePc)GetListInput : @(entityNamePc)GetPageInput {
+
+    @:}
+}
+
     /// <summary>@(gen.BusName)查询结果输出</summary>
     public partial class @(entityNamePc)GetOutput {
         @if (!String.IsNullOrWhiteSpace(gen.BaseEntity))
@@ -64,13 +132,13 @@ namespace @(gen.Namespace).Services.@(entityNamePc).Dto
             if (!col.IsIgnoreColumn())
             {
         @:/// <summary>@(col.Title)</summary>
-        @:@col.PropCs()
+        @:@col.PropCsByOutput()
             }
 
-            if (col.IsIncludeColumn())
-            {
-        @:@col.PropIncludeCs()
-            }
+        ///    if (col.IsIncludeColumn())
+        ///    {
+        ///@:@col.PropIncludeCs()
+        ///    }
         }
     }
 
@@ -92,13 +160,13 @@ namespace @(gen.Namespace).Services.@(entityNamePc).Dto
             if(!col.IsIgnoreColumn())
             {
         @:/// <summary>@(col.Title)</summary>
-        @:@col.PropCs()
+        @:@col.PropCsByOutput()
             }
 
-            if (col.IsIncludeColumn())
-            {
-        @:@col.PropIncludeCs()
-            }
+        ///    if (col.IsIncludeColumn())
+        ///    {
+        ///@:@col.PropIncludeCs()
+        ///    }
 
             if(!string.IsNullOrWhiteSpace(col.DictTypeCode))
             {
@@ -116,7 +184,7 @@ namespace @(gen.Namespace).Services.@(entityNamePc).Dto
             if(!col.IsIgnoreColumn())
             {
         @:/// <summary>@(col.Title)</summary>       
-        @:@col.PropCs(true)
+        @:@col.PropCsByInput(true)
             }
         }
     }
@@ -133,7 +201,7 @@ namespace @(gen.Namespace).Services.@(entityNamePc).Dto
                 {
 @:        [Required(ErrorMessage = "@((!String.IsNullOrEmpty(col.Title)?col.Title:col.ColumnName)+"不能为空")")]
                 }
-@:        @col.PropCs()                                                    
+@:        @col.PropCsByInput()                                                    
              }
         }
 @:    }
@@ -155,47 +223,10 @@ namespace @(gen.Namespace).Services.@(entityNamePc).Dto
         {
         @:[Required(ErrorMessage = "@((!String.IsNullOrEmpty(col.Title) ? col.Title : col.ColumnName) + "不能为空")")]
         }
-        @:@col.PropCs()
+        @:@col.PropCsByInput()
         }
     }
     }
 
-@if(gen.GenGetList){
-    @:/// <summary>@(gen.BusName)列表查询结果输出</summary>
-    @:public partial class @(entityNamePc)GetListOutput {
-        @if (!String.IsNullOrWhiteSpace(gen.BaseEntity))
-        {
-        @:public long Id { get; set; }
-        @:public DateTime CreatedTime { get; set; }
-        @:public string CreatedUserName { get; set; }
-        @:public string ModifiedUserName { get; set; }
-        @:public DateTime? ModifiedTime { get; set; }
-        }
-        @foreach(var col in gen.Fields.Where(w=>w.WhetherList))
-        {
-            if (!col.IsIgnoreColumn())
-            {
-        @:/// <summary>@(col.Title)</summary>
-        @:@col.PropCs()
-            }
-
-            if (col.IsIncludeColumn())
-            {
-        @:@col.PropIncludeCs()
-            }
-
-            if (!string.IsNullOrWhiteSpace(col.DictTypeCode))
-            {
-        @:/// <summary>@(col.Title)名称</summary>
-        @:public string? @(col.ColumnName)DictName { get; set; }
-            }
-        }
-    @:}
-
-    @:/// <summary>@(gen.BusName)列表查询条件输入</summary>
-    @:public partial class @(entityNamePc)GetListInput : @(entityNamePc)GetPageInput {
-
-    @:}
-}
 
 }

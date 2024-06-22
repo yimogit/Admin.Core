@@ -76,15 +76,30 @@
                 }
             }
         }
-        else if (col.Editor == "my-upload")
-        {
-            editorName = "my-upload";
-            attrs += " v-if='state.formShow' ";
-        }
         else if(defineUiComponentsImportPath.Keys.Any(a => a == col.Editor))
         {
             attrs = attrs + " class=\"input-with-select\" ";
             innerBody = "<el-button slot=\"append\" icon=\"el-icon-more\" @click=\"" + uiComponentsMethodName[col.Editor] + "('editForm','" + col.DictTypeCode + "','" + col.Title + "')\" />";
+        }
+        else if (col.Editor == "my-upload")
+        {
+            editorName = "my-upload";
+        }
+        else if (col.Editor == "my-input-textarea"){
+            editorName= "el-input";
+            attrs += " type=\"textarea\" ";
+        }
+        else if (col.Editor == "my-input-number"){
+            editorName= "el-input-number";
+        }
+        else if (col.Editor == "my-bussiness-select"){
+            editorName= "el-select";
+            if (col.IsNullable) attrs += " clearable ";
+            if(!String.IsNullOrWhiteSpace(col.IncludeEntity)){
+                //业务下拉前缀
+                var selectPrefix = col.IncludeEntity.Replace("Entity", "");
+                innerBody = string.Concat("<el-option v-for=", "\"item in state.select",selectPrefix,"ListData\" :key=\"item.id\" :value=\"item.id\" :label=\"item.title\" />");
+            }
         }
 
         return editorName;
@@ -92,7 +107,8 @@
 
     var dictCodes = gen.Fields.Where(w => "dict" == w.EffectType).Select(s => s.DictTypeCode);// editors.Any(a => a == "my-select-dictionary");
     var hasDict = dictCodes.Any();
-    var includeFields = gen.Fields.Where(w => !String.IsNullOrWhiteSpace(w.IncludeEntity));
+    //关联的模型
+    var includeFieldEntitys = gen.Fields.Where(w => !String.IsNullOrWhiteSpace(w.IncludeEntity)).Select(w=>w.IncludeEntity.Replace("Entity", "")).Distinct();
     var hasUpload=editors.Any(a=>a=="my-upload");
     //var hasRole = editors.Any(a => a == "my-role");
     //var hasUser = editors.Any(a => a == "my-user");
@@ -107,12 +123,12 @@
 }
 <template>
 <div class="my-layout">
-    <el-card class="mt8" shadow="never" :body-style="{ paddingBottom: '0' }">
+    <el-card class="mt8 search-box" shadow="never" :body-style="{ paddingBottom: '0' }">
       <el-form :inline="true" @(at)submit.stop.prevent>
         @foreach (var col in queryColumns.Where(w=>!w.IsIgnoreColumn()))
         {
             var editor = editorName(col, out attributes, out inner);
-        @:<el-form-item>
+        @:<el-form-item class="search-box-item">
         @:  <@(editor) @if(!attributes.Contains("clearable"))@("clearable") @(attributes) v-model="state.filter.@(col.ColumnName.NamingCamelCase())" placeholder="@(col.Title)" @(at)keyup.enter="onQuery" >
         if(!string.IsNullOrWhiteSpace(inner)){
         @:    @(inner)
@@ -153,7 +169,32 @@
           }
               @foreach (var col in gen.Fields.Where(w => w.WhetherTable && !w.IsIgnoreColumn()))
               {
+                  if(col.IsIncludeColumn()&&!string.IsNullOrWhiteSpace(col.IncludeEntityKey)){
+                      if(col.IncludeMode==0){
+          @:<el-table-column prop="@(col.ColumnName.NamingCamelCase())_Text" label="@(col.Title)" show-overflow-tooltip width />
+                      }else if(col.IncludeMode==1){
+                          
+          @:<el-table-column prop="@(col.ColumnName.NamingCamelCase())_Texts" label="@(col.Title)" show-overflow-tooltip width >
+          @:  <template #default="{ row }">
+          @:    {{ row.@(col.ColumnName.NamingCamelCase())_Texts ? row.@(col.ColumnName.NamingCamelCase())_Texts.join(',') : '' }}
+          @:  </template>
+          @:</el-table-column>
+                      }
+                  }else if(col.Editor=="my-upload"){
+          @:<el-table-column prop="@(col.ColumnName.NamingCamelCase())" label="@(col.Title)" show-overflow-tooltip width >
+          @:  <template #default="{ row }">
+          @:   <div class="my-flex">
+          @:     <el-image :src="row.@(col.ColumnName.NamingCamelCase())" :preview-src-list="preview@(col.ColumnName)list"
+          @:       :initial-index="get@(col.ColumnName)InitialIndex(row.@(col.ColumnName.NamingCamelCase()))" :lazy="true" :hide-on-click-modal="true" fit="scale-down"
+          @:       preview-teleported style="width: 80px; height: 80px" />
+          @:     <div class="ml10 my-flex-fill my-flex-y-center">
+          @:     </div>
+          @:   </div>
+          @: </template>
+          @:</el-table-column>
+                  }else{
           @:<el-table-column prop="@(col.ColumnName.NamingCamelCase())@if(!string.IsNullOrWhiteSpace(col.DictTypeCode))@("DictName")" label="@(col.Title)" show-overflow-tooltip width />
+                  }
               }
           <el-table-column v-auths="[perms.update,perms.softDelete,perms.delete]" label="操作" :width="actionColWidth" fixed="right">
             <template #default="{ row }">
@@ -203,29 +244,34 @@
 </template>
 
 <script lang="ts" setup name="@(areaNameCc)/@(entityNameKc)">
-import { ref, reactive, onMounted, getCurrentInstance, onBeforeMount, defineAsyncComponent } from 'vue'
+import { ref, reactive, onMounted, getCurrentInstance, onBeforeMount, defineAsyncComponent, computed } from 'vue'
 import { PageInput@(entityNamePc)GetPageInput, @(entityNamePc)GetPageInput, @(entityNamePc)GetPageOutput, @(entityNamePc)GetOutput, @(entityNamePc)AddInput, @(entityNamePc)UpdateInput,
 @if(gen.GenGetList){
 @:  @(entityNamePc)GetListInput, @(entityNamePc)GetListOutput,
 }
 @{
-    if (includeFields.Any())
+    if (includeFieldEntitys.Any())
     {
-        foreach(var incField in includeFields)
+        foreach(var incField in includeFieldEntitys)
         {
-            if (incField.IncludeMode == 1)
-            {
-@:  @(incField.IncludeEntity.Replace("Entity", ""))GetListOutput,
-            }
-            else
-            {
-@:  @(incField.IncludeEntity.Replace("Entity", ""))GetOutput,                    
-            }
+@:  @(incField)GetListOutput,
+@:  @(incField)GetOutput,                    
         }
     }
 }
 } from '/@(at)/api/@(areaNameKc)/data-contracts'
+@if(gen.Fields.Any(s=>s.Editor=="my-upload")){
+@:import {  FileGetPageOutput } from '/@(at)/api/admin/data-contracts'
+}
 import { @(apiName) } from '/@(at)/api/@(areaNameKc)/@(entityNamePc)'
+@if (includeFieldEntitys.Any())
+{
+    foreach(var incField in includeFieldEntitys)
+    {
+@:import { @(incField)Api } from '/@(at)/api/@(areaNameKc)/@(incField)'
+    }
+}
+
 import eventBus from '/@(at)/utils/mitt'
 import { auth, auths, authAll } from '/@(at)/utils/authFunction'
 
@@ -264,9 +310,19 @@ const state = reactive({
     pageSize: 20,
   } as PageInput@(entityNamePc)GetPageInput,
   @(entityNameCc)ListData: [] as Array<@(entityNamePc)GetListOutput>,
+  @foreach(var incField in includeFieldEntitys){
+@:  select@(incField)ListData: [] as @(incField)GetListOutput[],
+}
+@foreach (var col in gen.Fields.Where(s=>s.Editor=="my-upload")){
+@:  file@(col.ColumnName)ListData: [] as Array<FileGetPageOutput>,
+}
 })
 
 onMounted(() => {
+
+@foreach(var incField in includeFieldEntitys){
+@:  get@(incField)List();
+}
   onQuery()
   eventBus.off('refresh@(entityNamePc)')
   eventBus.on('refresh@(entityNamePc)', async () => {
@@ -278,6 +334,15 @@ onBeforeMount(() => {
   eventBus.off('refresh@(entityNamePc)')
 })
 
+@foreach(var incField in includeFieldEntitys){
+@:const get@(incField)List = async () => {
+@:  const res = await new @(incField)Api().getList({}).catch(() => {
+@:    state.select@(incField)ListData = []
+@:  })
+@:  state.select@(incField)ListData = res?.data || []
+@:}
+}
+
 const onQuery = async () => {
   state.loading = true
   state.pageInput.filter = state.filter
@@ -288,6 +353,14 @@ const onQuery = async () => {
   state.@(entityNameCc)ListData = res?.data?.list ?? []
   state.total = res?.data?.total ?? 0
   state.loading = false
+
+  @foreach (var col in gen.Fields.Where(s=>s.Editor=="my-upload")){
+@:  state.file@(col.ColumnName)ListData = res?.data?.list?.map(s => {
+@:    return { linkUrl: s.@(col.ColumnName.NamingCamelCase()) }
+@:  }) ?? []
+}
+
+
 }
 
 const onAdd = () => {
@@ -353,6 +426,20 @@ const selsChange = (vals: @(entityNamePc)GetPageOutput[]) => {
 @:      onQuery()
 @:    }
 @:  })
+@:}
+}
+@foreach (var col in gen.Fields.Where(s=>s.Editor=="my-upload")){
+@:const preview@(col.ColumnName)list = computed(() => {
+@:  let imgList = [] as string[]
+@:  state.file@(col.ColumnName)ListData.forEach((a) => {
+@:    if (a.linkUrl) {
+@:      imgList.push(a.linkUrl as string)
+@:    }
+@:  })
+@:  return imgList
+@:})
+@:const get@(col.ColumnName)InitialIndex = (imgUrl: string) => {
+@:  return preview@(col.ColumnName)list.value.indexOf(imgUrl)
 @:}
 }
 </script>

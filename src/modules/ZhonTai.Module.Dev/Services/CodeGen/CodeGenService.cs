@@ -23,7 +23,6 @@ using ZhonTai.Admin.Domain.Permission;
 using ZhonTai.Admin.Domain.Api;
 using ZhonTai.Admin.Core.Dto;
 using ZhonTai.Admin.Domain.View;
-using ZhonTai.Admin.Core.Consts;
 
 namespace ZhonTai.Module.Dev;
 
@@ -31,9 +30,6 @@ namespace ZhonTai.Module.Dev;
 /// 代码生成服务
 /// </summary>
 [DynamicApi(Area = DevConsts.AreaName)]
-#if DEBUG
-[AllowAnonymous]
-#endif
 public partial class CodeGenService : BaseService, ICodeGenService, IDynamicApi
 {
     private ICodeGenRepository _codeGenRepository => LazyGetRequiredService<ICodeGenRepository>();
@@ -212,8 +208,8 @@ public partial class CodeGenService : BaseService, ICodeGenService, IDynamicApi
                 {
                     if (string.IsNullOrWhiteSpace(col.ColumnName))
                         throw ResultOutput.Exception("列名称不能为空，列名为-时不使用列名。");
-                    if (!string.IsNullOrWhiteSpace(col.IncludeEntity))
-                        _ThrowIfNotTypeValid(usings, col.IncludeEntity);
+                    //if (!string.IsNullOrWhiteSpace(col.IncludeEntity))
+                    //    _ThrowIfNotTypeValid(usings, col.IncludeEntity);
                 }
             }
         }
@@ -504,6 +500,45 @@ public partial class CodeGenService : BaseService, ICodeGenService, IDynamicApi
             throw ResultOutput.Exception(ex.Message);
         }
         return "";
+    }
+
+    /// <summary>
+    /// 执行迁移到数据库
+    /// </summary>
+    /// <param name="id"></param>
+    /// <returns></returns>
+    [HttpPut]
+    [AdminTransaction]
+    public async Task GenCompileAsync(long id)
+    {
+        var gen = await _codeGenRepository
+            .Where(w => w.Id == id)
+            .FirstAsync();
+        if (gen == null)
+            throw ResultOutput.Exception(msg: "配置数据不存在。");
+        try
+        {
+            //使用命名空间生成模型
+            var assembly = Assembly.Load(gen.Namespace);
+            if (assembly == null)
+            {
+                throw ResultOutput.Exception(msg: "需要将代码添加到项目中再生成");
+            }
+
+            if (assembly != null)
+            {
+                var entity = assembly.GetType($"{gen.Namespace}.Domain.{gen.EntityName}.{gen.EntityName}Entity");
+                if (entity != null)
+                {
+                    var fsql = _cloud.Use(gen.DbKey);
+                    fsql.CodeFirst.SyncStructure(entity);
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+            throw ResultOutput.Exception(ex.Message);
+        }
     }
 
     #region 生成菜单及权限

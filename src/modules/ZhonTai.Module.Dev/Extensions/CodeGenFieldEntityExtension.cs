@@ -202,7 +202,7 @@ public static class CodeGenFieldEntityExtension
     /// <param name="col"></param>
     /// <param name="isNullable"></param>
     /// <returns></returns>
-    public static string PropCs(this CodeGenFieldEntity col, bool isNullable = false)
+    public static string PropCs(this CodeGenFieldEntity col, bool isNullable = false, bool isInput = false, bool isOutput = false)
     {
         if (col == null) return string.Empty;
 
@@ -212,9 +212,61 @@ public static class CodeGenFieldEntityExtension
         var propName = col.ColumnName.NamingPascalCase();
 
         var defaultValueStr = (!String.IsNullOrWhiteSpace(col.DefaultValue) ? (" = " + col.GetDefautlValueStringCS() + ";") : "");
-
+        if (isInput && col.Editor == "my-bussiness-select" && col.IncludeMode == 1)
+        {
+            //输入模型
+            //下拉一对多，接受数组
+            return $@"public {propType} {propName} {{ get {{ return string.Join(',', {propName}_Values ?? new List<string>()); }} }}
+        ///<summary>页面提交的{col.Title}数组</summary>
+        public List<string>? {propName}_Values {{ get; set; }}";
+        }
+        else if (isOutput && col.Editor == "my-bussiness-select")
+        {
+            //输出模型
+            //下拉显示文本值
+            var textFields = new List<string>();
+            //默认模型
+            textFields.Add($@"public {propType} {propName} {{ get; set; }}");
+            //有关联字段
+            if (!string.IsNullOrWhiteSpace(col.IncludeEntityKey))
+            {
+                textFields.Add($"///<summary>{col.Title}显示文本</summary>");
+                //单选返回text,多选返回texts
+                textFields.Add(col.IncludeMode == 0 ? $@"public string? {propName}_Text {{ get; set; }}" : $@"public List<string>? {propName}_Texts {{ get; set; }}");
+            }
+            if (col.IncludeMode == 1)
+            {
+                textFields.Add($"///<summary>页面使用的{col.Title}数组</summary>");
+                textFields.Add($@"public List<string>? {propName}_Values {{ get {{ return {propName}?.Split("","", StringSplitOptions.RemoveEmptyEntries).ToList() ?? new List<string>(); }} }}");
+            }
+            var textField = string.Join("\n        ", textFields);
+            //输出模型
+            return textField;
+        }
         return string.Join(" ", "public", propType, propName, "{ get; set; }") + defaultValueStr;
     }
+
+    /// <summary>
+    /// 获取列属性定义字符串 C# 输入模型
+    /// </summary>
+    /// <param name="col"></param>
+    /// <param name="isNullable"></param>
+    /// <returns></returns>
+    public static string PropCsByInput(this CodeGenFieldEntity col, bool isNullable = false)
+    {
+        return PropCs(col, isNullable, true, false);
+    }
+    /// <summary>
+    /// 获取列属性定义字符串 C# 输出模型
+    /// </summary>
+    /// <param name="col"></param>
+    /// <param name="isNullable"></param>
+    /// <returns></returns>
+    public static string PropCsByOutput(this CodeGenFieldEntity col, bool isNullable = false)
+    {
+        return PropCs(col, isNullable, false, true);
+    }
+
     /// <summary>
     /// 获取引用类型属性定义字符串 c#
     /// </summary>
@@ -229,7 +281,7 @@ public static class CodeGenFieldEntityExtension
 
         var propType = (col.IncludeMode == 1 ? string.Concat("IEnumerable<", colEntityName, ">") : colEntityName) + "?";
         if (col.IncludeMode == 1)
-            propName += "s";
+            propName += "_Texts";
 
         return string.Join(" ", "public", propType, propName, "{ get; set; }");
     }

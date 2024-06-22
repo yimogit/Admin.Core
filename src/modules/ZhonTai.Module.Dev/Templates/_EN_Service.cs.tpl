@@ -49,20 +49,6 @@ namespace @(gen.Namespace).Services.@(entityNamePc)
         }
 
         /// <summary>
-        /// 新增
-        /// </summary>
-        /// <param name="input"></param>
-        /// <returns></returns>
-        [HttpPost]
-        public async Task<long> AddAsync(@(entityNamePc)AddInput input)
-        {
-            var entity = Mapper.Map<@(entityNamePc)Entity>(input);
-            var id = (await _@(entityNameCc)Repository.InsertAsync(entity)).Id;
-
-            return id;
-        }
-
-        /// <summary>
         /// 查询
         /// </summary>
         /// <param name="id"></param>
@@ -73,7 +59,53 @@ namespace @(gen.Namespace).Services.@(entityNamePc)
             var output = await _@(entityNameCc)Repository.GetAsync<@(entityNamePc)GetOutput>(id);
             return output;
         }
+        
+@if(gen.GenGetList){
+        @:/// <summary>
+        @:/// 列表查询
+        @:/// </summary>
+        @:/// <param name="input"></param>
+        @:/// <returns></returns>
+        @:[HttpPost]
+        @:public async Task<IEnumerable<@(entityNamePc)GetListOutput>> GetListAsync(@(entityNamePc)GetListInput input)
+        @:{
+        @:    var list = await _@(entityNameCc)Repository.Select
+            @foreach(var col in gen.Fields.Where(w=>w.WhetherQuery)){
+                if(col.IsTextColumn()){
+                @:.WhereIf(!string.IsNullOrEmpty(input.@(col.ColumnName.NamingPascalCase())), a=>a.@(col.ColumnName.NamingPascalCase()) == input.@(col.ColumnName.NamingPascalCase()))
+                }else if(col.IsNumColumn()){
+                @:.WhereIf(input.@(col.ColumnName.NamingPascalCase()) != null, a=>a.@(col.ColumnName.NamingPascalCase()) == input.@(col.ColumnName.NamingPascalCase()))
+                }
+            }
+         @:       .OrderByDescending(a => a.Id)
+         @:       .ToListAsync<@(entityNamePc)GetListOutput>();
 
+            @if(gen.Fields.Any(a=>!string.IsNullOrWhiteSpace(a.DictTypeCode))) {
+
+                            var usedDicCols = gen.Fields.Where(w => !string.IsNullOrWhiteSpace(w.DictTypeCode));
+
+            @:var dictRepo = LazyGetRequiredService<IDictRepository>();
+            @:var dictList = await dictRepo.Where(w => new string[] { @(string.Concat("\"" , string.Join("\", \"", usedDicCols.Select(s=>s.DictTypeCode)), "\"")) }
+            @:    .Contains(w.DictType.Code)).ToListAsync();
+
+
+            @:return list.Select(s =>
+            @:{
+                            foreach(var col in usedDicCols)
+                            {
+
+            @:    s.@(col.ColumnName.NamingPascalCase())DictName = dictList.FirstOrDefault(f => f.DictType.Code == "@(col.DictTypeCode)" && f.Code == @if(col.IsNumColumn())@("\"\" + ")s.@(col.ColumnName.NamingPascalCase()))?.Name;
+                                
+                            }
+            @:   return s;
+            @:});
+
+            }else
+            {
+            @:return list;
+            }
+        @:}
+}
         /// <summary>
         /// 分页查询
         /// </summary>
@@ -125,9 +157,57 @@ namespace @(gen.Namespace).Services.@(entityNamePc)
 
             }
 
+            //关联查询代码
+            @foreach (var col in gen.Fields.Where(w=>w.IsIncludeColumn()&&!string.IsNullOrWhiteSpace(w.IncludeEntityKey))){
+                if(col.IncludeMode==0){
+            @://数据转换-单个关联
+            @:var @(col.ColumnName.NamingCamelCase())Rows = list.Where(s => s.@(col.ColumnName) > 0).ToList();
+            @:if (@(col.ColumnName.NamingCamelCase())Rows.Any())
+            @:{
+            @:    var @(col.ColumnName.NamingCamelCase())Repo = LazyGetRequiredService<Domain.@(col.IncludeEntity.Replace("Entity", "")).I@(col.IncludeEntity.Replace("Entity", ""))Repository>();
+            @:    var @(col.ColumnName.NamingCamelCase())RowsIds = @(col.ColumnName.NamingCamelCase())Rows.Select(s => s.@(col.ColumnName)).Distinct().ToList();
+            @:    var @(col.ColumnName.NamingCamelCase())RowsIdsData = await @(col.ColumnName.NamingCamelCase())Repo.Where(s => @(col.ColumnName.NamingCamelCase())RowsIds.Contains(s.Id)).ToListAsync(s => new { s.Id, s.@(col.IncludeEntityKey) });
+            @:    @(col.ColumnName.NamingCamelCase())Rows.ForEach(s =>
+            @:    {
+            @:        s.@(col.ColumnName)_Text = @(col.ColumnName.NamingCamelCase())RowsIdsData.FirstOrDefault(s2 => s2.Id == s.@(col.ColumnName))?.@(col.IncludeEntityKey);
+            @:    });
+            @:}
+            }else if(col.IncludeMode==1){
+                
+            @://数据转换-多个关联
+            @:var @(col.ColumnName.NamingCamelCase())Rows = list.Where(s => s.@(col.ColumnName)_Values != null && s.@(col.ColumnName)_Values.Any()).ToList();
+            @:if (@(col.ColumnName.NamingCamelCase())Rows.Any())
+            @:{
+            @:    var @(col.ColumnName.NamingCamelCase())Repo = LazyGetRequiredService<Domain.@(col.IncludeEntity.Replace("Entity", "")).I@(col.IncludeEntity.Replace("Entity", ""))Repository>();
+            @:    var @(col.ColumnName.NamingCamelCase())RowsIds =@(col.ColumnName.NamingCamelCase())Rows.SelectMany(s => s.@(col.ColumnName)_Values).Select(s => long.TryParse(s, out long s2) ? s2 : 0).Distinct().ToList();
+            @:    var @(col.ColumnName.NamingCamelCase())RowsIdsData = await @(col.ColumnName.NamingCamelCase())Repo.Where(s => @(col.ColumnName.NamingCamelCase())RowsIds.Contains(s.Id)).ToListAsync(s => new { s.Id, s.@(col.IncludeEntityKey) });
+            @:    @(col.ColumnName.NamingCamelCase())Rows.ForEach(s =>
+            @:    {
+            @:        s.@(col.ColumnName)_Texts = @(col.ColumnName.NamingCamelCase())RowsIdsData.Where(s2 => s.@(col.ColumnName)_Values.Contains(s2.Id.ToString())).OrderBy(s2 => s.@(col.ColumnName)_Values.IndexOf(s2.Id.ToString())).Select(s2 => s2.@(col.IncludeEntityKey)).ToList();
+            @:    });
+            @:}
+            }
+
+            }
+
             var data = new PageOutput<@(entityNamePc)GetPageOutput> { List = list, Total = total };
         
             return data;
+        }
+        
+
+        /// <summary>
+        /// 新增
+        /// </summary>
+        /// <param name="input"></param>
+        /// <returns></returns>
+        [HttpPost]
+        public async Task<long> AddAsync(@(entityNamePc)AddInput input)
+        {
+            var entity = Mapper.Map<@(entityNamePc)Entity>(input);
+            var id = (await _@(entityNameCc)Repository.InsertAsync(entity)).Id;
+
+            return id;
         }
 
         /// <summary>
@@ -159,52 +239,6 @@ namespace @(gen.Namespace).Services.@(entityNamePc)
             return await _@(entityNameCc)Repository.DeleteAsync(id) > 0;
         }
 
-@if(gen.GenGetList){
-        @:/// <summary>
-        @:/// 列表查询
-        @:/// </summary>
-        @:/// <param name="input"></param>
-        @:/// <returns></returns>
-        @:[HttpPost]
-        @:public async Task<IEnumerable<@(entityNamePc)GetListOutput>> GetListAsync(@(entityNamePc)GetListInput input)
-        @:{
-        @:    var list = await _@(entityNameCc)Repository.Select
-            @foreach(var col in gen.Fields.Where(w=>w.WhetherQuery)){
-                if(col.IsTextColumn()){
-                @:.WhereIf(!string.IsNullOrEmpty(input.@(col.ColumnName.NamingPascalCase())), a=>a.@(col.ColumnName.NamingPascalCase()) == input.@(col.ColumnName.NamingPascalCase()))
-                }else if(col.IsNumColumn()){
-                @:.WhereIf(input.@(col.ColumnName.NamingPascalCase()) != null, a=>a.@(col.ColumnName.NamingPascalCase()) == input.@(col.ColumnName.NamingPascalCase()))
-                }
-            }
-         @:       .OrderByDescending(a => a.Id)
-         @:       .ToListAsync<@(entityNamePc)GetListOutput>();
-
-            @if(gen.Fields.Any(a=>!string.IsNullOrWhiteSpace(a.DictTypeCode))) {
-
-                            var usedDicCols = gen.Fields.Where(w => !string.IsNullOrWhiteSpace(w.DictTypeCode));
-
-            @:var dictRepo = LazyGetRequiredService<IDictRepository>();
-            @:var dictList = await dictRepo.Where(w => new string[] { @(string.Concat("\"" , string.Join("\", \"", usedDicCols.Select(s=>s.DictTypeCode)), "\"")) }
-            @:    .Contains(w.DictType.Code)).ToListAsync();
-
-
-            @:return list.Select(s =>
-            @:{
-                            foreach(var col in usedDicCols)
-                            {
-
-            @:    s.@(col.ColumnName.NamingPascalCase())DictName = dictList.FirstOrDefault(f => f.DictType.Code == "@(col.DictTypeCode)" && f.Code == @if(col.IsNumColumn())@("\"\" + ")s.@(col.ColumnName.NamingPascalCase()))?.Name;
-                                
-                            }
-            @:   return s;
-            @:});
-
-            }else
-            {
-            @:return list;
-            }
-        @:}
-}
 
 @if(gen.GenBatchDelete){
         @:/// <summary>

@@ -46,11 +46,11 @@
         .Select(s => new { ImportName = s.NamingPascalCase(), ImportPath = defineUiComponentsImportPath[s] });
 
 
-
     // 获取数据输入控件
-    string editorName(ZhonTai.Module.Dev.Domain.CodeGen.CodeGenFieldEntity col, out string attrs, out string innerBody)
+    string editorName(ZhonTai.Module.Dev.Domain.CodeGen.CodeGenFieldEntity col, out string attrs, out string innerBody,out string subfix)
     {
         attrs = string.Empty;
+        subfix = string.Empty;
         innerBody = string.Empty;
         var editorName = col.Editor;
         if (String.IsNullOrWhiteSpace(editorName)) editorName = "el-input";
@@ -76,15 +76,44 @@
                 }
             }
         }
+        else if(defineUiComponentsImportPath.Keys.Any(a => a == col.Editor))
+        {
+            attrs = attrs + " class=\"input-with-select\" ";
+            innerBody = "<el-button slot=\"append\" icon=\"el-icon-more\" @click=\"" + uiComponentsMethodName[col.Editor] + "('editForm','" + col.DictTypeCode + "','" + col.Title + "')\" />";
+        }
         else if (col.Editor == "my-upload")
         {
             editorName = "my-upload";
             attrs += " v-if='state.showDialog' ";
         }
-        else if(defineUiComponentsImportPath.Keys.Any(a => a == col.Editor))
-        {
-            attrs = attrs + " class=\"input-with-select\" ";
-            innerBody = "<el-button slot=\"append\" icon=\"el-icon-more\" @click=\"" + uiComponentsMethodName[col.Editor] + "('editForm','" + col.DictTypeCode + "','" + col.Title + "')\" />";
+        else if (col.Editor == "my-input-textarea"){
+            editorName= "el-input";
+            attrs += " type=\"textarea\" ";
+        }
+        else if (col.Editor == "my-input-number"){
+            editorName= "el-input";
+            attrs += " type=\"number\" ";
+        }
+        else if (col.Editor == "my-bussiness-select"){
+            editorName= "el-select";
+            if (col.IsNullable) attrs += " clearable ";
+            if (col.IncludeMode == 1){
+                attrs += " multiple ";
+                subfix="_Values";
+            }
+            if(!String.IsNullOrWhiteSpace(col.IncludeEntity)){
+                //业务下拉前缀
+                var selectPrefix = col.IncludeEntity.Replace("Entity", "");
+                var selectTitle="name";
+                if(!String.IsNullOrWhiteSpace(col.IncludeEntityKey))
+                    selectTitle=col.IncludeEntityKey.NamingCamelCase();
+                if (col.IncludeMode == 1){
+                    //一对多,转换模型 xxxIds_Values
+                    innerBody = string.Concat("<el-option v-for=", "\"item in state.select",selectPrefix,"ListData\" :key=\"item.id\" :value=\"String(item.id)\" :label=\"item.",selectTitle,"\" />");
+                }else{
+                    innerBody = string.Concat("<el-option v-for=", "\"item in state.select",selectPrefix,"ListData\" :key=\"item.id\" :value=\"item.id\" :label=\"item.",selectTitle,"\" />");
+                }
+            }
         }
 
         return editorName;
@@ -92,7 +121,8 @@
 
     var dictCodes = gen.Fields.Where(w => "dict" == w.EffectType).Select(s => s.DictTypeCode);// editors.Any(a => a == "my-select-dictionary");
     var hasDict = dictCodes.Any();
-    var includeFields = gen.Fields.Where(w => !String.IsNullOrWhiteSpace(w.IncludeEntity));
+    //关联的模型
+    var includeFieldEntitys = gen.Fields.Where(w => !String.IsNullOrWhiteSpace(w.IncludeEntity)).Select(w=>w.IncludeEntity.Replace("Entity", "")).Distinct();
     var hasUpload=editors.Any(a=>a=="my-upload");
     //var hasRole = editors.Any(a => a == "my-role");
     //var hasUser = editors.Any(a => a == "my-user");
@@ -103,7 +133,7 @@
     }
 }
 @{ 
-    string attributes, inner;
+    string attributes, inner, subfix;
 }
 <template>
   <div>
@@ -119,9 +149,9 @@
       <el-form ref="formRef" :model="form" size="default" label-width="80px">
       @foreach(var col in gen.Fields.Where(w=>!w.IsIgnoreColumn() && ( w.WhetherAdd || w.WhetherUpdate )))
       {
-        var editor = editorName(col, out attributes, out inner);
-        @:<el-form-item label="@(col.Title)" prop="@(col.ColumnName.NamingCamelCase())" v-show="editItemIsShow(@jsBool(col.WhetherAdd), @jsBool(col.WhetherUpdate))">
-        @:  <@(editor) @(attributes) v-model="state.form.@(col.ColumnName.NamingCamelCase())" placeholder="@(col.Comment)" >
+        var editor = editorName(col, out attributes, out inner,out subfix);
+        @:<el-form-item label="@(col.Title)" prop="@(col.ColumnName.NamingCamelCase())@(subfix)" v-show="editItemIsShow(@jsBool(col.WhetherAdd), @jsBool(col.WhetherUpdate))">
+        @:  <@(editor) @(attributes) v-model="state.form.@(col.ColumnName.NamingCamelCase())@(subfix)" placeholder="@(col.Comment)" >
         if(!string.IsNullOrWhiteSpace(inner)){
         @:    @(inner)
         }
@@ -146,29 +176,22 @@ import { @(entityNamePc)AddInput, @(entityNamePc)UpdateInput,
 @:  @(entityNamePc)GetListInput, @(entityNamePc)GetListOutput,
 }
 @{
-    if (includeFields.Any())
+    if (includeFieldEntitys.Any())
     {
-        foreach(var incField in includeFields)
+        foreach(var incField in includeFieldEntitys)
         {
-            if (incField.IncludeMode == 1)
-            {
-@:  @(incField.IncludeEntity.Replace("Entity", ""))GetListOutput,
-            }
-            else
-            {
-@:  @(incField.IncludeEntity.Replace("Entity", ""))GetOutput,                    
-            }
+@:  @(incField)GetListOutput,
+@:  @(incField)GetOutput,
         }
     }
 }
 } from '/@(at)/api/@(areaNameKc)/data-contracts'
 import { @(apiName) } from '/@(at)/api/@(areaNameKc)/@(entityNamePc)'
-@if (includeFields.Any())
+@if (includeFieldEntitys.Any())
 {
-    foreach(var incField in includeFields)
+    foreach(var incField in includeFieldEntitys)
     {
-        var incEntityName = incField.IncludeEntity.Replace("Entity", "");
-@:import { @(incEntityName)Api } from '/@(at)/api/@(areaNameKc)/@(incEntityName)'
+@:import { @(incField)Api } from '/@(at)/api/@(areaNameKc)/@(incField)'
     }
 }
 import { auth, auths, authAll } from '/@(at)/utils/authFunction'
@@ -202,12 +225,19 @@ const state = reactive({
   showDialog: false,
   sureLoading: false,
   form: {} as @(entityNamePc)AddInput | @(entityNamePc)UpdateInput,
+@foreach(var incField in includeFieldEntitys){
+@:  select@(incField)ListData: [] as @(incField)GetListOutput[],
+}
+
 })
 const { form } = toRefs(state)
 
 // 打开对话框
 const open = async (row: any = {}) => {
-
+    
+@foreach(var incField in includeFieldEntitys){
+@:  get@(incField)List();
+}
   if (row.id > 0) {
     const res = await new @(apiName)().get({ id: row.id }, { loading: true }).catch(() => {
       proxy.$modal.closeLoading()
@@ -220,6 +250,15 @@ const open = async (row: any = {}) => {
     state.form = defaultToAdd()
   }
   state.showDialog = true
+}
+
+@foreach(var incField in includeFieldEntitys){
+@:const get@(incField)List = async () => {
+@:  const res = await new @(incField)Api().getList({}).catch(() => {
+@:    state.select@(incField)ListData = []
+@:  })
+@:  state.select@(incField)ListData = res?.data || []
+@:}
 }
 
 const defaultToAdd = (): @(entityNamePc)AddInput => {
@@ -267,6 +306,7 @@ const editItemIsShow = (add: Boolean, edit: Boolean): Boolean => {
     if(edit && isEdit)return true;
     return false;
 }
+
 
 defineExpose({
   open,

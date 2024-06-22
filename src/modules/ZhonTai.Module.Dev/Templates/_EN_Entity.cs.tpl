@@ -53,13 +53,13 @@ namespace @(gen.Namespace).Domain.@(entityNamePc)
 
         }
 
-        if (col.IsIncludeColumn())
-        {
-
-        @:@col.FreeSqlNavigaetAttribute()
-        @:@col.PropIncludeCs()
-        
-        }
+        ///if (col.IsIncludeColumn())
+        ///{
+        ///
+        ///@:@col.FreeSqlNavigaetAttribute()
+        ///@:@col.PropIncludeCs()
+        ///
+        ///}
     }
 
 }
