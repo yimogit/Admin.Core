@@ -10,13 +10,13 @@
       width="769px"
     >
       <el-form ref="formRef" :model="form" size="default" label-width="80px">
-        <el-form-item label="排序" prop="sort" v-show="editItemIsShow(true, true)">
-          <el-input  v-model="state.form.sort" placeholder="" >
-          </el-input>
-        </el-form-item>
         <el-form-item label="分类名称" prop="name" v-show="editItemIsShow(true, true)">
           <el-input  v-model="state.form.name" placeholder="" >
           </el-input>
+        </el-form-item>
+        <el-form-item label="排序" prop="sort" v-show="editItemIsShow(true, true)">
+          <el-input-number  v-model="state.form.sort" placeholder="" >
+          </el-input-number>
         </el-form-item>
       </el-form>
       <template #footer>
@@ -30,7 +30,7 @@
 </template>
 
 <script lang="ts" setup name="homely/thing-category/form">
-import { reactive, toRefs, getCurrentInstance, ref } from 'vue'
+import { reactive, toRefs, getCurrentInstance, ref, defineAsyncComponent} from 'vue'
 import { ThingCategoryAddInput, ThingCategoryUpdateInput,
   ThingCategoryGetListInput, ThingCategoryGetListOutput,
 } from '/@/api/homely/data-contracts'
@@ -54,12 +54,13 @@ const state = reactive({
   showDialog: false,
   sureLoading: false,
   form: {} as ThingCategoryAddInput | ThingCategoryUpdateInput,
+
 })
 const { form } = toRefs(state)
 
 // 打开对话框
 const open = async (row: any = {}) => {
-
+    
   if (row.id > 0) {
     const res = await new ThingCategoryApi().get({ id: row.id }, { loading: true }).catch(() => {
       proxy.$modal.closeLoading()
@@ -74,11 +75,11 @@ const open = async (row: any = {}) => {
   state.showDialog = true
 }
 
+
 const defaultToAdd = (): ThingCategoryAddInput => {
   return {
+    name: "",
     sort: null,
-    name: null,
-    tenantId: null,
   } as ThingCategoryAddInput
 }
 
@@ -119,6 +120,7 @@ const editItemIsShow = (add: Boolean, edit: Boolean): Boolean => {
     if(edit && isEdit)return true;
     return false;
 }
+
 
 defineExpose({
   open,

@@ -39,20 +39,6 @@ namespace ZhonTai.Module.Homely.Services.ThingCategory
         }
 
         /// <summary>
-        /// 新增
-        /// </summary>
-        /// <param name="input"></param>
-        /// <returns></returns>
-        [HttpPost]
-        public async Task<long> AddAsync(ThingCategoryAddInput input)
-        {
-            var entity = Mapper.Map<ThingCategoryEntity>(input);
-            var id = (await _thingCategoryRepository.InsertAsync(entity)).Id;
-
-            return id;
-        }
-
-        /// <summary>
         /// 查询
         /// </summary>
         /// <param name="id"></param>
@@ -63,7 +49,21 @@ namespace ZhonTai.Module.Homely.Services.ThingCategory
             var output = await _thingCategoryRepository.GetAsync<ThingCategoryGetOutput>(id);
             return output;
         }
-
+        
+        /// <summary>
+        /// 列表查询
+        /// </summary>
+        /// <param name="input"></param>
+        /// <returns></returns>
+        [HttpPost]
+        public async Task<IEnumerable<ThingCategoryGetListOutput>> GetListAsync(ThingCategoryGetListInput input)
+        {
+            var list = await _thingCategoryRepository.Select
+                .WhereIf(!string.IsNullOrEmpty(input.Name), a=>a.Name == input.Name)
+                .OrderByDescending(a => a.Id)
+                .ToListAsync<ThingCategoryGetListOutput>();
+            return list;
+        }
         /// <summary>
         /// 分页查询
         /// </summary>
@@ -82,9 +82,26 @@ namespace ZhonTai.Module.Homely.Services.ThingCategory
                 .ToListAsync<ThingCategoryGetPageOutput>();
         
 
+            //关联查询代码
+
             var data = new PageOutput<ThingCategoryGetPageOutput> { List = list, Total = total };
         
             return data;
+        }
+        
+
+        /// <summary>
+        /// 新增
+        /// </summary>
+        /// <param name="input"></param>
+        /// <returns></returns>
+        [HttpPost]
+        public async Task<long> AddAsync(ThingCategoryAddInput input)
+        {
+            var entity = Mapper.Map<ThingCategoryEntity>(input);
+            var id = (await _thingCategoryRepository.InsertAsync(entity)).Id;
+
+            return id;
         }
 
         /// <summary>
@@ -116,20 +133,6 @@ namespace ZhonTai.Module.Homely.Services.ThingCategory
             return await _thingCategoryRepository.DeleteAsync(id) > 0;
         }
 
-        /// <summary>
-        /// 列表查询
-        /// </summary>
-        /// <param name="input"></param>
-        /// <returns></returns>
-        [HttpPost]
-        public async Task<IEnumerable<ThingCategoryGetListOutput>> GetListAsync(ThingCategoryGetListInput input)
-        {
-            var list = await _thingCategoryRepository.Select
-                .WhereIf(!string.IsNullOrEmpty(input.Name), a=>a.Name == input.Name)
-                .OrderByDescending(a => a.Id)
-                .ToListAsync<ThingCategoryGetListOutput>();
-            return list;
-        }
 
 
         /// <summary>

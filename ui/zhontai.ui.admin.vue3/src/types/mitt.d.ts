@@ -50,7 +50,10 @@ declare type MittType<T = any> = {
   refreshFile?: T
   refreshTask?: T
   refreshRegion?: T,
-  refreshThing?: T
+  refreshCodeGen?:T,
+  onConfigEditSure:T,
+  refreshCodeGroup?:T
+  refreshThing?: T,
 }
 
 // mitt 参数类型定义

@@ -13,34 +13,17 @@ import { AxiosResponse } from 'axios'
 import {
   PageInputThingTagGetPageInput,
   ResultOutputBoolean,
+  ResultOutputIEnumerableThingTagGetListOutput,
   ResultOutputInt64,
   ResultOutputPageOutputThingTagGetPageOutput,
   ResultOutputThingTagGetOutput,
   ThingTagAddInput,
+  ThingTagGetListInput,
   ThingTagUpdateInput,
 } from './data-contracts'
 import { ContentType, HttpClient, RequestParams } from './http-client'
 
 export class ThingTagApi<SecurityDataType = unknown> extends HttpClient<SecurityDataType> {
-  /**
-   * No description
-   *
-   * @tags thing-tag
-   * @name Add
-   * @summary 新增
-   * @request POST:/api/homely/thing-tag/add
-   * @secure
-   */
-  add = (data: ThingTagAddInput, params: RequestParams = {}) =>
-    this.request<ResultOutputInt64, any>({
-      path: `/api/homely/thing-tag/add`,
-      method: 'POST',
-      body: data,
-      secure: true,
-      type: ContentType.Json,
-      format: 'json',
-      ...params,
-    })
   /**
    * No description
    *
@@ -69,6 +52,25 @@ export class ThingTagApi<SecurityDataType = unknown> extends HttpClient<Security
    * No description
    *
    * @tags thing-tag
+   * @name GetList
+   * @summary 列表查询
+   * @request POST:/api/homely/thing-tag/get-list
+   * @secure
+   */
+  getList = (data: ThingTagGetListInput, params: RequestParams = {}) =>
+    this.request<ResultOutputIEnumerableThingTagGetListOutput, any>({
+      path: `/api/homely/thing-tag/get-list`,
+      method: 'POST',
+      body: data,
+      secure: true,
+      type: ContentType.Json,
+      format: 'json',
+      ...params,
+    })
+  /**
+   * No description
+   *
+   * @tags thing-tag
    * @name GetPage
    * @summary 分页查询
    * @request POST:/api/homely/thing-tag/get-page
@@ -77,6 +79,25 @@ export class ThingTagApi<SecurityDataType = unknown> extends HttpClient<Security
   getPage = (data: PageInputThingTagGetPageInput, params: RequestParams = {}) =>
     this.request<ResultOutputPageOutputThingTagGetPageOutput, any>({
       path: `/api/homely/thing-tag/get-page`,
+      method: 'POST',
+      body: data,
+      secure: true,
+      type: ContentType.Json,
+      format: 'json',
+      ...params,
+    })
+  /**
+   * No description
+   *
+   * @tags thing-tag
+   * @name Add
+   * @summary 新增
+   * @request POST:/api/homely/thing-tag/add
+   * @secure
+   */
+  add = (data: ThingTagAddInput, params: RequestParams = {}) =>
+    this.request<ResultOutputInt64, any>({
+      path: `/api/homely/thing-tag/add`,
       method: 'POST',
       body: data,
       secure: true,

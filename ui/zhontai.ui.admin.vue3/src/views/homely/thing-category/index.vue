@@ -1,8 +1,8 @@
 ﻿<template>
 <div class="my-layout">
-    <el-card class="mt8" shadow="never" :body-style="{ paddingBottom: '0' }">
+    <el-card class="mt8 search-box" shadow="never" :body-style="{ paddingBottom: '0' }">
       <el-form :inline="true" @submit.stop.prevent>
-        <el-form-item>
+        <el-form-item class="search-box-item">
           <el-input clearable  v-model="state.filter.name" placeholder="分类名称" @keyup.enter="onQuery" >
           </el-input>
         </el-form-item>
@@ -22,8 +22,8 @@
       <el-table v-loading="state.loading" :data="state.thingCategoryListData" row-key="id" height="'100%'" style="width: 100%; height: 100%" @selection-change="selsChange">
         
           <el-table-column type="selection" width="50" />
-          <el-table-column prop="sort" label="排序" show-overflow-tooltip width />
           <el-table-column prop="name" label="分类名称" show-overflow-tooltip width />
+          <el-table-column prop="sort" label="排序" show-overflow-tooltip width />
           <el-table-column v-auths="[perms.update,perms.softDelete,perms.delete]" label="操作" :width="actionColWidth" fixed="right">
             <template #default="{ row }">
               <el-button v-auth="perms.update" icon="ele-EditPen" size="small" text type="primary" @click="onEdit(row)">编辑</el-button>
@@ -57,6 +57,7 @@ import { PageInputThingCategoryGetPageInput, ThingCategoryGetPageInput, ThingCat
   ThingCategoryGetListInput, ThingCategoryGetListOutput,
 } from '/@/api/homely/data-contracts'
 import { ThingCategoryApi } from '/@/api/homely/ThingCategory'
+
 import eventBus from '/@/utils/mitt'
 import { auth, auths, authAll } from '/@/utils/authFunction'
 
@@ -96,6 +97,7 @@ const state = reactive({
 })
 
 onMounted(() => {
+
   onQuery()
   eventBus.off('refreshThingCategory')
   eventBus.on('refreshThingCategory', async () => {
@@ -106,6 +108,7 @@ onMounted(() => {
 onBeforeMount(() => {
   eventBus.off('refreshThingCategory')
 })
+
 
 const onQuery = async () => {
   state.loading = true

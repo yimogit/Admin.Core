@@ -1,16 +1,16 @@
 ﻿<template>
 <div class="my-layout">
-    <el-card class="mt8" shadow="never" :body-style="{ paddingBottom: '0' }">
+    <el-card class="mt8 search-box" shadow="never" :body-style="{ paddingBottom: '0' }">
       <el-form :inline="true" @submit.stop.prevent>
-        <el-form-item>
+        <el-form-item class="search-box-item">
           <el-input clearable  v-model="state.filter.name" placeholder="物品名称" @keyup.enter="onQuery" >
           </el-input>
         </el-form-item>
-        <el-form-item>
+        <el-form-item class="search-box-item">
           <el-date-picker clearable  v-model="state.filter.availableDate" placeholder="有效期" @keyup.enter="onQuery" >
           </el-date-picker>
         </el-form-item>
-        <el-form-item>
+        <el-form-item class="search-box-item">
           <el-input clearable  v-model="state.filter.remark" placeholder="备注" @keyup.enter="onQuery" >
           </el-input>
         </el-form-item>
@@ -31,12 +31,37 @@
         
           <el-table-column type="selection" width="50" />
           <el-table-column prop="name" label="物品名称" show-overflow-tooltip width />
-          <el-table-column prop="imageUrl" label="图片" show-overflow-tooltip width />
+          <el-table-column prop="imageUrl" label="图片" show-overflow-tooltip width >
+            <template #default="{ row }">
+             <div class="my-flex">
+               <el-image :src="row.imageUrl" :preview-src-list="previewImageUrllist"
+                 :initial-index="getImageUrlInitialIndex(row.imageUrl)" :lazy="true" :hide-on-click-modal="true" fit="scale-down"
+                 preview-teleported style="width: 80px; height: 80px" />
+               <div class="ml10 my-flex-fill my-flex-y-center">
+               </div>
+             </div>
+           </template>
+          </el-table-column>
           <el-table-column prop="availableDate" label="有效期" show-overflow-tooltip width />
           <el-table-column prop="remark" label="备注" show-overflow-tooltip width />
           <el-table-column prop="sort" label="排序" show-overflow-tooltip width />
-          <el-table-column prop="categoryId" label="分类" show-overflow-tooltip width />
-          <el-table-column prop="tags" label="标签" show-overflow-tooltip width />
+          <el-table-column prop="categoryId_Text" label="分类" show-overflow-tooltip width />
+          <el-table-column prop="tagIds_Texts" label="标签" show-overflow-tooltip width >
+            <template #default="{ row }">
+              {{ row.tagIds_Texts ? row.tagIds_Texts.join(',') : '' }}
+            </template>
+          </el-table-column>
+          <el-table-column prop="phoneUrl" label="头像" show-overflow-tooltip width >
+            <template #default="{ row }">
+             <div class="my-flex">
+               <el-image :src="row.phoneUrl" :preview-src-list="previewPhoneUrllist"
+                 :initial-index="getPhoneUrlInitialIndex(row.phoneUrl)" :lazy="true" :hide-on-click-modal="true" fit="scale-down"
+                 preview-teleported style="width: 80px; height: 80px" />
+               <div class="ml10 my-flex-fill my-flex-y-center">
+               </div>
+             </div>
+           </template>
+          </el-table-column>
           <el-table-column v-auths="[perms.update,perms.softDelete,perms.delete]" label="操作" :width="actionColWidth" fixed="right">
             <template #default="{ row }">
               <el-button v-auth="perms.update" icon="ele-EditPen" size="small" text type="primary" @click="onEdit(row)">编辑</el-button>
@@ -65,11 +90,19 @@
 </template>
 
 <script lang="ts" setup name="homely/thing">
-import { ref, reactive, onMounted, getCurrentInstance, onBeforeMount, defineAsyncComponent } from 'vue'
+import { ref, reactive, onMounted, getCurrentInstance, onBeforeMount, defineAsyncComponent, computed } from 'vue'
 import { PageInputThingGetPageInput, ThingGetPageInput, ThingGetPageOutput, ThingGetOutput, ThingAddInput, ThingUpdateInput,
   ThingGetListInput, ThingGetListOutput,
+  ThingCategoryGetListOutput,
+  ThingCategoryGetOutput,                    
+  ThingTagGetListOutput,
+  ThingTagGetOutput,                    
 } from '/@/api/homely/data-contracts'
+import {  FileGetPageOutput } from '/@/api/admin/data-contracts'
 import { ThingApi } from '/@/api/homely/Thing'
+import { ThingCategoryApi } from '/@/api/homely/ThingCategory'
+import { ThingTagApi } from '/@/api/homely/ThingTag'
+
 import eventBus from '/@/utils/mitt'
 import { auth, auths, authAll } from '/@/utils/authFunction'
 
@@ -108,9 +141,16 @@ const state = reactive({
     pageSize: 20,
   } as PageInputThingGetPageInput,
   thingListData: [] as Array<ThingGetListOutput>,
+  selectThingCategoryListData: [] as ThingCategoryGetListOutput[],
+  selectThingTagListData: [] as ThingTagGetListOutput[],
+  fileImageUrlListData: [] as Array<FileGetPageOutput>,
+  filePhoneUrlListData: [] as Array<FileGetPageOutput>,
 })
 
 onMounted(() => {
+
+  getThingCategoryList();
+  getThingTagList();
   onQuery()
   eventBus.off('refreshThing')
   eventBus.on('refreshThing', async () => {
@@ -122,6 +162,19 @@ onBeforeMount(() => {
   eventBus.off('refreshThing')
 })
 
+const getThingCategoryList = async () => {
+  const res = await new ThingCategoryApi().getList({}).catch(() => {
+    state.selectThingCategoryListData = []
+  })
+  state.selectThingCategoryListData = res?.data || []
+}
+const getThingTagList = async () => {
+  const res = await new ThingTagApi().getList({}).catch(() => {
+    state.selectThingTagListData = []
+  })
+  state.selectThingTagListData = res?.data || []
+}
+
 const onQuery = async () => {
   state.loading = true
   state.pageInput.filter = state.filter
@@ -132,6 +185,15 @@ const onQuery = async () => {
   state.thingListData = res?.data?.list ?? []
   state.total = res?.data?.total ?? 0
   state.loading = false
+
+  state.fileImageUrlListData = res?.data?.list?.map(s => {
+    return { linkUrl: s.imageUrl }
+  }) ?? []
+  state.filePhoneUrlListData = res?.data?.list?.map(s => {
+    return { linkUrl: s.phoneUrl }
+  }) ?? []
+
+
 }
 
 const onAdd = () => {
@@ -184,5 +246,29 @@ const onBatchSoftDelete = async () => {
       onQuery()
     }
   })
+}
+const previewImageUrllist = computed(() => {
+  let imgList = [] as string[]
+  state.fileImageUrlListData.forEach((a) => {
+    if (a.linkUrl) {
+      imgList.push(a.linkUrl as string)
+    }
+  })
+  return imgList
+})
+const getImageUrlInitialIndex = (imgUrl: string) => {
+  return previewImageUrllist.value.indexOf(imgUrl)
+}
+const previewPhoneUrllist = computed(() => {
+  let imgList = [] as string[]
+  state.filePhoneUrlListData.forEach((a) => {
+    if (a.linkUrl) {
+      imgList.push(a.linkUrl as string)
+    }
+  })
+  return imgList
+})
+const getPhoneUrlInitialIndex = (imgUrl: string) => {
+  return previewPhoneUrllist.value.indexOf(imgUrl)
 }
 </script>

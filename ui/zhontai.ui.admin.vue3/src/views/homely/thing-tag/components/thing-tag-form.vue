@@ -30,8 +30,9 @@
 </template>
 
 <script lang="ts" setup name="homely/thing-tag/form">
-import { reactive, toRefs, getCurrentInstance, ref } from 'vue'
+import { reactive, toRefs, getCurrentInstance, ref, defineAsyncComponent} from 'vue'
 import { ThingTagAddInput, ThingTagUpdateInput,
+  ThingTagGetListInput, ThingTagGetListOutput,
 } from '/@/api/homely/data-contracts'
 import { ThingTagApi } from '/@/api/homely/ThingTag'
 import { auth, auths, authAll } from '/@/utils/authFunction'
@@ -53,12 +54,13 @@ const state = reactive({
   showDialog: false,
   sureLoading: false,
   form: {} as ThingTagAddInput | ThingTagUpdateInput,
+
 })
 const { form } = toRefs(state)
 
 // 打开对话框
 const open = async (row: any = {}) => {
-
+    
   if (row.id > 0) {
     const res = await new ThingTagApi().get({ id: row.id }, { loading: true }).catch(() => {
       proxy.$modal.closeLoading()
@@ -73,9 +75,10 @@ const open = async (row: any = {}) => {
   state.showDialog = true
 }
 
+
 const defaultToAdd = (): ThingTagAddInput => {
   return {
-    name: null,
+    name: "",
     sort: null,
   } as ThingTagAddInput
 }
@@ -117,6 +120,7 @@ const editItemIsShow = (add: Boolean, edit: Boolean): Boolean => {
     if(edit && isEdit)return true;
     return false;
 }
+
 
 defineExpose({
   open,

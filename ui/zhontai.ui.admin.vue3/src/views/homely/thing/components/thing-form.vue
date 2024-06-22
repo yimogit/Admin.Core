@@ -15,7 +15,7 @@
           </el-input>
         </el-form-item>
         <el-form-item label="图片" prop="imageUrl" v-show="editItemIsShow(true, true)">
-          <my-upload  v-model="state.form.imageUrl" placeholder="" >
+          <my-upload  v-if='state.showDialog'  v-model="state.form.imageUrl" placeholder="" >
           </my-upload>
         </el-form-item>
         <el-form-item label="有效期" prop="availableDate" v-show="editItemIsShow(true, true)">
@@ -31,12 +31,18 @@
           </el-input>
         </el-form-item>
         <el-form-item label="分类" prop="categoryId" v-show="editItemIsShow(true, true)">
-          <el-input  v-model="state.form.categoryId" placeholder="" >
-          </el-input>
+          <el-select  clearable  v-model="state.form.categoryId" placeholder="" >
+            <el-option v-for="item in state.selectThingCategoryListData" :key="item.id" :value="item.id" :label="item.name" />
+          </el-select>
         </el-form-item>
-        <el-form-item label="标签" prop="tags" v-show="editItemIsShow(true, true)">
-          <el-input  v-model="state.form.tags" placeholder="" >
-          </el-input>
+        <el-form-item label="标签" prop="tagIds_Values" v-show="editItemIsShow(true, true)">
+          <el-select  clearable  multiple  v-model="state.form.tagIds_Values" placeholder="" >
+            <el-option v-for="item in state.selectThingTagListData" :key="item.id" :value="String(item.id)" :label="item.name" />
+          </el-select>
+        </el-form-item>
+        <el-form-item label="头像" prop="phoneUrl" v-show="editItemIsShow(true, true)">
+          <my-upload  v-if='state.showDialog'  v-model="state.form.phoneUrl" placeholder="" >
+          </my-upload>
         </el-form-item>
       </el-form>
       <template #footer>
@@ -53,13 +59,19 @@
 import { reactive, toRefs, getCurrentInstance, ref, defineAsyncComponent} from 'vue'
 import { ThingAddInput, ThingUpdateInput,
   ThingGetListInput, ThingGetListOutput,
+  ThingCategoryGetListOutput,
+  ThingCategoryGetOutput,
+  ThingTagGetListOutput,
+  ThingTagGetOutput,
 } from '/@/api/homely/data-contracts'
 import { ThingApi } from '/@/api/homely/Thing'
+import { ThingCategoryApi } from '/@/api/homely/ThingCategory'
+import { ThingTagApi } from '/@/api/homely/ThingTag'
 import { auth, auths, authAll } from '/@/utils/authFunction'
 
  const MyUpload = defineAsyncComponent(() => import('/@/components/my-upload/index.vue'))      
 
- import eventBus from '/@/utils/mitt'
+import eventBus from '/@/utils/mitt'
 
 defineProps({
   title: {
@@ -74,13 +86,18 @@ const formRef = ref()
 const state = reactive({
   showDialog: false,
   sureLoading: false,
-  form: {} as ThingUpdateInput,
+  form: {} as ThingAddInput | ThingUpdateInput,
+  selectThingCategoryListData: [] as ThingCategoryGetListOutput[],
+  selectThingTagListData: [] as ThingTagGetListOutput[],
+
 })
 const { form } = toRefs(state)
 
 // 打开对话框
 const open = async (row: any = {}) => {
-
+    
+  getThingCategoryList();
+  getThingTagList();
   if (row.id > 0) {
     const res = await new ThingApi().get({ id: row.id }, { loading: true }).catch(() => {
       proxy.$modal.closeLoading()
@@ -95,16 +112,29 @@ const open = async (row: any = {}) => {
   state.showDialog = true
 }
 
-const defaultToAdd = (): ThingUpdateInput => {
+const getThingCategoryList = async () => {
+  const res = await new ThingCategoryApi().getList({}).catch(() => {
+    state.selectThingCategoryListData = []
+  })
+  state.selectThingCategoryListData = res?.data || []
+}
+const getThingTagList = async () => {
+  const res = await new ThingTagApi().getList({}).catch(() => {
+    state.selectThingTagListData = []
+  })
+  state.selectThingTagListData = res?.data || []
+}
+
+const defaultToAdd = (): ThingAddInput => {
   return {
-    id:null,
     name: "",
     imageUrl: null,
     availableDate: null,
     remark: null,
     sort: null,
     categoryId: null,
-    tags: null,
+    tagIds: null,
+    phoneUrl: null,
   } as ThingAddInput
 }
 
@@ -145,6 +175,7 @@ const editItemIsShow = (add: Boolean, edit: Boolean): Boolean => {
     if(edit && isEdit)return true;
     return false;
 }
+
 
 defineExpose({
   open,

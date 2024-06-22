@@ -7,7 +7,7 @@ using ZhonTai.Admin.Core.Entities;
 namespace ZhonTai.Module.Homely.Domain.ThingTag
 {
     /// <summary>
-    /// 标签 实体类
+    /// 物品标签 实体类
     /// </summary>
     /// <remarks></remarks>
     [Table(Name="homely_thing_tag")]
@@ -18,7 +18,7 @@ namespace ZhonTai.Module.Homely.Domain.ThingTag
         /// </summary>
         /// <remarks></remarks>
         [Column(StringLength=300)]
-        public string? Name { get; set; }
+        public string Name { get; set; }
         /// <summary>
         /// 排序
         /// </summary>

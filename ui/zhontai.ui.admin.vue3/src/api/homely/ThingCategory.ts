@@ -28,25 +28,6 @@ export class ThingCategoryApi<SecurityDataType = unknown> extends HttpClient<Sec
    * No description
    *
    * @tags thing-category
-   * @name Add
-   * @summary 新增
-   * @request POST:/api/homely/thing-category/add
-   * @secure
-   */
-  add = (data: ThingCategoryAddInput, params: RequestParams = {}) =>
-    this.request<ResultOutputInt64, any>({
-      path: `/api/homely/thing-category/add`,
-      method: 'POST',
-      body: data,
-      secure: true,
-      type: ContentType.Json,
-      format: 'json',
-      ...params,
-    })
-  /**
-   * No description
-   *
-   * @tags thing-category
    * @name Get
    * @summary 查询
    * @request GET:/api/homely/thing-category/get
@@ -71,6 +52,25 @@ export class ThingCategoryApi<SecurityDataType = unknown> extends HttpClient<Sec
    * No description
    *
    * @tags thing-category
+   * @name GetList
+   * @summary 列表查询
+   * @request POST:/api/homely/thing-category/get-list
+   * @secure
+   */
+  getList = (data: ThingCategoryGetListInput, params: RequestParams = {}) =>
+    this.request<ResultOutputIEnumerableThingCategoryGetListOutput, any>({
+      path: `/api/homely/thing-category/get-list`,
+      method: 'POST',
+      body: data,
+      secure: true,
+      type: ContentType.Json,
+      format: 'json',
+      ...params,
+    })
+  /**
+   * No description
+   *
+   * @tags thing-category
    * @name GetPage
    * @summary 分页查询
    * @request POST:/api/homely/thing-category/get-page
@@ -79,6 +79,25 @@ export class ThingCategoryApi<SecurityDataType = unknown> extends HttpClient<Sec
   getPage = (data: PageInputThingCategoryGetPageInput, params: RequestParams = {}) =>
     this.request<ResultOutputPageOutputThingCategoryGetPageOutput, any>({
       path: `/api/homely/thing-category/get-page`,
+      method: 'POST',
+      body: data,
+      secure: true,
+      type: ContentType.Json,
+      format: 'json',
+      ...params,
+    })
+  /**
+   * No description
+   *
+   * @tags thing-category
+   * @name Add
+   * @summary 新增
+   * @request POST:/api/homely/thing-category/add
+   * @secure
+   */
+  add = (data: ThingCategoryAddInput, params: RequestParams = {}) =>
+    this.request<ResultOutputInt64, any>({
+      path: `/api/homely/thing-category/add`,
       method: 'POST',
       body: data,
       secure: true,
@@ -125,25 +144,6 @@ export class ThingCategoryApi<SecurityDataType = unknown> extends HttpClient<Sec
       method: 'DELETE',
       query: query,
       secure: true,
-      format: 'json',
-      ...params,
-    })
-  /**
-   * No description
-   *
-   * @tags thing-category
-   * @name GetList
-   * @summary 列表查询
-   * @request POST:/api/homely/thing-category/get-list
-   * @secure
-   */
-  getList = (data: ThingCategoryGetListInput, params: RequestParams = {}) =>
-    this.request<ResultOutputIEnumerableThingCategoryGetListOutput, any>({
-      path: `/api/homely/thing-category/get-list`,
-      method: 'POST',
-      body: data,
-      secure: true,
-      type: ContentType.Json,
       format: 'json',
       ...params,
     })

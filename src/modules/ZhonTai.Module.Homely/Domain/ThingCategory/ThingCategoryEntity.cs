@@ -14,17 +14,17 @@ namespace ZhonTai.Module.Homely.Domain.ThingCategory
     public partial class ThingCategoryEntity: EntityTenant
     {
         /// <summary>
-        /// 排序
-        /// </summary>
-        /// <remarks></remarks>
-        [Column(Name="Sort", DbType="INTEGER")]
-        public int? Sort { get; set; }
-        /// <summary>
         /// 分类名称
         /// </summary>
         /// <remarks></remarks>
-        [Column(Name="Name", DbType="NVARCHAR", StringLength=300)]
-        public string? Name { get; set; }
+        [Column(Name="Name", Position=1, DbType="NVARCHAR", StringLength=300)]
+        public string Name { get; set; }
+        /// <summary>
+        /// 排序
+        /// </summary>
+        /// <remarks></remarks>
+        [Column(Name="Sort", Position=2, DbType="INTEGER")]
+        public int? Sort { get; set; }
     }
 
 }

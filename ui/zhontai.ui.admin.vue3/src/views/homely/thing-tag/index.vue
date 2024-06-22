@@ -1,6 +1,6 @@
 ﻿<template>
 <div class="my-layout">
-    <el-card class="mt8" shadow="never" :body-style="{ paddingBottom: '0' }">
+    <el-card class="mt8 search-box" shadow="never" :body-style="{ paddingBottom: '0' }">
       <el-form :inline="true" @submit.stop.prevent>
         <el-form-item>
           <el-button type="primary" icon="ele-Plus" @click="onAdd">新增</el-button>
@@ -47,8 +47,10 @@
 <script lang="ts" setup name="homely/thing-tag">
 import { ref, reactive, onMounted, getCurrentInstance, onBeforeMount, defineAsyncComponent } from 'vue'
 import { PageInputThingTagGetPageInput, ThingTagGetPageInput, ThingTagGetPageOutput, ThingTagGetOutput, ThingTagAddInput, ThingTagUpdateInput,
+  ThingTagGetListInput, ThingTagGetListOutput,
 } from '/@/api/homely/data-contracts'
 import { ThingTagApi } from '/@/api/homely/ThingTag'
+
 import eventBus from '/@/utils/mitt'
 import { auth, auths, authAll } from '/@/utils/authFunction'
 
@@ -78,7 +80,7 @@ const state = reactive({
   total: 0,
   sels: [] as Array<ThingTagGetPageOutput>,
   filter: {
-  } as ThingTagGetPageInput ,
+  } as ThingTagGetPageInput | ThingTagGetListInput,
   pageInput: {
     currentPage: 1,
     pageSize: 20,
@@ -87,6 +89,7 @@ const state = reactive({
 })
 
 onMounted(() => {
+
   onQuery()
   eventBus.off('refreshThingTag')
   eventBus.on('refreshThingTag', async () => {
@@ -97,6 +100,7 @@ onMounted(() => {
 onBeforeMount(() => {
   eventBus.off('refreshThingTag')
 })
+
 
 const onQuery = async () => {
   state.loading = true
@@ -111,12 +115,12 @@ const onQuery = async () => {
 }
 
 const onAdd = () => {
-  state.thingTagFormTitle = '新增标签'
+  state.thingTagFormTitle = '新增物品标签'
   thingTagFormRef.value.open()
 }
 
 const onEdit = (row: ThingTagGetOutput) => {
-  state.thingTagFormTitle = '编辑标签'
+  state.thingTagFormTitle = '编辑物品标签'
   thingTagFormRef.value.open(row)
 }
 

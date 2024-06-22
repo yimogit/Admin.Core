@@ -39,20 +39,6 @@ namespace ZhonTai.Module.Homely.Services.Thing
         }
 
         /// <summary>
-        /// 新增
-        /// </summary>
-        /// <param name="input"></param>
-        /// <returns></returns>
-        [HttpPost]
-        public async Task<long> AddAsync(ThingAddInput input)
-        {
-            var entity = Mapper.Map<ThingEntity>(input);
-            var id = (await _thingRepository.InsertAsync(entity)).Id;
-
-            return id;
-        }
-
-        /// <summary>
         /// 查询
         /// </summary>
         /// <param name="id"></param>
@@ -63,7 +49,22 @@ namespace ZhonTai.Module.Homely.Services.Thing
             var output = await _thingRepository.GetAsync<ThingGetOutput>(id);
             return output;
         }
-
+        
+        /// <summary>
+        /// 列表查询
+        /// </summary>
+        /// <param name="input"></param>
+        /// <returns></returns>
+        [HttpPost]
+        public async Task<IEnumerable<ThingGetListOutput>> GetListAsync(ThingGetListInput input)
+        {
+            var list = await _thingRepository.Select
+                .WhereIf(!string.IsNullOrEmpty(input.Name), a=>a.Name == input.Name)
+                .WhereIf(!string.IsNullOrEmpty(input.Remark), a=>a.Remark == input.Remark)
+                .OrderByDescending(a => a.Id)
+                .ToListAsync<ThingGetListOutput>();
+            return list;
+        }
         /// <summary>
         /// 分页查询
         /// </summary>
@@ -83,9 +84,50 @@ namespace ZhonTai.Module.Homely.Services.Thing
                 .ToListAsync<ThingGetPageOutput>();
         
 
+            //关联查询代码
+            //数据转换-单个关联
+            var categoryIdRows = list.Where(s => s.CategoryId > 0).ToList();
+            if (categoryIdRows.Any())
+            {
+                var categoryIdRepo = LazyGetRequiredService<Domain.ThingCategory.IThingCategoryRepository>();
+                var categoryIdRowsIds = categoryIdRows.Select(s => s.CategoryId).Distinct().ToList();
+                var categoryIdRowsIdsData = await categoryIdRepo.Where(s => categoryIdRowsIds.Contains(s.Id)).ToListAsync(s => new { s.Id, s.Name });
+                categoryIdRows.ForEach(s =>
+                {
+                    s.CategoryId_Text = categoryIdRowsIdsData.FirstOrDefault(s2 => s2.Id == s.CategoryId)?.Name;
+                });
+            }
+            //数据转换-多个关联
+            var tagIdsRows = list.Where(s => s.TagIds_Values != null && s.TagIds_Values.Any()).ToList();
+            if (tagIdsRows.Any())
+            {
+                var tagIdsRepo = LazyGetRequiredService<Domain.ThingTag.IThingTagRepository>();
+                var tagIdsRowsIds =tagIdsRows.SelectMany(s => s.TagIds_Values).Select(s => long.TryParse(s, out long s2) ? s2 : 0).Distinct().ToList();
+                var tagIdsRowsIdsData = await tagIdsRepo.Where(s => tagIdsRowsIds.Contains(s.Id)).ToListAsync(s => new { s.Id, s.Name });
+                tagIdsRows.ForEach(s =>
+                {
+                    s.TagIds_Texts = tagIdsRowsIdsData.Where(s2 => s.TagIds_Values.Contains(s2.Id.ToString())).OrderBy(s2 => s.TagIds_Values.IndexOf(s2.Id.ToString())).Select(s2 => s2.Name).ToList();
+                });
+            }
+
             var data = new PageOutput<ThingGetPageOutput> { List = list, Total = total };
         
             return data;
+        }
+        
+
+        /// <summary>
+        /// 新增
+        /// </summary>
+        /// <param name="input"></param>
+        /// <returns></returns>
+        [HttpPost]
+        public async Task<long> AddAsync(ThingAddInput input)
+        {
+            var entity = Mapper.Map<ThingEntity>(input);
+            var id = (await _thingRepository.InsertAsync(entity)).Id;
+
+            return id;
         }
 
         /// <summary>
@@ -117,21 +159,6 @@ namespace ZhonTai.Module.Homely.Services.Thing
             return await _thingRepository.DeleteAsync(id) > 0;
         }
 
-        /// <summary>
-        /// 列表查询
-        /// </summary>
-        /// <param name="input"></param>
-        /// <returns></returns>
-        [HttpPost]
-        public async Task<IEnumerable<ThingGetListOutput>> GetListAsync(ThingGetListInput input)
-        {
-            var list = await _thingRepository.Select
-                .WhereIf(!string.IsNullOrEmpty(input.Name), a=>a.Name == input.Name)
-                .WhereIf(!string.IsNullOrEmpty(input.Remark), a=>a.Remark == input.Remark)
-                .OrderByDescending(a => a.Id)
-                .ToListAsync<ThingGetListOutput>();
-            return list;
-        }
 
 
         /// <summary>

@@ -27,7 +27,7 @@ using ZhonTai.Module.Homely.Core.Consts;
 namespace ZhonTai.Module.Homely.Services.ThingTag
 {
     /// <summary>
-    /// 标签服务
+    /// 物品标签服务
     /// </summary>
     [DynamicApi(Area = HomelyConsts.AreaName)]
     public class ThingTagService : BaseService, IThingTagService, IDynamicApi
@@ -36,20 +36,6 @@ namespace ZhonTai.Module.Homely.Services.ThingTag
 
         public ThingTagService()
         {
-        }
-
-        /// <summary>
-        /// 新增
-        /// </summary>
-        /// <param name="input"></param>
-        /// <returns></returns>
-        [HttpPost]
-        public async Task<long> AddAsync(ThingTagAddInput input)
-        {
-            var entity = Mapper.Map<ThingTagEntity>(input);
-            var id = (await _thingTagRepository.InsertAsync(entity)).Id;
-
-            return id;
         }
 
         /// <summary>
@@ -63,7 +49,20 @@ namespace ZhonTai.Module.Homely.Services.ThingTag
             var output = await _thingTagRepository.GetAsync<ThingTagGetOutput>(id);
             return output;
         }
-
+        
+        /// <summary>
+        /// 列表查询
+        /// </summary>
+        /// <param name="input"></param>
+        /// <returns></returns>
+        [HttpPost]
+        public async Task<IEnumerable<ThingTagGetListOutput>> GetListAsync(ThingTagGetListInput input)
+        {
+            var list = await _thingTagRepository.Select
+                .OrderByDescending(a => a.Id)
+                .ToListAsync<ThingTagGetListOutput>();
+            return list;
+        }
         /// <summary>
         /// 分页查询
         /// </summary>
@@ -81,9 +80,26 @@ namespace ZhonTai.Module.Homely.Services.ThingTag
                 .ToListAsync<ThingTagGetPageOutput>();
         
 
+            //关联查询代码
+
             var data = new PageOutput<ThingTagGetPageOutput> { List = list, Total = total };
         
             return data;
+        }
+        
+
+        /// <summary>
+        /// 新增
+        /// </summary>
+        /// <param name="input"></param>
+        /// <returns></returns>
+        [HttpPost]
+        public async Task<long> AddAsync(ThingTagAddInput input)
+        {
+            var entity = Mapper.Map<ThingTagEntity>(input);
+            var id = (await _thingTagRepository.InsertAsync(entity)).Id;
+
+            return id;
         }
 
         /// <summary>
@@ -97,7 +113,7 @@ namespace ZhonTai.Module.Homely.Services.ThingTag
             var entity = await _thingTagRepository.GetAsync(input.Id);
             if (!(entity?.Id > 0))
             {
-                throw ResultOutput.Exception("标签不存在！");
+                throw ResultOutput.Exception("物品标签不存在！");
             }
 
             Mapper.Map(input, entity);
