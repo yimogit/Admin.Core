@@ -217,6 +217,241 @@ export interface CodeGenUpdateInput {
   fields?: CodeGenFieldGetOutput[] | null
 }
 
+/** 模板组新增输入 */
+export interface CodeGroupAddInput {
+  /**
+   * 模板标题
+   * @minLength 1
+   */
+  title: string
+  /** 备注 */
+  remark?: string | null
+}
+
+/** 模板明细新增输入 */
+export interface CodeGroupDetailAddInput {
+  /**
+   * 模板分组
+   * @format int64
+   */
+  groupId: number
+  /**
+   * 模板名称
+   * @minLength 1
+   */
+  title: string
+  /**
+   * 模板内容
+   * @minLength 1
+   */
+  content: string
+  /** 生成路径 */
+  path?: string | null
+  /** 模板分组 */
+  groupIds?: string | null
+  /** 页面提交的模板分组数组 */
+  groupIds_Values?: string[] | null
+}
+
+/** 模板明细列表查询条件输入 */
+export interface CodeGroupDetailGetListInput {
+  /**
+   * 模板分组
+   * @format int64
+   */
+  groupId?: number | null
+}
+
+/** 模板明细列表查询结果输出 */
+export interface CodeGroupDetailGetListOutput {
+  /** @format int64 */
+  id?: number
+  /** @format date-time */
+  createdTime?: string
+  createdUserName?: string | null
+  modifiedUserName?: string | null
+  /** @format date-time */
+  modifiedTime?: string | null
+  /**
+   * 模板分组
+   * @format int64
+   */
+  groupId?: number
+  /** 模板分组显示文本 */
+  groupId_Text?: string | null
+  /** 模板名称 */
+  title?: string | null
+  /** 模板内容 */
+  content?: string | null
+  /** 生成路径 */
+  path?: string | null
+  /** 模板分组 */
+  groupIds?: string | null
+  /** 模板分组显示文本 */
+  groupIds_Texts?: string[] | null
+  /** 页面使用的模板分组数组 */
+  groupIds_Values?: string[] | null
+}
+
+/** 模板明细查询结果输出 */
+export interface CodeGroupDetailGetOutput {
+  /** @format int64 */
+  id?: number
+  /**
+   * 模板分组
+   * @format int64
+   */
+  groupId?: number
+  /** 模板分组显示文本 */
+  groupId_Text?: string | null
+  /** 模板名称 */
+  title?: string | null
+  /** 模板内容 */
+  content?: string | null
+  /** 生成路径 */
+  path?: string | null
+  /** 模板分组 */
+  groupIds?: string | null
+  /** 模板分组显示文本 */
+  groupIds_Texts?: string[] | null
+  /** 页面使用的模板分组数组 */
+  groupIds_Values?: string[] | null
+}
+
+/** 模板明细分页查询条件输入 */
+export interface CodeGroupDetailGetPageInput {
+  /**
+   * 模板分组
+   * @format int64
+   */
+  groupId?: number | null
+}
+
+/** 模板明细分页查询结果输出 */
+export interface CodeGroupDetailGetPageOutput {
+  /** @format int64 */
+  id?: number
+  /** @format date-time */
+  createdTime?: string
+  createdUserName?: string | null
+  modifiedUserName?: string | null
+  /** @format date-time */
+  modifiedTime?: string | null
+  /**
+   * 模板分组
+   * @format int64
+   */
+  groupId?: number
+  /** 模板分组显示文本 */
+  groupId_Text?: string | null
+  /** 模板名称 */
+  title?: string | null
+  /** 模板内容 */
+  content?: string | null
+  /** 生成路径 */
+  path?: string | null
+  /** 模板分组 */
+  groupIds?: string | null
+  /** 模板分组显示文本 */
+  groupIds_Texts?: string[] | null
+  /** 页面使用的模板分组数组 */
+  groupIds_Values?: string[] | null
+}
+
+/** 模板明细更新数据输入 */
+export interface CodeGroupDetailUpdateInput {
+  /** @format int64 */
+  id?: number
+  /**
+   * 模板分组
+   * @format int64
+   */
+  groupId: number
+  /**
+   * 模板名称
+   * @minLength 1
+   */
+  title: string
+  /**
+   * 模板内容
+   * @minLength 1
+   */
+  content: string
+  /** 生成路径 */
+  path?: string | null
+  /** 模板分组 */
+  groupIds?: string | null
+  /** 页面提交的模板分组数组 */
+  groupIds_Values?: string[] | null
+}
+
+/** 模板组列表查询条件输入 */
+export interface CodeGroupGetListInput {
+  /** 模板标题 */
+  title?: string | null
+}
+
+/** 模板组列表查询结果输出 */
+export interface CodeGroupGetListOutput {
+  /** @format int64 */
+  id?: number
+  /** @format date-time */
+  createdTime?: string
+  createdUserName?: string | null
+  modifiedUserName?: string | null
+  /** @format date-time */
+  modifiedTime?: string | null
+  /** 模板标题 */
+  title?: string | null
+  /** 备注 */
+  remark?: string | null
+}
+
+/** 模板组查询结果输出 */
+export interface CodeGroupGetOutput {
+  /** @format int64 */
+  id?: number
+  /** 模板标题 */
+  title?: string | null
+  /** 备注 */
+  remark?: string | null
+}
+
+/** 模板组分页查询条件输入 */
+export interface CodeGroupGetPageInput {
+  /** 模板标题 */
+  title?: string | null
+}
+
+/** 模板组分页查询结果输出 */
+export interface CodeGroupGetPageOutput {
+  /** @format int64 */
+  id?: number
+  /** @format date-time */
+  createdTime?: string
+  createdUserName?: string | null
+  modifiedUserName?: string | null
+  /** @format date-time */
+  modifiedTime?: string | null
+  /** 模板标题 */
+  title?: string | null
+  /** 备注 */
+  remark?: string | null
+}
+
+/** 模板组更新数据输入 */
+export interface CodeGroupUpdateInput {
+  /** @format int64 */
+  id?: number
+  /**
+   * 模板标题
+   * @minLength 1
+   */
+  title: string
+  /** 备注 */
+  remark?: string | null
+}
+
 export interface DatabaseGetOutput {
   dbKey?: string | null
   type?: string | null
@@ -232,6 +467,84 @@ export interface DictionaryTreeOutput {
   childrens?: DictionaryTreeOutput[] | null
 }
 
+export interface DynamicFilterInfo {
+  field?: string | null
+  /** Contains=0,StartsWith=1,EndsWith=2,NotContains=3,NotStartsWith=4,NotEndsWith=5,Equal=6,Equals=7,Eq=8,NotEqual=9,GreaterThan=10,GreaterThanOrEqual=11,LessThan=12,LessThanOrEqual=13,Range=14,DateRange=15,Any=16,NotAny=17,Custom=18 */
+  operator?: DynamicFilterOperator
+  value?: any
+  /** And=0,Or=1 */
+  logic?: DynamicFilterLogic
+  filters?: DynamicFilterInfo[] | null
+}
+
+/**
+ * And=0,Or=1
+ * @format int32
+ */
+export type DynamicFilterLogic = 0 | 1
+
+/**
+ * Contains=0,StartsWith=1,EndsWith=2,NotContains=3,NotStartsWith=4,NotEndsWith=5,Equal=6,Equals=7,Eq=8,NotEqual=9,GreaterThan=10,GreaterThanOrEqual=11,LessThan=12,LessThanOrEqual=13,Range=14,DateRange=15,Any=16,NotAny=17,Custom=18
+ * @format int32
+ */
+export type DynamicFilterOperator = 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12 | 13 | 14 | 15 | 16 | 17 | 18
+
+/** 分页信息输入 */
+export interface PageInputCodeGroupDetailGetPageInput {
+  /**
+   * 当前页标
+   * @format int32
+   */
+  currentPage?: number
+  /**
+   * 每页大小
+   * @format int32
+   */
+  pageSize?: number
+  dynamicFilter?: DynamicFilterInfo
+  /** 模板明细分页查询条件输入 */
+  filter?: CodeGroupDetailGetPageInput
+}
+
+/** 分页信息输入 */
+export interface PageInputCodeGroupGetPageInput {
+  /**
+   * 当前页标
+   * @format int32
+   */
+  currentPage?: number
+  /**
+   * 每页大小
+   * @format int32
+   */
+  pageSize?: number
+  dynamicFilter?: DynamicFilterInfo
+  /** 模板组分页查询条件输入 */
+  filter?: CodeGroupGetPageInput
+}
+
+/** 分页信息输出 */
+export interface PageOutputCodeGroupDetailGetPageOutput {
+  /**
+   * 数据总数
+   * @format int64
+   */
+  total?: number
+  /** 数据 */
+  list?: CodeGroupDetailGetPageOutput[] | null
+}
+
+/** 分页信息输出 */
+export interface PageOutputCodeGroupGetPageOutput {
+  /**
+   * 数据总数
+   * @format int64
+   */
+  total?: number
+  /** 数据 */
+  list?: CodeGroupGetPageOutput[] | null
+}
+
 /** 结果输出 */
 export interface ResultOutputBaseDataGetOutput {
   /** 是否成功标记 */
@@ -244,6 +557,18 @@ export interface ResultOutputBaseDataGetOutput {
 }
 
 /** 结果输出 */
+export interface ResultOutputBoolean {
+  /** 是否成功标记 */
+  success?: boolean
+  /** 编码 */
+  code?: string | null
+  /** 消息 */
+  msg?: string | null
+  /** 数据 */
+  data?: boolean
+}
+
+/** 结果输出 */
 export interface ResultOutputCodeGenGetOutput {
   /** 是否成功标记 */
   success?: boolean
@@ -252,6 +577,30 @@ export interface ResultOutputCodeGenGetOutput {
   /** 消息 */
   msg?: string | null
   data?: CodeGenGetOutput
+}
+
+/** 结果输出 */
+export interface ResultOutputCodeGroupDetailGetOutput {
+  /** 是否成功标记 */
+  success?: boolean
+  /** 编码 */
+  code?: string | null
+  /** 消息 */
+  msg?: string | null
+  /** 模板明细查询结果输出 */
+  data?: CodeGroupDetailGetOutput
+}
+
+/** 结果输出 */
+export interface ResultOutputCodeGroupGetOutput {
+  /** 是否成功标记 */
+  success?: boolean
+  /** 编码 */
+  code?: string | null
+  /** 消息 */
+  msg?: string | null
+  /** 模板组查询结果输出 */
+  data?: CodeGroupGetOutput
 }
 
 /** 结果输出 */
@@ -267,6 +616,30 @@ export interface ResultOutputIEnumerableCodeGenGetOutput {
 }
 
 /** 结果输出 */
+export interface ResultOutputIEnumerableCodeGroupDetailGetListOutput {
+  /** 是否成功标记 */
+  success?: boolean
+  /** 编码 */
+  code?: string | null
+  /** 消息 */
+  msg?: string | null
+  /** 数据 */
+  data?: CodeGroupDetailGetListOutput[] | null
+}
+
+/** 结果输出 */
+export interface ResultOutputIEnumerableCodeGroupGetListOutput {
+  /** 是否成功标记 */
+  success?: boolean
+  /** 编码 */
+  code?: string | null
+  /** 消息 */
+  msg?: string | null
+  /** 数据 */
+  data?: CodeGroupGetListOutput[] | null
+}
+
+/** 结果输出 */
 export interface ResultOutputIEnumerableDictionaryTreeOutput {
   /** 是否成功标记 */
   success?: boolean
@@ -276,6 +649,45 @@ export interface ResultOutputIEnumerableDictionaryTreeOutput {
   msg?: string | null
   /** 数据 */
   data?: DictionaryTreeOutput[] | null
+}
+
+/** 结果输出 */
+export interface ResultOutputInt64 {
+  /** 是否成功标记 */
+  success?: boolean
+  /** 编码 */
+  code?: string | null
+  /** 消息 */
+  msg?: string | null
+  /**
+   * 数据
+   * @format int64
+   */
+  data?: number
+}
+
+/** 结果输出 */
+export interface ResultOutputPageOutputCodeGroupDetailGetPageOutput {
+  /** 是否成功标记 */
+  success?: boolean
+  /** 编码 */
+  code?: string | null
+  /** 消息 */
+  msg?: string | null
+  /** 分页信息输出 */
+  data?: PageOutputCodeGroupDetailGetPageOutput
+}
+
+/** 结果输出 */
+export interface ResultOutputPageOutputCodeGroupGetPageOutput {
+  /** 是否成功标记 */
+  success?: boolean
+  /** 编码 */
+  code?: string | null
+  /** 消息 */
+  msg?: string | null
+  /** 分页信息输出 */
+  data?: PageOutputCodeGroupGetPageOutput
 }
 
 /** 结果输出 */

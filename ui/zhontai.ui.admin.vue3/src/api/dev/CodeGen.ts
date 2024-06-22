@@ -199,6 +199,29 @@ export class CodeGenApi<SecurityDataType = unknown> extends HttpClient<SecurityD
    * No description
    *
    * @tags code-gen
+   * @name GenCompile
+   * @summary 执行迁移到数据库
+   * @request PUT:/api/dev/code-gen/gen-compile
+   * @secure
+   */
+  genCompile = (
+    query?: {
+      /** @format int64 */
+      id?: number
+    },
+    params: RequestParams = {}
+  ) =>
+    this.request<AxiosResponse, any>({
+      path: `/api/dev/code-gen/gen-compile`,
+      method: 'PUT',
+      query: query,
+      secure: true,
+      ...params,
+    })
+  /**
+   * No description
+   *
+   * @tags code-gen
    * @name GenMenu
    * @summary 生成菜单
    * @request PUT:/api/dev/code-gen/gen-menu
