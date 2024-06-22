@@ -18,8 +18,8 @@
         </span>
       </template>
       <div>
-        <div style="margin-bottom: 20px;text-align: center;" >
-          <el-radio-group v-model="state.editor" size="default" >
+        <div style="margin-bottom: 20px;text-align: center;">
+          <el-radio-group v-model="state.editor" size="default">
             <el-radio-button label="infor">基础配置</el-radio-button>
             <el-radio-button label="field">字段配置</el-radio-button>
           </el-radio-group>
@@ -156,20 +156,177 @@
                 <div v-else>{{ scope.row.title }}</div>
               </template>
             </el-table-column>
-            <el-table-column prop="length" label="长度" width="60">
+            <el-table-column prop="length" label="长度" width="80">
               <template #default="scope">
-                <el-input v-if="!showMode" v-model="scope.row.length"></el-input>
+                <el-input type="number" v-if="!showMode" v-model="scope.row.length"></el-input>
                 <div v-else>{{ scope.row.length }}</div>
+              </template>
+            </el-table-column>
+            
+            <el-table-column prop="editor" label="组件类型" width="150">
+              <template #default="scope">
+                <el-select v-if="!showMode" v-model="scope.row.editor">
+                  <el-option v-for="item in editors" :key="item.value" :value="item.value"
+                    :label="item.label"></el-option>
+                </el-select>
+                <div v-else>{{ scope.row.editor }}</div>
+              </template>
+            </el-table-column>
+            <el-table-column prop="whetherTable" label="表" width="50">
+              <template #header>
+                <div class="my-flex-y-center">表<el-tooltip effect="dark" placement="top" hide-after="0">
+                  <template #content>表格分页列表显示字段</template>
+                  <SvgIcon name="ele-InfoFilled" class="ml5" />
+                </el-tooltip></div>
+              </template>
+              <template #default="scope">
+                <el-checkbox v-model="scope.row.whetherTable" :disabled="showMode"></el-checkbox>
+              </template>
+            </el-table-column>
+            <el-table-column prop="whetherAdd" label="增" width="50">
+              <template #header>
+                <div class="my-flex-y-center">增<el-tooltip effect="dark" placement="top" hide-after="0">
+                  <template #content>新增页面显示的字段</template>
+                  <SvgIcon name="ele-InfoFilled" class="ml5" />
+                </el-tooltip></div>
+              </template>
+              <template #default="scope">
+                <el-checkbox v-model="scope.row.whetherAdd" :disabled="showMode"></el-checkbox>
+              </template>
+            </el-table-column>
+            <el-table-column prop="whetherUpdate" label="改" width="50">
+              <template #header>
+                <div class="my-flex-y-center">改<el-tooltip effect="dark" placement="top" hide-after="0">
+                  <template #content>修改页面显示的字段</template>
+                  <SvgIcon name="ele-InfoFilled" class="ml5" />
+                </el-tooltip></div>
+              </template>
+              <template #default="scope">
+                <el-checkbox v-model="scope.row.whetherUpdate" :disabled="showMode"></el-checkbox>
+              </template>
+            </el-table-column>
+
+            <el-table-column prop="whetherList" label="列" width="50" >
+              <template #header>
+                <div class="my-flex-y-center">列<el-tooltip effect="dark" placement="top" hide-after="0">
+                  <template #content>获取的精简数据，下拉框，选择框使用的字段</template>
+                  <SvgIcon name="ele-InfoFilled" class="ml5" />
+                </el-tooltip></div>
+              </template>
+              <template #default="scope">
+                <el-checkbox v-model="scope.row.whetherList" :disabled="showMode"></el-checkbox>
+              </template>
+            </el-table-column>
+            <el-table-column prop="isNullable" label="空" width="50">
+              <template #header>
+                <div class="my-flex-y-center">空<el-tooltip effect="dark" placement="top" hide-after="0">
+                  <template #content>字段模型是否可空类型</template>
+                  <SvgIcon name="ele-InfoFilled" class="ml5" />
+                </el-tooltip></div>
+              </template>
+              <template #default="scope">
+                <el-checkbox v-model="scope.row.isNullable" :disabled="showMode" ></el-checkbox>
+              </template>
+            </el-table-column>
+
+            <el-table-column prop="whetherQuery" label="查" width="50">
+              <template #header>
+                <div class="my-flex-y-center">查<el-tooltip effect="dark" placement="top" hide-after="0">
+                  <template #content>查询条件显示的字段</template>
+                  <SvgIcon name="ele-InfoFilled" class="ml5" />
+                </el-tooltip></div>
+              </template>
+              <template #default="scope">
+                <el-checkbox v-model="scope.row.whetherQuery" :disabled="showMode"></el-checkbox>
+              </template>
+            </el-table-column>
+            <el-table-column prop="queryType" label="查询方式" width="140">
+              <template #default="scope">
+                <el-select v-model="scope.row.queryType" v-if="!showMode">
+                  <el-option v-for="item in operates" :key="item.value" :value="item.value"
+                    :label="item.label"></el-option>
+                </el-select>
+                <div v-else>{{ scope.row.queryType }}</div>
+              </template>
+            </el-table-column>
+
+            <!-- <el-table-column prop="effectType" label="作用类型" width="120">
+            <template #default="scope">
+              <el-select v-if="!showMode" v-model="scope.row.effectType">
+                <el-option key="input" value="input" label="输入"></el-option>
+                <el-option key="dict" value="dict" label="字典"></el-option>
+              </el-select>
+              <div v-else>{{ scope.row.effectType }}</div>
+            </template>
+          </el-table-column> -->
+            <el-table-column prop="includeEntity"  width="140">
+              <template #header>
+                <div class="my-flex-y-center">关联模型<el-tooltip effect="dark" placement="top" hide-after="0">
+                  <template #content>用于生成页面下拉选择，一对多则生成多选 eg: CodeGroupEntity</template>
+                  <SvgIcon name="ele-InfoFilled" class="ml5" />
+                </el-tooltip></div>
+              </template>
+              <template #default="scope">
+                <el-input v-if="!showMode" v-model="scope.row.includeEntity"
+                  title="用于生成页面下拉选择，一对多则生成多选 eg: CodeGroupEntity，一对一的时候将生成字段 字段_Text, 一对多的时候，模型中将生成 字段_Values，字段_Texts" placeholder="关联模型名 xxxEntity"></el-input>
+                <div v-else>{{ scope.row.includeEntity }}</div>
+              </template>
+            </el-table-column>
+            <el-table-column prop="includeEntityKey"  width="140">
+              <template #header>
+                <div class="my-flex-y-center">关联模型字段<el-tooltip effect="dark" placement="top" hide-after="0">
+                  <template #content>列表和获取单个时显示文本值，根据Id查询关联模型，显示的字段 eg:Title，关联查询模型时的字段</template>
+                  <SvgIcon name="ele-InfoFilled" class="ml5" />
+                </el-tooltip></div>
+              </template>
+              <template #default="scope">
+                <el-input v-if="!showMode" v-model="scope.row.includeEntityKey"
+                  title="列表和获取单个时显示文本值，根据Id查询关联模型，显示的字段 eg:Title" placeholder="关联显示字段 Title"></el-input>
+                <div v-else>{{ scope.row.includeEntityKey }}</div>
+              </template>
+            </el-table-column>
+            <el-table-column prop="includeMode" label="外联方式" width="120">
+              <template #default="scope">
+                <el-select v-if="!showMode" v-model="scope.row.includeMode" title="对应单选/多选">
+                  <el-option v-for="item in includes" :key="item.value" :value="item.value"
+                    :label="item.label"></el-option>
+                </el-select>
+                <div v-else>{{ scope.row.includeMode }}</div>
+              </template>
+            </el-table-column>
+            <el-table-column prop="dictTypeCode" label="字典编码" width="120">
+              <template #default="scope">
+                <el-input v-if="!showMode" v-model="scope.row.dictTypeCode"></el-input>
+                <div v-else>{{ scope.row.dictTypeCode }}</div>
+              </template>
+            </el-table-column>
+            <el-table-column prop="displayColumn" label="选中文本字段" width="140">
+              <template #default="scope">
+                <el-input v-if="!showMode" v-model="scope.row.displayColumn"></el-input>
+                <div v-else>{{ scope.row.displayColumn }}</div>
+              </template>
+            </el-table-column>
+            <el-table-column prop="valueColumn" label="选中值字段" width="140">
+              <template #default="scope">
+                <el-input v-if="!showMode" v-model="scope.row.valueColumn"></el-input>
+                <div v-else>{{ scope.row.valueColumn }}</div>
+              </template>
+            </el-table-column>
+            <el-table-column prop="pidColumn" label="父级字段" width="140">
+              <template #default="scope">
+                <el-input v-if="!showMode" v-model="scope.row.pidColumn"></el-input>
+                <div v-else>{{ scope.row.pidColumn }}</div>
+              </template>
+            </el-table-column>
+            <el-table-column prop="frontendRuleTrigger" label="前端检测触发" width="140">
+              <template #default="scope">
+                <el-input v-if="!showMode" v-model="scope.row.frontendRuleTrigger"></el-input>
+                <div v-else>{{ scope.row.frontendRuleTrigger }}</div>
               </template>
             </el-table-column>
             <el-table-column prop="isPrimary" label="主键" width="50">
               <template #default="scope"><!-- :disabled="showMode || editMode != 'add'"-->
                 <el-checkbox v-model="scope.row.isPrimary" :disabled="showMode"></el-checkbox>
-              </template>
-            </el-table-column>
-            <el-table-column prop="isNullable" label="可空" width="50">
-              <template #default="scope">
-                <el-checkbox v-model="scope.row.isNullable" :disabled="showMode"></el-checkbox>
               </template>
             </el-table-column>
             <el-table-column prop="defaultValue" label="默认值" width="100">
@@ -215,114 +372,6 @@
               <template #default="scope">
                 <el-input v-if="!showMode" v-model="scope.row.position"></el-input>
                 <div v-else>{{ scope.row.position }}</div>
-              </template>
-            </el-table-column>
-            <el-table-column prop="whetherList" label="列" width="50">
-              <template #default="scope">
-                <el-checkbox v-model="scope.row.whetherList" :disabled="showMode"></el-checkbox>
-              </template>
-            </el-table-column>
-            <el-table-column prop="whetherTable" label="表" width="50">
-              <template #default="scope">
-                <el-checkbox v-model="scope.row.whetherTable" :disabled="showMode"></el-checkbox>
-              </template>
-            </el-table-column>
-            <el-table-column prop="whetherAdd" label="增" width="50">
-              <template #default="scope">
-                <el-checkbox v-model="scope.row.whetherAdd" :disabled="showMode"></el-checkbox>
-              </template>
-            </el-table-column>
-            <el-table-column prop="whetherUpdate" label="改" width="50">
-              <template #default="scope">
-                <el-checkbox v-model="scope.row.whetherUpdate" :disabled="showMode"></el-checkbox>
-              </template>
-            </el-table-column>
-
-            <el-table-column prop="editor" label="编辑器" width="120">
-              <template #default="scope">
-                <el-select v-if="!showMode" v-model="scope.row.editor">
-                  <el-option v-for="item in editors" :key="item" :value="item" :label="item"></el-option>
-                </el-select>
-                <div v-else>{{ scope.row.editor }}</div>
-              </template>
-            </el-table-column>
-
-            <el-table-column prop="whetherQuery" label="查" width="50">
-              <template #default="scope">
-                <el-checkbox v-model="scope.row.whetherQuery" :disabled="showMode"></el-checkbox>
-              </template>
-            </el-table-column>
-            <el-table-column prop="queryType" label="查询方式" width="140">
-              <template #default="scope">
-                <el-select v-model="scope.row.queryType" v-if="!showMode">
-                  <el-option v-for="item in operates" :key="item.value" :value="item.value"
-                    :label="item.label"></el-option>
-                </el-select>
-                <div v-else>{{ scope.row.queryType }}</div>
-              </template>
-            </el-table-column>
-
-            <!-- <el-table-column prop="effectType" label="作用类型" width="120">
-            <template #default="scope">
-              <el-select v-if="!showMode" v-model="scope.row.effectType">
-                <el-option key="input" value="input" label="输入"></el-option>
-                <el-option key="dict" value="dict" label="字典"></el-option>
-              </el-select>
-              <div v-else>{{ scope.row.effectType }}</div>
-            </template>
-          </el-table-column> -->
-
-            <el-table-column prop="dictTypeCode" label="字典编码" width="120">
-              <template #default="scope">
-                <el-input v-if="!showMode" v-model="scope.row.dictTypeCode"></el-input>
-                <div v-else>{{ scope.row.dictTypeCode }}</div>
-              </template>
-            </el-table-column>
-
-            <el-table-column prop="includeEntity" label="外联实体" width="140">
-              <template #default="scope">
-                <el-input v-if="!showMode" v-model="scope.row.includeEntity"></el-input>
-                <div v-else>{{ scope.row.includeEntity }}</div>
-              </template>
-            </el-table-column>
-            <el-table-column prop="includeEntityKey" label="外联字段" width="140">
-              <template #default="scope">
-                <el-input v-if="!showMode" v-model="scope.row.includeEntityKey"></el-input>
-                <div v-else>{{ scope.row.includeEntityKey }}</div>
-              </template>
-            </el-table-column>
-            <el-table-column prop="includeMode" label="外联方式" width="100">
-              <template #default="scope">
-                <el-select v-if="!showMode" v-model="scope.row.includeMode">
-                  <el-option v-for="item in includes" :key="item.value" :value="item.value"
-                    :label="item.label"></el-option>
-                </el-select>
-                <div v-else>{{ scope.row.includeMode }}</div>
-              </template>
-            </el-table-column>
-
-            <el-table-column prop="displayColumn" label="选中文本字段" width="140">
-              <template #default="scope">
-                <el-input v-if="!showMode" v-model="scope.row.displayColumn"></el-input>
-                <div v-else>{{ scope.row.displayColumn }}</div>
-              </template>
-            </el-table-column>
-            <el-table-column prop="valueColumn" label="选中值字段" width="140">
-              <template #default="scope">
-                <el-input v-if="!showMode" v-model="scope.row.valueColumn"></el-input>
-                <div v-else>{{ scope.row.valueColumn }}</div>
-              </template>
-            </el-table-column>
-            <el-table-column prop="pidColumn" label="父级字段" width="140">
-              <template #default="scope">
-                <el-input v-if="!showMode" v-model="scope.row.pidColumn"></el-input>
-                <div v-else>{{ scope.row.pidColumn }}</div>
-              </template>
-            </el-table-column>
-            <el-table-column prop="frontendRuleTrigger" label="前端检测触发" width="140">
-              <template #default="scope">
-                <el-input v-if="!showMode" v-model="scope.row.frontendRuleTrigger"></el-input>
-                <div v-else>{{ scope.row.frontendRuleTrigger }}</div>
               </template>
             </el-table-column>
           </el-table>
@@ -371,14 +420,23 @@ const props = defineProps({
     ],
   },
   editors: {
-    type: [] as PropType<Array<String>>,
-    default: ['el-input', 'el-select', 'el-date-picker', 'el-switch', 'my-upload'],
+    type: [] as PropType<Array<SelectOptionType>>,
+    default: [
+      { label: "文本框", value: "el-input" },
+      { label: "数值框", value: "el-input-number" },
+      { label: "文本域", value: "my-input-textarea" },
+      { label: "下拉框", value: "el-select" },
+      { label: "日期框", value: "el-date-picker" },
+      { label: "开关", value: "el-switch" },
+      { label: "图片上传", value: "my-upload" },
+      { label: "业务选择", value: "my-bussiness-select" }
+    ]
   },
   includes: {
     type: [] as PropType<Array<SelectOptionType>>,
     default: [
-      { value: 0, label: '1对1' },
-      { value: 1, label: '1对多' },
+      { value: 0, label: '1对1(单选)' },
+      { value: 1, label: '1对多(多选)' },
     ],
   },
   operates: {
@@ -474,7 +532,7 @@ function _newCol(name: string, title: string, netType: string, options: CodeGenU
     comment: '',
     dbType: '',
     isPrimary: false,
-    isNullable: true,
+    isNullable: false,
     defaultValue: '',
     length: '-1',
     editor: 'el-input',

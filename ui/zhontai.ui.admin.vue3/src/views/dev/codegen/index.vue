@@ -51,6 +51,7 @@
                   <el-dropdown-menu>
                     <el-dropdown-item @click="generate(scope.row)">生成代码</el-dropdown-item>
                     <el-dropdown-item @click="compile(scope.row)">生成迁移SQL</el-dropdown-item>
+                    <el-dropdown-item @click="genCompile(scope.row)">执行迁移到数据库</el-dropdown-item>
                     <el-dropdown-item @click="genMenu(scope.row)">生成菜单数据</el-dropdown-item>
                   </el-dropdown-menu>
                 </template>
@@ -254,6 +255,14 @@ const compile = async (config: CodeGenGetOutput) => {
   }
 }
 
+const genCompile = async (config: CodeGenGetOutput) => {
+  if (!config) {
+    return
+  }
+
+  await new CodeGenApi().genCompile({ id: config.id }, { loading: true, showSuccessMessage: true })
+}
+
 const genMenu = async (config: CodeGenGetOutput) => {
   if (!config) return
   await new CodeGenApi().genMenu({ id: config.id }, { loading: true, showSuccessMessage: true })
@@ -318,7 +327,7 @@ onMounted(() => {
 })
 
 onUnmounted(() => {
-  eventBus.off('onTableEditSure')
+  eventBus.off('onConfigEditSure')
 })
 </script>
 
