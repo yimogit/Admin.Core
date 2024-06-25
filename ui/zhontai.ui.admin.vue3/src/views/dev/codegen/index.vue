@@ -3,24 +3,44 @@
     <el-card shadow="never" :body-style="{ paddingBottom: '0' }" style="margin-top: 8px">
       <el-form class="ad-form-query" inline :model="state.filter">
         <el-form-item label="数据源">
-          <el-select v-model="state.filter.dbKey" @change="getConfigs" style="width: 150px">
+          <el-select v-model="state.filter.dbKey" @change="getConfigs" style="width: 150px" clearable>
             <el-option v-for="item in state.dbKeys" :key="item.dbKey" :value="item.dbKey" :label="item.dbKey"></el-option>
           </el-select>
         </el-form-item>
         <el-form-item>
           <el-button-group>
-            <el-button type="primary" @click="createTable">创建表</el-button>
+            <el-dropdown split-button type="primary" @click="createTable">
+              创建表
+              <template #dropdown>
+                <el-dropdown-menu>
+                  <el-dropdown-item type="primary" @click="importConfig">从剪切板导入配置</el-dropdown-item>
+                </el-dropdown-menu>
+              </template>
+            </el-dropdown>
           </el-button-group>
         </el-form-item>
         <el-form-item>
           <el-button type="primary" @click="getTables">查看数据库结构</el-button>
+        </el-form-item>
+        <el-form-item>
+          <el-button-group>
+            <el-dropdown split-button type="primary" @click="exportConfig">
+              复制选中配置到剪切板
+              <template #dropdown>
+                <el-dropdown-menu>
+                  <el-dropdown-item type="primary" @click="importConfig">从剪切板导入配置</el-dropdown-item>
+                </el-dropdown-menu>
+              </template>
+            </el-dropdown>
+          </el-button-group>
         </el-form-item>
       </el-form>
     </el-card>
 
     <el-card shadow="never" style="margin-top: 8px">
       <el-table :data="state.configs" highlight-current-row size="default" @row-click="configSelect"
-        @row-dblclick="modifyConfig">
+        @row-dblclick="modifyConfig" @selection-change="selsChange">
+        <el-table-column type="selection" width="50" />
         <el-table-column type="expand" fixed>
           <template #default="scope">
             <el-row>
@@ -29,9 +49,9 @@
             </el-row>
           </template>
         </el-table-column>
-        <el-table-column prop="tableName" label="表名称" width="160" fixed></el-table-column>
+        <el-table-column prop="tableName" label="表名称" width="180" fixed></el-table-column>
         <el-table-column prop="entityName" label="实体名" width="140" fixed></el-table-column>
-        <el-table-column prop="namespace" label="命名空间" width="170"></el-table-column>
+        <el-table-column prop="namespace" label="命名空间" width="180"></el-table-column>
         <el-table-column prop="busName" label="业务名" width="100"></el-table-column>
         <el-table-column prop="baseEntity" label="基类" width="120"></el-table-column>
         <el-table-column prop="apiAreaName" label="Api分区" width="100"></el-table-column>
@@ -76,6 +96,33 @@
         </span>
       </template>
     </el-drawer>
+    <el-dialog title="导入确认" destroy-on-close draggable width="80%" class="dialog-h50" :close-on-click-modal="false"
+      v-model="state.importBoxyShow">
+      <el-table :data="state.importConfigs" highlight-current-row size="default" @selection-change="importSelsChange"
+        ref="importDialogTableRef">
+        <el-table-column type="selection" width="50" />
+        <el-table-column prop="tableName" label="表名称" width="180" fixed></el-table-column>
+        <el-table-column prop="entityName" label="实体名" width="140" fixed></el-table-column>
+        <el-table-column prop="namespace" label="命名空间" width="180"></el-table-column>
+        <el-table-column prop="busName" label="业务名" width="100"></el-table-column>
+        <el-table-column prop="baseEntity" label="基类" width="120"></el-table-column>
+        <el-table-column prop="apiAreaName" label="Api分区" width="100"></el-table-column>
+        <el-table-column prop="generateType" label="生成方式" width="100">
+          <template #default="scope">
+            {{ genType(scope.row.generateType) }}
+          </template>
+        </el-table-column>
+        <el-table-column prop="authorName" label="作者" width="100"></el-table-column>
+        <el-table-column prop="comment" label="备注" width></el-table-column>
+        <el-table-column prop="importStatus" label="导入状态" width show-overflow-tooltip></el-table-column>
+      </el-table>
+      <template #footer>
+        <span class="dialog-footer">
+          <el-button @click="onCancelImport"> 取消 </el-button>
+          <el-button type="primary" @click="onSureImport"> {{ state.importSuccess ? '导入完成' : '确定' }}</el-button>
+        </span>
+      </template>
+    </el-dialog>
   </div>
 </template>
 
@@ -120,7 +167,12 @@ const state = reactive({
   dbTree: [] as Array<DbTree>,
   // 状态器定义
   dataLoading: false,
-  dbStructShow: false
+  dbStructShow: false,
+  sels: [] as Array<CodeGenGetOutput>,
+  importConfigs: [] as Array<CodeGenGetOutput>,
+  importSels: [] as Array<CodeGenGetOutput>,
+  importBoxyShow: false,
+  importSuccess: false
 })
 
 const genDefaultConfig = (): CodeGenUpdateInput => {
@@ -190,6 +242,8 @@ const getTables = async () => {
   state.dbTree = dbTree
 }
 const getConfigs = async () => {
+  if (!state.filter.dbKey)
+    return
   state.filter.config = null
   state.dataLoading = true
   const res = await new CodeGenApi().getList({ dbkey: state.filter.dbKey })
@@ -329,11 +383,74 @@ onMounted(() => {
 onUnmounted(() => {
   eventBus.off('onConfigEditSure')
 })
+
+const selsChange = (vals: CodeGenGetOutput[]) => {
+  console.log(vals)
+  state.sels = vals
+}
+const exportConfig = () => {
+  if (state.sels.length == 0)
+    return proxy.$modal.msgWarning('请选择要复制的配置')
+  console.log(JSON.stringify(state.sels))
+  toClipboard(JSON.stringify(state.sels))
+  return proxy.$modal.msgSuccess('已经配置复制到剪切板，保存成json即可')
+}
+const importDialogTableRef = ref()
+const importConfig = () => {
+  if (!state.filter.dbKey)
+    return proxy.$modal.msgError('请先选择导入的数据源')
+  state.importSuccess = false
+  navigator.clipboard
+    .readText()
+    .then((v) => {
+      console.log("获取剪贴板成功：", v);
+      let list = JSON.parse(v) as Array<CodeGenGetOutput>
+      state.importBoxyShow = true
+      state.importConfigs = list
+    })
+    .catch((v) => {
+      proxy.$modal.msgError('请先复制正确的配置')
+    });
+}
+const importSelsChange = (vals: CodeGenGetOutput[]) => {
+  state.importSels = vals
+}
+
+const onSureImport = () => {
+  if (!state.filter.dbKey)
+    return proxy.$modal.msgError('请先选择导入的数据源')
+  state.importSels.forEach(async data => {
+    if (data.importStatus == '导入成功' || data.importStatus == '导入中')
+      return
+    let editorForm = data as CodeGenUpdateInput
+    editorForm.dbKey = state.filter.dbKey
+    editorForm.id = 0
+    if (!editorForm.fields) {
+      editorForm.fields = []
+    }
+    editorForm.fields.forEach(s => {
+      s.id = 0
+    })
+    data.importStatus = '导入中'
+    const res = await new CodeGenApi().update(editorForm, { loading: true, showErrorMessage: false }).catch((e) => {
+      data.importStatus = '导入失败:' + e.message
+    })
+    if (res?.success) {
+      data.importStatus = '导入成功'
+    }
+    state.importSuccess = state.importSels.filter(s2 => s2.importStatus === '导入成功').length == state.importSels.length
+  })
+}
+const onCancelImport = () => {
+  state.importBoxyShow = false
+}
+
 </script>
 
 <script lang="ts">
 import { defineComponent } from 'vue'
 import { ElLoading } from 'element-plus'
+import { forEach } from "lodash"
 
 export default defineComponent({
   name: 'dev/codegen',

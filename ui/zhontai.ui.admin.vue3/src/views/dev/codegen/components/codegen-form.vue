@@ -1,6 +1,6 @@
 <template>
   <div>
-    <el-dialog v-model="state.showDialog" destroy-on-close :title="state.title" draggable width="80%" class="dialog-h80">
+    <el-dialog v-model="state.showDialog" destroy-on-close  :close-on-click-modal="false"  :title="state.title" draggable width="80%" class="dialog-h80">
       <template #footer>
         <span class="dialog-footer">
           <span style="float: left" v-show="state.editor == 'field'">
