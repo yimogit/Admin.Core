@@ -1,45 +1,46 @@
 <template>
   <div>
     <el-card shadow="never" :body-style="{ paddingBottom: '0' }" style="margin-top: 8px">
-      <el-form class="ad-form-query" inline :model="state.filter">
-        <el-form-item label="数据源">
-          <el-select v-model="state.filter.dbKey" @change="getConfigs" style="width: 150px" clearable>
-            <el-option v-for="item in state.dbKeys" :key="item.dbKey" :value="item.dbKey" :label="item.dbKey"></el-option>
-          </el-select>
-        </el-form-item>
-        <el-form-item>
+      <el-row>
+        <el-col :span="18">
+          <el-form class="ad-form-query" inline :model="state.filter">
+            <el-form-item label="数据源">
+              <el-select v-model="state.filter.dbKey" @change="getConfigs" style="width: 150px" clearable>
+                <el-option v-for="item in state.dbKeys" :key="item.dbKey" :value="item.dbKey"
+                  :label="item.dbKey"></el-option>
+              </el-select>
+            </el-form-item>
+            <el-form-item>
+              <el-dropdown split-button type="primary"  @click="getConfigs">
+                <el-icon><ele-Search /></el-icon> 查询
+                <template #dropdown>
+                  <el-dropdown-menu>
+                    <el-dropdown-item type="primary"  @click="getTables">查看数据源数据库结构</el-dropdown-item>
+                  </el-dropdown-menu>
+                </template>
+              </el-dropdown>
+            </el-form-item>
+          </el-form>
+        </el-col>
+        <el-col :span="6" class="text-right">
           <el-button-group>
             <el-dropdown split-button type="primary" @click="createTable">
               创建表
               <template #dropdown>
                 <el-dropdown-menu>
+                  <el-dropdown-item type="primary" @click="exportConfig">复制选中配置到剪切板</el-dropdown-item>
                   <el-dropdown-item type="primary" @click="importConfig">从剪切板导入配置</el-dropdown-item>
                 </el-dropdown-menu>
               </template>
             </el-dropdown>
           </el-button-group>
-        </el-form-item>
-        <el-form-item>
-          <el-button type="primary" @click="getTables">查看数据库结构</el-button>
-        </el-form-item>
-        <el-form-item>
-          <el-button-group>
-            <el-dropdown split-button type="primary" @click="exportConfig">
-              复制选中配置到剪切板
-              <template #dropdown>
-                <el-dropdown-menu>
-                  <el-dropdown-item type="primary" @click="importConfig">从剪切板导入配置</el-dropdown-item>
-                </el-dropdown-menu>
-              </template>
-            </el-dropdown>
-          </el-button-group>
-        </el-form-item>
-      </el-form>
+        </el-col>
+      </el-row>
     </el-card>
 
     <el-card shadow="never" style="margin-top: 8px">
-      <el-table :data="state.configs" highlight-current-row size="default" @row-click="configSelect"
-        @row-dblclick="modifyConfig" @selection-change="selsChange">
+      <el-table :data="state.configs" highlight-current-row size="default" ref="listTableRef"
+        @row-click="listTableToggleSelection" @row-dblclick="modifyConfig" @selection-change="selsChange">
         <el-table-column type="selection" width="50" />
         <el-table-column type="expand" fixed>
           <template #default="scope">
@@ -52,6 +53,7 @@
         <el-table-column prop="tableName" label="表名称" width="180" fixed></el-table-column>
         <el-table-column prop="entityName" label="实体名" width="140" fixed></el-table-column>
         <el-table-column prop="namespace" label="命名空间" width="180"></el-table-column>
+        <el-table-column prop="dbKey" label="数据源" width="100" ></el-table-column>
         <el-table-column prop="busName" label="业务名" width="100"></el-table-column>
         <el-table-column prop="baseEntity" label="基类" width="120"></el-table-column>
         <el-table-column prop="apiAreaName" label="Api分区" width="100"></el-table-column>
@@ -76,8 +78,11 @@
                   </el-dropdown-menu>
                 </template>
               </el-dropdown>
-              <el-button type="danger" split-button size="small" icon="ele-Delete"
-                @click="removeConfig(scope.row)">删除</el-button>
+              <el-popconfirm title="确定删除吗？" @confirm="onDelRow(scope.row)">
+                <template #reference>
+                  <el-button split-button size="small" icon="ele-Delete" type="danger">删除</el-button>
+                </template>
+              </el-popconfirm>
             </el-space>
           </template>
         </el-table-column>
@@ -96,13 +101,15 @@
         </span>
       </template>
     </el-drawer>
-    <el-dialog title="导入确认" destroy-on-close draggable width="80%" class="dialog-h50" :close-on-click-modal="false"
-      v-model="state.importBoxyShow">
+    <el-dialog title="导入确认(双击可编辑直接提交)" destroy-on-close draggable width="80%" class="dialog-h50"
+      :close-on-click-modal="false" v-model="state.importBoxyShow">
       <el-table :data="state.importConfigs" highlight-current-row size="default" @selection-change="importSelsChange"
-        ref="importDialogTableRef">
+        @row-click="dialogTalbeToggleSelection" @row-dblclick="modifyConfig" ref="importDialogTableRef">
         <el-table-column type="selection" width="50" />
-        <el-table-column prop="tableName" label="表名称" width="180" fixed></el-table-column>
-        <el-table-column prop="entityName" label="实体名" width="140" fixed></el-table-column>
+        <el-table-column prop="importStatus" label="导入状态" width="120" fixed show-overflow-tooltip></el-table-column>
+        <el-table-column prop="tableName" label="表名称" width="180"></el-table-column>
+        <el-table-column prop="entityName" label="实体名" width="140"></el-table-column>
+        <el-table-column prop="dbKey" label="数据源" width="100" ></el-table-column>
         <el-table-column prop="namespace" label="命名空间" width="180"></el-table-column>
         <el-table-column prop="busName" label="业务名" width="100"></el-table-column>
         <el-table-column prop="baseEntity" label="基类" width="120"></el-table-column>
@@ -114,12 +121,12 @@
         </el-table-column>
         <el-table-column prop="authorName" label="作者" width="100"></el-table-column>
         <el-table-column prop="comment" label="备注" width></el-table-column>
-        <el-table-column prop="importStatus" label="导入状态" width show-overflow-tooltip></el-table-column>
       </el-table>
       <template #footer>
         <span class="dialog-footer">
           <el-button @click="onCancelImport"> 取消 </el-button>
-          <el-button type="primary" @click="onSureImport"> {{ state.importSuccess ? '导入完成' : '确定' }}</el-button>
+          <el-button type="primary" @click="onCompleteImport" v-if="state.importSuccess">导入完成</el-button>
+          <el-button type="primary" @click="onSureImport" v-else> 确定</el-button>
         </span>
       </template>
     </el-dialog>
@@ -140,6 +147,9 @@ const { toClipboard } = useClipboard()
 const CodegenForm = defineAsyncComponent(() => import('./components/codegen-form.vue'))
 
 const { proxy } = getCurrentInstance() as any
+
+const listTableRef = ref()
+const importDialogTableRef = ref()
 
 interface DbTree {
   key: string | null | undefined
@@ -169,10 +179,10 @@ const state = reactive({
   dataLoading: false,
   dbStructShow: false,
   sels: [] as Array<CodeGenGetOutput>,
-  importConfigs: [] as Array<CodeGenGetOutput>,
-  importSels: [] as Array<CodeGenGetOutput>,
+  importConfigs: [] as Array<any>,
+  importSels: [] as Array<any>,
   importBoxyShow: false,
-  importSuccess: false
+  importSuccess: false as Boolean
 })
 
 const genDefaultConfig = (): CodeGenUpdateInput => {
@@ -242,9 +252,7 @@ const getTables = async () => {
   state.dbTree = dbTree
 }
 const getConfigs = async () => {
-  if (!state.filter.dbKey)
-    return
-  state.filter.config = null
+  // state.filter.config = null
   state.dataLoading = true
   const res = await new CodeGenApi().getList({ dbkey: state.filter.dbKey })
   state.configs = res?.data ?? []
@@ -255,15 +263,15 @@ const configSelect = async (row: CodeGenGetOutput, column: any, event: any) => {
   state.filter.config = row
 }
 
-const showEditData = async (data: CodeGenGetOutput) => {
+const showEditData = async (data: CodeGenGetOutput & any) => {
+  if (data.importStatus == '导入成功') {
+    proxy.$modal.msgWarning('导入成功后不能再编辑')
+    return
+  }
   codegenFormRef?.value?.open(data)
 }
 
 const createTable = async () => {
-  if (!state.filter.dbKey) {
-    proxy.$modal.msgWarning('请选择数据源')
-    return
-  }
   showEditData(genDefaultConfig())
 }
 const removeConfig = async (config: CodeGenGetOutput) => {
@@ -272,11 +280,14 @@ const removeConfig = async (config: CodeGenGetOutput) => {
     return
   }
   proxy.$modal.confirmDelete(`确定要删除【${config.tableName}】？`).then(async () => {
-    var res = await new CodeGenApi().delete({ id: config.id }, { loading: true, showSuccessMessage: true })
-    if (res?.success) {
-      getConfigs()
-    }
+    onDelRow(config)
   })
+}
+const onDelRow = async (config: CodeGenGetOutput) => {
+  var res = await new CodeGenApi().delete({ id: config.id }, { loading: true, showSuccessMessage: true })
+  if (res?.success) {
+    getConfigs()
+  }
 }
 
 const modifyConfig = async (config: CodeGenGetOutput) => {
@@ -286,6 +297,13 @@ const modifyConfig = async (config: CodeGenGetOutput) => {
   showEditData(JSON.parse(JSON.stringify(config)))
 }
 
+
+const listTableToggleSelection = async (row: CodeGenGetOutput) => {
+  listTableRef.value!.toggleRowSelection(row)
+}
+const dialogTalbeToggleSelection = async (row: CodeGenGetOutput) => {
+  importDialogTableRef.value!.toggleRowSelection(row)
+}
 const generate = async (config: CodeGenGetOutput) => {
   if (!config) {
     return
@@ -326,7 +344,6 @@ const onConfigEditSure = async (data: any) => {
   if (!data?.data) return
 
   let editorForm = data.data as CodeGenUpdateInput
-  editorForm.dbKey = state.filter.dbKey
   if (!editorForm.fields) {
     editorForm.fields = []
   }
@@ -337,7 +354,19 @@ const onConfigEditSure = async (data: any) => {
   if (!res?.success) {
     return res
   }
-  state.filter.config = JSON.parse(JSON.stringify(editorForm))
+  if (data.data.importStatus == '等待导入') {
+    console.log(data.data.importKey)
+    console.log(state.importConfigs)
+    let selectData = state.importConfigs.find(s => s.importKey == data.data.importKey)
+    console.log(selectData)
+    if (selectData) {
+      selectData.importStatus = '导入成功'
+    }
+    let callback = data.callback as Function
+    callback(res)
+    return
+  }
+  // state.filter.config = JSON.parse(JSON.stringify(editorForm))
 
   let callback = data.callback as Function
   callback(res)
@@ -364,6 +393,7 @@ const createConfigFromTable = async (table: DbTree) => {
   // newConfig.fields.reverse()
   newConfig.baseEntity = 'EntityBase'
   newConfig.generateType = '2'
+  newConfig.entityName = ''
   showEditData(newConfig)
 }
 
@@ -374,7 +404,7 @@ const genType = (t: number) => {
 }
 onMounted(() => {
   getBaseData()
-
+  getConfigs()
   eventBus.on('onConfigEditSure', async (config: CodeGenUpdateInput) => {
     onConfigEditSure(config)
   })
@@ -391,22 +421,30 @@ const selsChange = (vals: CodeGenGetOutput[]) => {
 const exportConfig = () => {
   if (state.sels.length == 0)
     return proxy.$modal.msgWarning('请选择要复制的配置')
-  console.log(JSON.stringify(state.sels))
+  // console.log(JSON.stringify(state.sels))
   toClipboard(JSON.stringify(state.sels))
   return proxy.$modal.msgSuccess('已经配置复制到剪切板，保存成json即可')
 }
-const importDialogTableRef = ref()
 const importConfig = () => {
-  if (!state.filter.dbKey)
-    return proxy.$modal.msgError('请先选择导入的数据源')
   state.importSuccess = false
   navigator.clipboard
     .readText()
     .then((v) => {
-      console.log("获取剪贴板成功：", v);
-      let list = JSON.parse(v) as Array<CodeGenGetOutput>
+      // console.log("获取剪贴板成功：", v);
+      let list = JSON.parse(v) as Array<any>
       state.importBoxyShow = true
-      state.importConfigs = list
+      let k = 1;
+      state.importConfigs = list.map(s => {
+        //导入key
+        s.importKey = 'import_' + (k++).toString()
+        //导入消息
+        s.importStatus = '等待导入'
+        s.id = 0;
+        s.fields?.forEach((s2: CodeGenFieldGetOutput) => {
+          s2.id = 0
+        })
+        return s
+      })
     })
     .catch((v) => {
       proxy.$modal.msgError('请先复制正确的配置')
@@ -417,20 +455,19 @@ const importSelsChange = (vals: CodeGenGetOutput[]) => {
 }
 
 const onSureImport = () => {
-  if (!state.filter.dbKey)
-    return proxy.$modal.msgError('请先选择导入的数据源')
+  if (state.importSels.length == 0)
+    return proxy.$modal.msgWarning('选择要导入的数据')
   state.importSels.forEach(async data => {
     if (data.importStatus == '导入成功' || data.importStatus == '导入中')
       return
     let editorForm = data as CodeGenUpdateInput
-    editorForm.dbKey = state.filter.dbKey
-    editorForm.id = 0
+    // editorForm.id = 0
     if (!editorForm.fields) {
       editorForm.fields = []
     }
-    editorForm.fields.forEach(s => {
-      s.id = 0
-    })
+    // editorForm.fields.forEach(s => {
+    //   s.id = 0
+    // })
     data.importStatus = '导入中'
     const res = await new CodeGenApi().update(editorForm, { loading: true, showErrorMessage: false }).catch((e) => {
       data.importStatus = '导入失败:' + e.message
@@ -438,11 +475,16 @@ const onSureImport = () => {
     if (res?.success) {
       data.importStatus = '导入成功'
     }
-    state.importSuccess = state.importSels.filter(s2 => s2.importStatus === '导入成功').length == state.importSels.length
+    state.importSuccess = state.importConfigs.filter(s2 => s2.importStatus === '导入成功').length == state.importConfigs.length
   })
+  state.importSuccess = state.importConfigs.filter(s2 => s2.importStatus === '导入成功').length == state.importConfigs.length
 }
 const onCancelImport = () => {
   state.importBoxyShow = false
+}
+const onCompleteImport = () => {
+  onCancelImport();
+  getConfigs()
 }
 
 </script>

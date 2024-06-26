@@ -1,6 +1,7 @@
 <template>
   <div>
-    <el-dialog v-model="state.showDialog" destroy-on-close  :close-on-click-modal="false"  :title="state.title" draggable width="80%" class="dialog-h80">
+    <el-dialog v-model="state.showDialog" destroy-on-close :close-on-click-modal="false" :title="state.title" draggable
+      width="80%" class="dialog-h80">
       <template #footer>
         <span class="dialog-footer">
           <span style="float: left" v-show="state.editor == 'field'">
@@ -35,6 +36,14 @@
             <el-col :xl="8" :lg="8" :md="12" :sm="12" :xs="24">
               <el-form-item label="业务名" prop="busName">
                 <el-input v-model="state.config.busName" required placeholder="子模块名称 eg:物品"></el-input>
+              </el-form-item>
+            </el-col>
+            <el-col :xl="8" :lg="8" :md="12" :sm="12" :xs="24">
+              <el-form-item label="数据源" prop="dbKey">
+                <el-select v-model="state.config.dbKey" clearable>
+                  <el-option v-for="item in state.dbKeys" :key="item.dbKey" :value="item.dbKey"
+                    :label="item.dbKey"></el-option>
+                </el-select>
               </el-form-item>
             </el-col>
             <el-col :xl="8" :lg="8" :md="12" :sm="12" :xs="24">
@@ -162,7 +171,7 @@
                 <div v-else>{{ scope.row.length }}</div>
               </template>
             </el-table-column>
-            
+
             <el-table-column prop="editor" label="组件类型" width="150">
               <template #default="scope">
                 <el-select v-if="!showMode" v-model="scope.row.editor">
@@ -175,9 +184,9 @@
             <el-table-column prop="whetherTable" label="表" width="50">
               <template #header>
                 <div class="my-flex-y-center">表<el-tooltip effect="dark" placement="top" hide-after="0">
-                  <template #content>表格分页列表显示字段</template>
-                  <SvgIcon name="ele-InfoFilled" class="ml5" />
-                </el-tooltip></div>
+                    <template #content>表格分页列表显示字段</template>
+                    <SvgIcon name="ele-InfoFilled" class="ml5" />
+                  </el-tooltip></div>
               </template>
               <template #default="scope">
                 <el-checkbox v-model="scope.row.whetherTable" :disabled="showMode"></el-checkbox>
@@ -186,9 +195,9 @@
             <el-table-column prop="whetherAdd" label="增" width="50">
               <template #header>
                 <div class="my-flex-y-center">增<el-tooltip effect="dark" placement="top" hide-after="0">
-                  <template #content>新增页面显示的字段</template>
-                  <SvgIcon name="ele-InfoFilled" class="ml5" />
-                </el-tooltip></div>
+                    <template #content>新增页面显示的字段</template>
+                    <SvgIcon name="ele-InfoFilled" class="ml5" />
+                  </el-tooltip></div>
               </template>
               <template #default="scope">
                 <el-checkbox v-model="scope.row.whetherAdd" :disabled="showMode"></el-checkbox>
@@ -197,21 +206,21 @@
             <el-table-column prop="whetherUpdate" label="改" width="50">
               <template #header>
                 <div class="my-flex-y-center">改<el-tooltip effect="dark" placement="top" hide-after="0">
-                  <template #content>修改页面显示的字段</template>
-                  <SvgIcon name="ele-InfoFilled" class="ml5" />
-                </el-tooltip></div>
+                    <template #content>修改页面显示的字段</template>
+                    <SvgIcon name="ele-InfoFilled" class="ml5" />
+                  </el-tooltip></div>
               </template>
               <template #default="scope">
                 <el-checkbox v-model="scope.row.whetherUpdate" :disabled="showMode"></el-checkbox>
               </template>
             </el-table-column>
 
-            <el-table-column prop="whetherList" label="列" width="50" >
+            <el-table-column prop="whetherList" label="列" width="50">
               <template #header>
                 <div class="my-flex-y-center">列<el-tooltip effect="dark" placement="top" hide-after="0">
-                  <template #content>获取的精简数据，下拉框，选择框使用的字段</template>
-                  <SvgIcon name="ele-InfoFilled" class="ml5" />
-                </el-tooltip></div>
+                    <template #content>获取的精简数据，下拉框，选择框使用的字段</template>
+                    <SvgIcon name="ele-InfoFilled" class="ml5" />
+                  </el-tooltip></div>
               </template>
               <template #default="scope">
                 <el-checkbox v-model="scope.row.whetherList" :disabled="showMode"></el-checkbox>
@@ -220,21 +229,21 @@
             <el-table-column prop="isNullable" label="空" width="50">
               <template #header>
                 <div class="my-flex-y-center">空<el-tooltip effect="dark" placement="top" hide-after="0">
-                  <template #content>字段模型是否可空类型</template>
-                  <SvgIcon name="ele-InfoFilled" class="ml5" />
-                </el-tooltip></div>
+                    <template #content>字段模型是否可空类型</template>
+                    <SvgIcon name="ele-InfoFilled" class="ml5" />
+                  </el-tooltip></div>
               </template>
               <template #default="scope">
-                <el-checkbox v-model="scope.row.isNullable" :disabled="showMode" ></el-checkbox>
+                <el-checkbox v-model="scope.row.isNullable" :disabled="showMode"></el-checkbox>
               </template>
             </el-table-column>
 
             <el-table-column prop="whetherQuery" label="查" width="50">
               <template #header>
                 <div class="my-flex-y-center">查<el-tooltip effect="dark" placement="top" hide-after="0">
-                  <template #content>查询条件显示的字段</template>
-                  <SvgIcon name="ele-InfoFilled" class="ml5" />
-                </el-tooltip></div>
+                    <template #content>查询条件显示的字段</template>
+                    <SvgIcon name="ele-InfoFilled" class="ml5" />
+                  </el-tooltip></div>
               </template>
               <template #default="scope">
                 <el-checkbox v-model="scope.row.whetherQuery" :disabled="showMode"></el-checkbox>
@@ -259,25 +268,26 @@
               <div v-else>{{ scope.row.effectType }}</div>
             </template>
           </el-table-column> -->
-            <el-table-column prop="includeEntity"  width="140">
+            <el-table-column prop="includeEntity" width="140">
               <template #header>
                 <div class="my-flex-y-center">关联模型<el-tooltip effect="dark" placement="top" hide-after="0">
-                  <template #content>用于生成页面下拉选择，一对多则生成多选 eg: CodeGroupEntity</template>
-                  <SvgIcon name="ele-InfoFilled" class="ml5" />
-                </el-tooltip></div>
+                    <template #content>用于生成页面下拉选择，一对多则生成多选 eg: CodeGroupEntity</template>
+                    <SvgIcon name="ele-InfoFilled" class="ml5" />
+                  </el-tooltip></div>
               </template>
               <template #default="scope">
                 <el-input v-if="!showMode" v-model="scope.row.includeEntity"
-                  title="用于生成页面下拉选择，一对多则生成多选 eg: CodeGroupEntity，一对一的时候将生成字段 字段_Text, 一对多的时候，模型中将生成 字段_Values，字段_Texts" placeholder="关联模型名 xxxEntity"></el-input>
+                  title="用于生成页面下拉选择，一对多则生成多选 eg: CodeGroupEntity，一对一的时候将生成字段 字段_Text, 一对多的时候，模型中将生成 字段_Values，字段_Texts"
+                  placeholder="关联模型名 xxxEntity"></el-input>
                 <div v-else>{{ scope.row.includeEntity }}</div>
               </template>
             </el-table-column>
-            <el-table-column prop="includeEntityKey"  width="140">
+            <el-table-column prop="includeEntityKey" width="140">
               <template #header>
                 <div class="my-flex-y-center">关联模型字段<el-tooltip effect="dark" placement="top" hide-after="0">
-                  <template #content>列表和获取单个时显示文本值，根据Id查询关联模型，显示的字段 eg:Title，关联查询模型时的字段</template>
-                  <SvgIcon name="ele-InfoFilled" class="ml5" />
-                </el-tooltip></div>
+                    <template #content>列表和获取单个时显示文本值，根据Id查询关联模型，显示的字段 eg:Title，关联查询模型时的字段</template>
+                    <SvgIcon name="ele-InfoFilled" class="ml5" />
+                  </el-tooltip></div>
               </template>
               <template #default="scope">
                 <el-input v-if="!showMode" v-model="scope.row.includeEntityKey"
@@ -383,9 +393,10 @@
 <script lang="ts" setup>
 import { reactive, toRefs, PropType, computed, ref } from 'vue'
 import eventBus from '/@/utils/mitt'
-import { CodeGenFieldGetOutput, CodeGenGetOutput, CodeGenUpdateInput } from '/@/api/dev/data-contracts'
+import { DatabaseGetOutput, CodeGenFieldGetOutput, CodeGenGetOutput, CodeGenUpdateInput } from '/@/api/dev/data-contracts'
 import { AxiosResponse } from 'axios'
 import { FormRules } from 'element-plus';
+import { CodeGenApi } from '/@/api/dev/CodeGen'
 
 const tableInfoFromRef = ref()
 
@@ -483,7 +494,7 @@ NotAny	17	不在序列中
 Custom	18	
 
     */
-  }
+  },
 })
 
 //const { proxy } = getCurrentInstance() as any
@@ -515,7 +526,9 @@ const state = reactive({
   editor: 'infor',
   appendCount: 1,
   tableSize: 'small',
-  config: {} as CodeGenGetOutput & CodeGenUpdateInput,
+  config: {} as CodeGenGetOutput & CodeGenUpdateInput & any,
+  // 界面显示用数据
+  dbKeys: [] as Array<DatabaseGetOutput>
 })
 
 const setTableSize = (size: string) => {
@@ -653,10 +666,16 @@ const onSure = () => {
 }
 
 // 显示数据
-const open = async (config: CodeGenGetOutput & CodeGenUpdateInput) => {
+const open = async (config: CodeGenGetOutput & CodeGenUpdateInput & any) => {
   state.showDialog = true
   state.title = config.id == 0 ? '创建表' : '编辑表：' + config.tableName
+  if (config.importStatus == '等待导入') {
+    state.title = '导入表' + config.tableName
+    console.log(config.importKey)
+  }
   state.config = config
+  const res = await new CodeGenApi().getBaseData()
+  state.dbKeys = res?.data?.databases ?? []
 }
 
 defineExpose({

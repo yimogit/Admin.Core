@@ -110,15 +110,17 @@ public partial class CodeGenService : BaseService, ICodeGenService, IDynamicApi
     /// </summary>
     /// <param name="dbkey"></param>
     /// <returns></returns>
-    public async Task<IEnumerable<CodeGenGetOutput>> GetListAsync(string dbkey)
+    public async Task<IEnumerable<CodeGenGetOutput>> GetListAsync(string? dbkey)
     {
 #if DEBUG
         _cloud.Use(DbKeys.AppDb).CodeFirst.SyncStructure(typeof(CodeGenEntity), typeof(CodeGenFieldEntity));
 #endif
 
-        var gens = await _codeGenRepository.Where(w => w.DbKey == dbkey)
+        var gens = await _codeGenRepository
+            .WhereIf(!string.IsNullOrEmpty(dbkey), w => w.DbKey == dbkey)
             .IncludeMany<CodeGenFieldEntity>(c => c.Fields.Where(w => w.CodeGenId == c.Id),
             then => then.OrderBy(o => new { o.Position, o.Id }))
+            .OrderByDescending(o => o.CreatedTime)
             .ToListAsync();
 
         var tables = gens.Select(s =>
@@ -199,8 +201,8 @@ public partial class CodeGenService : BaseService, ICodeGenService, IDynamicApi
         if (String.IsNullOrWhiteSpace(input.AuthorName)) { input.AuthorName = "admin"; }
         try
         {
-            if (string.IsNullOrEmpty(input.DbKey))
-                throw ResultOutput.Exception("数据库选择失效，刷新页面后重试");
+            //if (string.IsNullOrEmpty(input.DbKey))
+            //    throw ResultOutput.Exception("数据库选择失效，刷新页面后重试");
             var usings = input.Usings?.Split(';');
             if (input.Fields != null && input.Fields.Count() > 0)
             {
@@ -231,9 +233,12 @@ public partial class CodeGenService : BaseService, ICodeGenService, IDynamicApi
     public async Task UpdateAsync(CodeGenUpdateInput input)
     {
         _ThrowIfNotValid(input);
-
-        var fsql = _cloud.Use(input.DbKey);
-        input.DbType = fsql.Ado.DataType.ToString();
+        //不指定数据源
+        if (!string.IsNullOrEmpty(input.DbKey))
+        {
+            var fsql = _cloud.Use(input.DbKey);
+            input.DbType = fsql.Ado.DataType.ToString();
+        }
 
         // 将主键转换成唯一索引键
         if (input.BaseEntity != null)

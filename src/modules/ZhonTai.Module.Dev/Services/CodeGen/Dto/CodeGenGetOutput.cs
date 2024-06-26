@@ -25,7 +25,7 @@ public class CodeGenGetOutput
     /// <summary>
     /// 库定位器名
     /// </summary>
-    public string DbKey { get; set; }
+    public string? DbKey { get; set; }
 
     ///// <summary>
     ///// 数据库名(保留字段)

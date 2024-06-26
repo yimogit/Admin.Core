@@ -13,6 +13,6 @@ public class DbKeys
     /// 数据库注册键
     /// </summary>
     [Description("数据库注册键")]
-    public static string AppDb { get; set; } = "admindb";
+    public static string AppDb { get; set; } = Admin.Core.Consts.DbKeys.AppDb;//"admindb";
 
 }
