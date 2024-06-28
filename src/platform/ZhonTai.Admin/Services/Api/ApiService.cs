@@ -13,6 +13,16 @@ using ZhonTai.Admin.Core.Consts;
 using ZhonTai.Admin.Repositories;
 using System;
 using ZhonTai.Admin.Core.Configs;
+using Microsoft.AspNetCore.Authorization;
+using System.Reflection;
+using ZhonTai.Common.Extensions;
+using FreeSql.Internal;
+using System.IO;
+using System.Text.RegularExpressions;
+using System.Threading;
+using System.Xml.XPath;
+using System.Xml;
+using ZhonTai.Common.Helpers;
 
 namespace ZhonTai.Admin.Services.Api;
 
@@ -321,4 +331,52 @@ public class ApiService : BaseService, IApiService, IDynamicApi
     {
         return _appConfig.Value.Swagger.Projects;
     }
+
+#if DEBUG
+    /// <summary>
+    /// 获得枚举列表
+    /// </summary>
+    /// <returns></returns>
+    [HttpGet]
+    [NoOprationLog]
+    [AllowAnonymous]
+    public List<ApiGetEnumsOutput> GetEnums()
+    {
+        var enums = new List<ApiGetEnumsOutput>();
+
+        var appConfig = _appConfig.Value;
+        var assemblyNames = appConfig.AssemblyNames;
+        if (!(assemblyNames?.Length > 0))
+        {
+            return enums;
+        }
+       
+        foreach (var assemblyName in assemblyNames)
+        {
+            var assembly = Assembly.Load(assemblyName);
+            var enumTypes = assembly.GetTypes().Where(m => m.IsEnum);
+            foreach (var enumType in enumTypes)
+            {
+                var summaryList = SummaryHelper.GetEnumSummaryList(enumType);
+
+                var enumDescriptor = new ApiGetEnumsOutput
+                {
+                    Name = enumType.Name,
+                    Description = enumType.ToDescription() ?? (summaryList.TryGetValue("", out var comment) ? comment : ""),
+                    Options = Enum.GetValues(enumType).Cast<Enum>().Select(x => new ApiGetEnumsOutput.Models.Options
+                    {
+                        Name = x.ToString(),
+                        Description = x.ToDescription(false) ?? (summaryList.TryGetValue(x.ToString(), out var comment) ? comment : ""),
+                        Value = x.ToInt64()
+                    }).ToList()
+                };
+                
+                enums.Add(enumDescriptor);
+            }
+        }
+
+        return enums;
+    }
+#endif
+
 }
