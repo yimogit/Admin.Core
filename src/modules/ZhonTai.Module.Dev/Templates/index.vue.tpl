@@ -123,42 +123,52 @@
 }
 <template>
 <div class="my-layout">
-    <el-card class="mt8 search-box" shadow="never" :body-style="{ paddingBottom: '0' }">
-      <el-form :inline="true" @(at)submit.stop.prevent>
-        @foreach (var col in queryColumns.Where(w=>!w.IsIgnoreColumn()))
-        {
-            var editor = editorName(col, out attributes, out inner);
-        @:<el-form-item class="search-box-item">
-        @:  <@(editor) @if(!attributes.Contains("clearable"))@("clearable") @(attributes) v-model="state.filter.@(col.ColumnName.NamingCamelCase())" placeholder="@(col.Title)" @(at)keyup.enter="onQuery" >
-        if(!string.IsNullOrWhiteSpace(inner)){
-        @:    @(inner)
-        }
-        @:  </@(editor)>
-        @:</el-form-item>
-        }
-        @if (queryColumns.Count() > 0)
-        {
-        @:<el-form-item>
-        @:  <el-button type="primary" icon="ele-Search" @(at)click="onQuery">查询</el-button>
-        @:</el-form-item>
-        }
-        @if (gen.GenAdd)
-        {
-        @:<el-form-item>
-        @:  <el-button type="primary" icon="ele-Plus" @(at)click="onAdd">新增</el-button>
-        @:</el-form-item>
-        }
-        @if(gen.GenBatchDelete || gen.GenBatchSoftDelete){
-          @:<el-form-item v-auths="[perms.batDelete, perms.batSoftDelete]" >
-          if(gen.GenBatchSoftDelete){
-          @:  <el-button v-auth="perms.batSoftDelete" type="warning" :disabled="state.sels.length==0" :placement="'bottom-end'" @(at)click="onBatchSoftDelete" icon="ele-DeleteFilled">批量删除</el-button>
-          }
-          if(gen.GenBatchDelete){
-          @:  <el-button v-auth="perms.batDelete" type="danger" :disabled="state.sels.length==0" :placement="'bottom-end'" @(at)click="onBatchDelete" icon="ele-Delete">批量删除</el-button>
-          }
-          @:</el-form-item>
-          }
-      </el-form>
+    <el-card class="mt8 search-box" shadow="never">
+      <el-row>
+        <el-col :span="18">
+          <el-form :inline="true" @(at)submit.stop.prevent>
+            @foreach (var col in queryColumns.Where(w=>!w.IsIgnoreColumn()))
+            {
+                var editor = editorName(col, out attributes, out inner);
+            @:<el-form-item class="search-box-item">
+            @:  <@(editor) @if(!attributes.Contains("clearable"))@("clearable") @(attributes) v-model="state.filter.@(col.ColumnName.NamingCamelCase())" placeholder="@(col.Title)" @(at)keyup.enter="onQuery" >
+            if(!string.IsNullOrWhiteSpace(inner)){
+            @:    @(inner)
+            }
+            @:  </@(editor)>
+            @:</el-form-item>
+            }
+            @if (queryColumns.Count() > 0)
+            {
+            @:<el-form-item>
+            @:  <el-button type="default" icon="ele-Search" @(at)click="onQuery">查询</el-button>
+            @:</el-form-item>
+            }
+          </el-form>
+        </el-col>
+        <el-col :span="6" class="text-right">
+          <el-space>
+          @if (gen.GenAdd){
+          @:<el-button type="primary" icon="ele-Plus" @(at)click="onAdd">新增</el-button>
+            }
+            @if(gen.GenBatchDelete || gen.GenBatchSoftDelete){
+            @:<el-dropdown :placement="'bottom-end'">
+            @:  <el-button type="warning">批量操作 <el-icon><ele-ArrowDown /></el-icon></el-button>
+            @:  <template #dropdown>
+            @:    <el-dropdown-menu>
+                if(gen.GenBatchSoftDelete){
+                  @:  <el-dropdown-item v-auth="perms.batSoftDelete" type="warning" :disabled="state.sels.length==0" @(at)click="onBatchSoftDelete" icon="ele-DeleteFilled">批量删除</el-dropdown-item>
+                  }
+                  if(gen.GenBatchDelete){
+                  @:  <el-dropdown-item v-auth="perms.batDelete" type="danger" :disabled="state.sels.length==0" @(at)click="onBatchDelete" icon="ele-Delete">批量删除</el-dropdown-item>
+                  }
+            @:    </el-dropdown-menu>
+            @:  </template>
+            @:</el-dropdown>
+             }
+          </el-space>
+        </el-col>
+      </el-row>
     </el-card>
 
     <el-card class="my-fill mt8" shadow="never">

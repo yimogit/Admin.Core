@@ -47,18 +47,19 @@
 
 
     // 获取数据输入控件
-    string editorName(ZhonTai.Module.Dev.Domain.CodeGen.CodeGenFieldEntity col, out string attrs, out string innerBody,out string subfix)
+    string editorName(ZhonTai.Module.Dev.Domain.CodeGen.CodeGenFieldEntity col, out string attrs, out string innerBody,out string subfix,out string colWidth)
     {
         attrs = string.Empty;
         subfix = string.Empty;
         innerBody = string.Empty;
+        colWidth= new List<string>(){"my-upload","my-editor","my-input-textarea"}.Contains(col.Editor)?"24":"12";
         var editorName = col.Editor;
         if (String.IsNullOrWhiteSpace(editorName)) editorName = "el-input";
         if (!string.IsNullOrWhiteSpace(col.DictTypeCode))
         {
             editorName = "el-select";
             if( col.IsNullable)attrs += " clearable ";
-            innerBody = string.Concat("<el-option v-for=", "\"item in dicts['", col.DictTypeCode, "']\" :key=\"item.code\" :value=\"item.code\" :label=\"item.name\" />");
+            innerBody = string.Concat("<el-option v-for=", "\"item in state.dicts['", col.DictTypeCode, "']\" :key=\"item.code\" :value=\"item.code\" :label=\"item.name\" />");
         }
         else if (col.Editor == "el-select")
         {
@@ -84,6 +85,11 @@
         else if (col.Editor == "my-upload")
         {
             editorName = "my-upload";
+            attrs += " v-if='state.showDialog' ";
+        }
+        else if (col.Editor == "my-editor")
+        {
+            editorName = "my-editor";
             attrs += " v-if='state.showDialog' ";
         }
         else if (col.Editor == "my-input-textarea"){
@@ -119,11 +125,12 @@
         return editorName;
     }
 
-    var dictCodes = gen.Fields.Where(w => "dict" == w.EffectType).Select(s => s.DictTypeCode);// editors.Any(a => a == "my-select-dictionary");
+    var dictCodes = gen.Fields.Where(w => !String.IsNullOrWhiteSpace(w.DictTypeCode)).Select(s => s.DictTypeCode).Distinct();// editors.Any(a => a == "my-select-dictionary");
     var hasDict = dictCodes.Any();
     //关联的模型
     var includeFieldEntitys = gen.Fields.Where(w => !String.IsNullOrWhiteSpace(w.IncludeEntity)).Select(w=>w.IncludeEntity.Replace("Entity", "")).Distinct();
     var hasUpload=editors.Any(a=>a=="my-upload");
+    var hasEditor=editors.Any(a=>a=="my-editor");
     //var hasRole = editors.Any(a => a == "my-role");
     //var hasUser = editors.Any(a => a == "my-user");
     //var hasPosition = editors.Any(a => a == "my-position");
@@ -133,31 +140,28 @@
     }
 }
 @{ 
-    string attributes, inner, subfix;
+    string attributes, inner, subfix,colWidth;
 }
 <template>
   <div>
-    <el-dialog
-      v-model="state.showDialog"
-      destroy-on-close
-      :title="title"
-      draggable
-      :close-on-click-modal="false"
-      :close-on-press-escape="false"
-      width="769px"
-    >
-      <el-form ref="formRef" :model="form" size="default" label-width="80px">
+    <el-dialog v-model="state.showDialog" :title="title" draggable destroy-on-close :close-on-click-modal="false"
+      :close-on-press-escape="false" class="my-dialog-form">
+      <el-form ref="formRef" :model="form" size="default" label-width="auto">
+        <el-row :gutter="20">
       @foreach(var col in gen.Fields.Where(w=>!w.IsIgnoreColumn() && ( w.WhetherAdd || w.WhetherUpdate )))
       {
-        var editor = editorName(col, out attributes, out inner,out subfix);
-        @:<el-form-item label="@(col.Title)" prop="@(col.ColumnName.NamingCamelCase())@(subfix)" v-show="editItemIsShow(@jsBool(col.WhetherAdd), @jsBool(col.WhetherUpdate))">
-        @:  <@(editor) @(attributes) v-model="state.form.@(col.ColumnName.NamingCamelCase())@(subfix)" placeholder="@(col.Comment)" >
-        if(!string.IsNullOrWhiteSpace(inner)){
-        @:    @(inner)
-        }
-        @:  </@(editor)>
-        @:</el-form-item>
+        var editor = editorName(col, out attributes, out inner,out subfix,out colWidth);
+        @:<el-col :span="@(colWidth)">
+           @:<el-form-item label="@(col.Title)" prop="@(col.ColumnName.NamingCamelCase())@(subfix)" v-show="editItemIsShow(@jsBool(col.WhetherAdd), @jsBool(col.WhetherUpdate))">
+           @:  <@(editor) @(attributes) v-model="state.form.@(col.ColumnName.NamingCamelCase())@(subfix)" placeholder="@(col.Comment)" >
+           if(!string.IsNullOrWhiteSpace(inner)){
+           @:    @(inner)
+           }
+           @:  </@(editor)>
+           @:</el-form-item>
+        @:</el-col>
       }
+        </el-row>
       </el-form>
       <template #footer>
         <span class="dialog-footer">
@@ -198,7 +202,7 @@ import { auth, auths, authAll } from '/@(at)/utils/authFunction'
 
     @if (hasDict)
     {
-@:import dictTreeApi from '@(at)/api/admin/dictionary-tree'        
+@:import { DictionaryTreeApi } from '/@(at)/api/dev/DictionaryTree'
     }
     @foreach (var comp in uiComponentsInfo)
     {
@@ -207,6 +211,10 @@ import { auth, auths, authAll } from '/@(at)/utils/authFunction'
     @if (hasUpload)
     {
  @:const MyUpload = defineAsyncComponent(() => import('/@(at)/components/my-upload/index.vue'))      
+    }
+    @if (hasEditor)
+    {
+ @:const MyEditor = defineAsyncComponent(() => import('/@(at)/components/my-editor/index.vue'))      
     }
 
 import eventBus from '/@(at)/utils/mitt'
@@ -228,7 +236,15 @@ const state = reactive({
 @foreach(var incField in includeFieldEntitys){
 @:  select@(incField)ListData: [] as @(incField)GetListOutput[],
 }
-
+@if (hasDict){
+  @://字典相关
+  @:dicts:{
+    foreach (var d in dictCodes)
+    {
+    @:"@(d)":[],   
+    }
+  @:}
+    }
 })
 const { form } = toRefs(state)
 
@@ -238,6 +254,12 @@ const open = async (row: any = {}) => {
 @foreach(var incField in includeFieldEntitys){
 @:  get@(incField)List();
 }
+
+    @if (hasDict)
+    {
+@:  getDictsTree()      
+    }
+
   if (row.id > 0) {
     const res = await new @(apiName)().get({ id: row.id }, { loading: true }).catch(() => {
       proxy.$modal.closeLoading()
@@ -258,6 +280,18 @@ const open = async (row: any = {}) => {
 @:    state.select@(incField)ListData = []
 @:  })
 @:  state.select@(incField)ListData = res?.data || []
+@:}
+}
+
+@if (hasDict)
+{
+@://获取需要使用的字典树
+@:const getDictsTree = async () => {
+@:  let res = await new DictionaryTreeApi().get({codes:'@(string.Join(',', dictCodes))'})
+@:  if(!res?.success)return;
+@:  res.data?.forEach((item: any) => {
+@:    state.dicts[item.code] = item.childrens
+@:  })
 @:}
 }
 

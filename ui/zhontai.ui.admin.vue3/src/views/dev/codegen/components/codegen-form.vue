@@ -151,18 +151,18 @@
                 <div v-else>{{ scope.row.columnName }}</div>
               </template>
             </el-table-column>
-            <el-table-column prop="netType" label="类型" width="100">
+            <el-table-column prop="title" label="标题" width="140" fixed>
+              <template #default="scope">
+                <el-input v-if="!showMode" v-model="scope.row.title"></el-input>
+                <div v-else>{{ scope.row.title }}</div>
+              </template>
+            </el-table-column>
+            <el-table-column prop="netType" label="类型" width="110">
               <template #default="scope">
                 <el-select v-if="!showMode" v-model="scope.row.netType">
                   <el-option v-for="item in netTypes" :key="item" :value="item" :label="item"></el-option>
                 </el-select>
                 <div v-else>{{ scope.row.netType }}</div>
-              </template>
-            </el-table-column>
-            <el-table-column prop="title" label="标题" width="140">
-              <template #default="scope">
-                <el-input v-if="!showMode" v-model="scope.row.title"></el-input>
-                <div v-else>{{ scope.row.title }}</div>
               </template>
             </el-table-column>
             <el-table-column prop="length" label="长度" width="80">
@@ -436,10 +436,12 @@ const props = defineProps({
       { label: "文本框", value: "el-input" },
       { label: "数值框", value: "el-input-number" },
       { label: "文本域", value: "my-input-textarea" },
-      { label: "下拉框", value: "el-select" },
       { label: "日期框", value: "el-date-picker" },
+      { label: "下拉框", value: "el-select" },
       { label: "开关", value: "el-switch" },
+      { label: "复选框", value: "el-checkbox" },
       { label: "图片上传", value: "my-upload" },
+      { label: "编辑器", value: "my-editor" },
       { label: "业务选择", value: "my-bussiness-select" }
     ]
   },
