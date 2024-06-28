@@ -85,8 +85,6 @@ namespace ZhonTai.Module.Homely.Services.Thing.Dto
         public List<string>? TagIds_Texts { get; set; }
         ///<summary>页面使用的标签数组</summary>
         public List<string>? TagIds_Values { get { return TagIds?.Split(",", StringSplitOptions.RemoveEmptyEntries).ToList() ?? new List<string>(); } }
-        /// <summary>头像</summary>
-        public string? PhoneUrl { get; set; }
     }
     /// <summary>物品列表查询条件输入</summary>
     public partial class ThingGetListInput : ThingGetPageInput {
@@ -115,8 +113,6 @@ namespace ZhonTai.Module.Homely.Services.Thing.Dto
         public List<string>? TagIds_Texts { get; set; }
         ///<summary>页面使用的标签数组</summary>
         public List<string>? TagIds_Values { get { return TagIds?.Split(",", StringSplitOptions.RemoveEmptyEntries).ToList() ?? new List<string>(); } }
-        /// <summary>头像</summary>
-        public string? PhoneUrl { get; set; }
     }
 
     /// <summary>物品分页查询结果输出</summary>
@@ -146,8 +142,6 @@ namespace ZhonTai.Module.Homely.Services.Thing.Dto
         public List<string>? TagIds_Texts { get; set; }
         ///<summary>页面使用的标签数组</summary>
         public List<string>? TagIds_Values { get { return TagIds?.Split(",", StringSplitOptions.RemoveEmptyEntries).ToList() ?? new List<string>(); } }
-        /// <summary>头像</summary>
-        public string? PhoneUrl { get; set; }
     }
 
     /// <summary>物品分页查询条件输入</summary>
@@ -180,8 +174,6 @@ namespace ZhonTai.Module.Homely.Services.Thing.Dto
         public string? TagIds { get { return string.Join(',', TagIds_Values ?? new List<string>()); } }
         ///<summary>页面提交的标签数组</summary>
         public List<string>? TagIds_Values { get; set; }                                                    
-        /// <summary>头像</summary>
-        public string? PhoneUrl { get; set; }                                                    
     }
 
 
@@ -205,8 +197,6 @@ namespace ZhonTai.Module.Homely.Services.Thing.Dto
         public string? TagIds { get { return string.Join(',', TagIds_Values ?? new List<string>()); } }
         ///<summary>页面提交的标签数组</summary>
         public List<string>? TagIds_Values { get; set; }
-        /// <summary>头像</summary>
-        public string? PhoneUrl { get; set; }
     }
 
 

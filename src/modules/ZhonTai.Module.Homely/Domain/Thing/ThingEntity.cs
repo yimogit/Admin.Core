@@ -55,12 +55,6 @@ namespace ZhonTai.Module.Homely.Domain.Thing
         /// <remarks></remarks>
         
         public string? TagIds { get; set; }
-        /// <summary>
-        /// 头像
-        /// </summary>
-        /// <remarks></remarks>
-        [Column(StringLength=64)]
-        public string? PhoneUrl { get; set; }
     }
 
 }

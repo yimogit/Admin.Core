@@ -284,8 +284,11 @@ export interface ThingAddInput {
 
 /** 物品分类新增输入 */
 export interface ThingCategoryAddInput {
-  /** 分类名称 */
-  name?: string | null
+  /**
+   * 分类名称
+   * @minLength 1
+   */
+  name: string
   /**
    * 排序
    * @format int32
@@ -360,8 +363,11 @@ export interface ThingCategoryGetPageOutput {
 export interface ThingCategoryUpdateInput {
   /** @format int64 */
   id?: number
-  /** 分类名称 */
-  name?: string | null
+  /**
+   * 分类名称
+   * @minLength 1
+   */
+  name: string
   /**
    * 排序
    * @format int32
@@ -514,8 +520,11 @@ export interface ThingGetPageOutput {
 
 /** 物品标签新增输入 */
 export interface ThingTagAddInput {
-  /** 标签名称 */
-  name?: string | null
+  /**
+   * 标签名称
+   * @minLength 1
+   */
+  name: string
   /**
    * 排序
    * @format int32
@@ -584,8 +593,11 @@ export interface ThingTagGetPageOutput {
 export interface ThingTagUpdateInput {
   /** @format int64 */
   id?: number
-  /** 标签名称 */
-  name?: string | null
+  /**
+   * 标签名称
+   * @minLength 1
+   */
+  name: string
   /**
    * 排序
    * @format int32

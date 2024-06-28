@@ -23,12 +23,12 @@
           </el-date-picker>
         </el-form-item>
         <el-form-item label="备注" prop="remark" v-show="editItemIsShow(true, true)">
-          <el-input  v-model="state.form.remark" placeholder="" >
+          <el-input  type="textarea"  v-model="state.form.remark" placeholder="" >
           </el-input>
         </el-form-item>
         <el-form-item label="排序" prop="sort" v-show="editItemIsShow(true, true)">
-          <el-input  v-model="state.form.sort" placeholder="" >
-          </el-input>
+          <el-input-number  v-model="state.form.sort" placeholder="" >
+          </el-input-number>
         </el-form-item>
         <el-form-item label="分类" prop="categoryId" v-show="editItemIsShow(true, true)">
           <el-select  clearable  v-model="state.form.categoryId" placeholder="" >
@@ -39,10 +39,6 @@
           <el-select  clearable  multiple  v-model="state.form.tagIds_Values" placeholder="" >
             <el-option v-for="item in state.selectThingTagListData" :key="item.id" :value="String(item.id)" :label="item.name" />
           </el-select>
-        </el-form-item>
-        <el-form-item label="头像" prop="phoneUrl" v-show="editItemIsShow(true, true)">
-          <my-upload  v-if='state.showDialog'  v-model="state.form.phoneUrl" placeholder="" >
-          </my-upload>
         </el-form-item>
       </el-form>
       <template #footer>
@@ -134,7 +130,6 @@ const defaultToAdd = (): ThingAddInput => {
     sort: null,
     categoryId: null,
     tagIds: null,
-    phoneUrl: null,
   } as ThingAddInput
 }
 

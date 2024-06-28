@@ -228,6 +228,277 @@ export interface CodeGroupAddInput {
   remark?: string | null
 }
 
+/** 模板演示新增输入 */
+export interface CodeGroupDemoAddInput {
+  /**
+   * 文本框
+   * @minLength 1
+   */
+  inputText: string
+  /**
+   * 数字框
+   * @format int32
+   */
+  inputNumber?: number | null
+  /** 文本域 */
+  inputTextArea?: string | null
+  /**
+   * 日期
+   * @format date-time
+   */
+  inputDate?: string | null
+  /** 开关 */
+  inputSwitch?: boolean | null
+  /**
+   * 下拉框
+   * @minLength 1
+   */
+  inputSelectCustom: string
+  /** 复选框 */
+  inputCheckbox: boolean
+  /**
+   * 字典
+   * @minLength 1
+   */
+  inputSelectDict: string
+  /**
+   * 模块业务单选
+   * @format int64
+   */
+  inputBussinessSingle?: number | null
+  /** 模块业务多选 */
+  inputBussinessMultiple?: string | null
+  /** 页面提交的模块业务多选数组 */
+  inputBussinessMultiple_Values?: string[] | null
+  /** 图片上传 */
+  inputImage?: string | null
+  /** 编辑器 */
+  inputEditor?: string | null
+}
+
+/** 模板演示列表查询条件输入 */
+export interface CodeGroupDemoGetListInput {
+  /** 文本框 */
+  inputText?: string | null
+  /**
+   * 模块业务单选
+   * @format int64
+   */
+  inputBussinessSingle?: number | null
+}
+
+/** 模板演示列表查询结果输出 */
+export interface CodeGroupDemoGetListOutput {
+  /** @format int64 */
+  id?: number
+  /** @format date-time */
+  createdTime?: string
+  createdUserName?: string | null
+  modifiedUserName?: string | null
+  /** @format date-time */
+  modifiedTime?: string | null
+  /** 文本框 */
+  inputText?: string | null
+  /**
+   * 数字框
+   * @format int32
+   */
+  inputNumber?: number | null
+  /** 文本域 */
+  inputTextArea?: string | null
+  /**
+   * 日期
+   * @format date-time
+   */
+  inputDate?: string | null
+  /** 开关 */
+  inputSwitch?: boolean | null
+  /** 下拉框 */
+  inputSelectCustom?: string | null
+  /** 复选框 */
+  inputCheckbox?: boolean
+  /** 字典 */
+  inputSelectDict?: string | null
+  /** 字典名称 */
+  inputSelectDictDictName?: string | null
+  /**
+   * 模块业务单选
+   * @format int64
+   */
+  inputBussinessSingle?: number | null
+  /** 模块业务单选显示文本 */
+  inputBussinessSingle_Text?: string | null
+  /** 模块业务多选 */
+  inputBussinessMultiple?: string | null
+  /** 模块业务多选显示文本 */
+  inputBussinessMultiple_Texts?: string[] | null
+  /** 页面使用的模块业务多选数组 */
+  inputBussinessMultiple_Values?: string[] | null
+  /** 图片上传 */
+  inputImage?: string | null
+  /** 编辑器 */
+  inputEditor?: string | null
+}
+
+/** 模板演示查询结果输出 */
+export interface CodeGroupDemoGetOutput {
+  /** @format int64 */
+  id?: number
+  /** 文本框 */
+  inputText?: string | null
+  /**
+   * 数字框
+   * @format int32
+   */
+  inputNumber?: number | null
+  /** 文本域 */
+  inputTextArea?: string | null
+  /**
+   * 日期
+   * @format date-time
+   */
+  inputDate?: string | null
+  /** 开关 */
+  inputSwitch?: boolean | null
+  /** 下拉框 */
+  inputSelectCustom?: string | null
+  /** 复选框 */
+  inputCheckbox?: boolean
+  /** 字典 */
+  inputSelectDict?: string | null
+  /**
+   * 模块业务单选
+   * @format int64
+   */
+  inputBussinessSingle?: number | null
+  /** 模块业务单选显示文本 */
+  inputBussinessSingle_Text?: string | null
+  /** 模块业务多选 */
+  inputBussinessMultiple?: string | null
+  /** 模块业务多选显示文本 */
+  inputBussinessMultiple_Texts?: string[] | null
+  /** 页面使用的模块业务多选数组 */
+  inputBussinessMultiple_Values?: string[] | null
+  /** 图片上传 */
+  inputImage?: string | null
+  /** 编辑器 */
+  inputEditor?: string | null
+}
+
+/** 模板演示分页查询条件输入 */
+export interface CodeGroupDemoGetPageInput {
+  /** 文本框 */
+  inputText?: string | null
+  /**
+   * 模块业务单选
+   * @format int64
+   */
+  inputBussinessSingle?: number | null
+}
+
+/** 模板演示分页查询结果输出 */
+export interface CodeGroupDemoGetPageOutput {
+  /** @format int64 */
+  id?: number
+  /** @format date-time */
+  createdTime?: string
+  createdUserName?: string | null
+  modifiedUserName?: string | null
+  /** @format date-time */
+  modifiedTime?: string | null
+  /** 文本框 */
+  inputText?: string | null
+  /**
+   * 数字框
+   * @format int32
+   */
+  inputNumber?: number | null
+  /** 文本域 */
+  inputTextArea?: string | null
+  /**
+   * 日期
+   * @format date-time
+   */
+  inputDate?: string | null
+  /** 开关 */
+  inputSwitch?: boolean | null
+  /** 下拉框 */
+  inputSelectCustom?: string | null
+  /** 复选框 */
+  inputCheckbox?: boolean
+  /** 字典 */
+  inputSelectDict?: string | null
+  /** 字典名称 */
+  inputSelectDictDictName?: string | null
+  /**
+   * 模块业务单选
+   * @format int64
+   */
+  inputBussinessSingle?: number | null
+  /** 模块业务单选显示文本 */
+  inputBussinessSingle_Text?: string | null
+  /** 模块业务多选 */
+  inputBussinessMultiple?: string | null
+  /** 模块业务多选显示文本 */
+  inputBussinessMultiple_Texts?: string[] | null
+  /** 页面使用的模块业务多选数组 */
+  inputBussinessMultiple_Values?: string[] | null
+  /** 图片上传 */
+  inputImage?: string | null
+  /** 编辑器 */
+  inputEditor?: string | null
+}
+
+/** 模板演示更新数据输入 */
+export interface CodeGroupDemoUpdateInput {
+  /** @format int64 */
+  id?: number
+  /**
+   * 文本框
+   * @minLength 1
+   */
+  inputText: string
+  /**
+   * 数字框
+   * @format int32
+   */
+  inputNumber?: number | null
+  /** 文本域 */
+  inputTextArea?: string | null
+  /**
+   * 日期
+   * @format date-time
+   */
+  inputDate?: string | null
+  /** 开关 */
+  inputSwitch?: boolean | null
+  /**
+   * 下拉框
+   * @minLength 1
+   */
+  inputSelectCustom: string
+  /** 复选框 */
+  inputCheckbox: boolean
+  /**
+   * 字典
+   * @minLength 1
+   */
+  inputSelectDict: string
+  /**
+   * 模块业务单选
+   * @format int64
+   */
+  inputBussinessSingle?: number | null
+  /** 模块业务多选 */
+  inputBussinessMultiple?: string | null
+  /** 页面提交的模块业务多选数组 */
+  inputBussinessMultiple_Values?: string[] | null
+  /** 图片上传 */
+  inputImage?: string | null
+  /** 编辑器 */
+  inputEditor?: string | null
+}
+
 /** 模板明细新增输入 */
 export interface CodeGroupDetailAddInput {
   /**
@@ -490,6 +761,23 @@ export type DynamicFilterLogic = 0 | 1
 export type DynamicFilterOperator = 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12 | 13 | 14 | 15 | 16 | 17 | 18
 
 /** 分页信息输入 */
+export interface PageInputCodeGroupDemoGetPageInput {
+  /**
+   * 当前页标
+   * @format int32
+   */
+  currentPage?: number
+  /**
+   * 每页大小
+   * @format int32
+   */
+  pageSize?: number
+  dynamicFilter?: DynamicFilterInfo
+  /** 模板演示分页查询条件输入 */
+  filter?: CodeGroupDemoGetPageInput
+}
+
+/** 分页信息输入 */
 export interface PageInputCodeGroupDetailGetPageInput {
   /**
    * 当前页标
@@ -521,6 +809,17 @@ export interface PageInputCodeGroupGetPageInput {
   dynamicFilter?: DynamicFilterInfo
   /** 模板组分页查询条件输入 */
   filter?: CodeGroupGetPageInput
+}
+
+/** 分页信息输出 */
+export interface PageOutputCodeGroupDemoGetPageOutput {
+  /**
+   * 数据总数
+   * @format int64
+   */
+  total?: number
+  /** 数据 */
+  list?: CodeGroupDemoGetPageOutput[] | null
 }
 
 /** 分页信息输出 */
@@ -580,6 +879,18 @@ export interface ResultOutputCodeGenGetOutput {
 }
 
 /** 结果输出 */
+export interface ResultOutputCodeGroupDemoGetOutput {
+  /** 是否成功标记 */
+  success?: boolean
+  /** 编码 */
+  code?: string | null
+  /** 消息 */
+  msg?: string | null
+  /** 模板演示查询结果输出 */
+  data?: CodeGroupDemoGetOutput
+}
+
+/** 结果输出 */
 export interface ResultOutputCodeGroupDetailGetOutput {
   /** 是否成功标记 */
   success?: boolean
@@ -613,6 +924,18 @@ export interface ResultOutputIEnumerableCodeGenGetOutput {
   msg?: string | null
   /** 数据 */
   data?: CodeGenGetOutput[] | null
+}
+
+/** 结果输出 */
+export interface ResultOutputIEnumerableCodeGroupDemoGetListOutput {
+  /** 是否成功标记 */
+  success?: boolean
+  /** 编码 */
+  code?: string | null
+  /** 消息 */
+  msg?: string | null
+  /** 数据 */
+  data?: CodeGroupDemoGetListOutput[] | null
 }
 
 /** 结果输出 */
@@ -664,6 +987,18 @@ export interface ResultOutputInt64 {
    * @format int64
    */
   data?: number
+}
+
+/** 结果输出 */
+export interface ResultOutputPageOutputCodeGroupDemoGetPageOutput {
+  /** 是否成功标记 */
+  success?: boolean
+  /** 编码 */
+  code?: string | null
+  /** 消息 */
+  msg?: string | null
+  /** 分页信息输出 */
+  data?: PageOutputCodeGroupDemoGetPageOutput
 }
 
 /** 结果输出 */

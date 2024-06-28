@@ -11,7 +11,7 @@
           </el-date-picker>
         </el-form-item>
         <el-form-item class="search-box-item">
-          <el-input clearable  v-model="state.filter.remark" placeholder="备注" @keyup.enter="onQuery" >
+          <el-input clearable  type="textarea"  v-model="state.filter.remark" placeholder="备注" @keyup.enter="onQuery" >
           </el-input>
         </el-form-item>
         <el-form-item>
@@ -50,17 +50,6 @@
             <template #default="{ row }">
               {{ row.tagIds_Texts ? row.tagIds_Texts.join(',') : '' }}
             </template>
-          </el-table-column>
-          <el-table-column prop="phoneUrl" label="头像" show-overflow-tooltip width >
-            <template #default="{ row }">
-             <div class="my-flex">
-               <el-image :src="row.phoneUrl" :preview-src-list="previewPhoneUrllist"
-                 :initial-index="getPhoneUrlInitialIndex(row.phoneUrl)" :lazy="true" :hide-on-click-modal="true" fit="scale-down"
-                 preview-teleported style="width: 80px; height: 80px" />
-               <div class="ml10 my-flex-fill my-flex-y-center">
-               </div>
-             </div>
-           </template>
           </el-table-column>
           <el-table-column v-auths="[perms.update,perms.softDelete,perms.delete]" label="操作" :width="actionColWidth" fixed="right">
             <template #default="{ row }">
@@ -144,7 +133,6 @@ const state = reactive({
   selectThingCategoryListData: [] as ThingCategoryGetListOutput[],
   selectThingTagListData: [] as ThingTagGetListOutput[],
   fileImageUrlListData: [] as Array<FileGetPageOutput>,
-  filePhoneUrlListData: [] as Array<FileGetPageOutput>,
 })
 
 onMounted(() => {
@@ -188,9 +176,6 @@ const onQuery = async () => {
 
   state.fileImageUrlListData = res?.data?.list?.map(s => {
     return { linkUrl: s.imageUrl }
-  }) ?? []
-  state.filePhoneUrlListData = res?.data?.list?.map(s => {
-    return { linkUrl: s.phoneUrl }
   }) ?? []
 
 
@@ -258,17 +243,5 @@ const previewImageUrllist = computed(() => {
 })
 const getImageUrlInitialIndex = (imgUrl: string) => {
   return previewImageUrllist.value.indexOf(imgUrl)
-}
-const previewPhoneUrllist = computed(() => {
-  let imgList = [] as string[]
-  state.filePhoneUrlListData.forEach((a) => {
-    if (a.linkUrl) {
-      imgList.push(a.linkUrl as string)
-    }
-  })
-  return imgList
-})
-const getPhoneUrlInitialIndex = (imgUrl: string) => {
-  return previewPhoneUrllist.value.indexOf(imgUrl)
 }
 </script>
