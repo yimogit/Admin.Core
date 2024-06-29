@@ -24,7 +24,7 @@
         </el-col>
         <el-col :span="12">
            <el-form-item label="日期" prop="inputDate" v-show="editItemIsShow(true, true)">
-             <el-date-picker  v-model="state.form.inputDate" placeholder="" >
+             <el-date-picker  value-format="YYYY-MM-DD" clearable v-model="state.form.inputDate" placeholder="" >
              </el-date-picker>
            </el-form-item>
         </el-col>

@@ -4,13 +4,35 @@
       <el-row>
         <el-col :span="18">
           <el-form :inline="true" @submit.stop.prevent>
-            <el-form-item class="search-box-item">
-              <el-input clearable  v-model="state.filter.inputText" placeholder="文本框" @keyup.enter="onQuery" >
+            <el-form-item class="search-box-item"  label="文本框">
+              <el-input  clearable  v-model="state.filter.inputText" placeholder="" @keyup.enter="onQuery" >
               </el-input>
             </el-form-item>
-            <el-form-item class="search-box-item">
-              <el-select   clearable  v-model="state.filter.inputBussinessSingle" placeholder="模块业务单选" @keyup.enter="onQuery" >
-                <el-option v-for="item in state.selectCodeGroupListData" :key="item.id" :value="item.id" :label="item.title" />
+            <el-form-item class="search-box-item"  label="数字框">
+              <el-input-number  clearable  v-model="state.filter.inputNumber" placeholder="" @keyup.enter="onQuery" >
+              </el-input-number>
+            </el-form-item>
+            <el-form-item class="search-box-item"  label="日期">
+              <el-date-picker    value-format="YYYY-MM-DD" clearable v-model="state.filter.inputDate" placeholder="" @keyup.enter="onQuery" >
+              </el-date-picker>
+            </el-form-item>
+            <el-form-item class="search-box-item"  label="开关">
+              <el-switch  clearable  v-model="state.filter.inputSwitch" placeholder="" @keyup.enter="onQuery" >
+              </el-switch>
+            </el-form-item>
+            <el-form-item class="search-box-item"  label="下拉框">
+              <el-select  clearable  v-model="state.filter.inputSelectCustom" placeholder="" @keyup.enter="onQuery" >
+                <el-option value="11" label="AA" /><el-option value="22" label="BB" /><el-option value="33" label="CC" />
+              </el-select>
+            </el-form-item>
+            <el-form-item class="search-box-item"  label="字典">
+              <el-select  clearable  v-model="state.filter.inputSelectDict" placeholder="" @keyup.enter="onQuery" >
+                <el-option v-for="item in state.dicts['sex']" :key="item.value" :value="item.value" :label="item.name" />
+              </el-select>
+            </el-form-item>
+            <el-form-item class="search-box-item"  label="模块业务单选">
+              <el-select    clearable  v-model="state.filter.inputBussinessSingle" placeholder="" @keyup.enter="onQuery" >
+                <el-option v-for="item in state.selectCodeGroupListData" :key="item.id" :value="item.id" :label="item.name" />
               </el-select>
             </el-form-item>
             <el-form-item>
@@ -101,7 +123,7 @@ import { PageInputCodeGroupDemoGetPageInput, CodeGroupDemoGetPageInput, CodeGrou
 import {  FileGetPageOutput } from '/@/api/admin/data-contracts'
 import { CodeGroupDemoApi } from '/@/api/dev/CodeGroupDemo'
 import { CodeGroupApi } from '/@/api/dev/CodeGroup'
-
+import { DictApi } from '/@/api/admin/Dict'
 import eventBus from '/@/utils/mitt'
 import { auth, auths, authAll } from '/@/utils/authFunction'
 
@@ -131,6 +153,11 @@ const state = reactive({
   sels: [] as Array<CodeGroupDemoGetPageOutput>,
   filter: {
     inputText: null,
+    inputNumber: null,
+    inputDate: null,
+    inputSwitch: null,
+    inputSelectCustom: null,
+    inputSelectDict: null,
     inputBussinessSingle: null,
   } as CodeGroupDemoGetPageInput | CodeGroupDemoGetListInput,
   pageInput: {
@@ -140,11 +167,16 @@ const state = reactive({
   codeGroupDemoListData: [] as Array<CodeGroupDemoGetListOutput>,
   selectCodeGroupListData: [] as CodeGroupGetListOutput[],
   fileInputImageListData: [] as Array<FileGetPageOutput>,
+  //字典相关
+  dicts:{
+    "sex":[],   
+  }
 })
 
 onMounted(() => {
 
   getCodeGroupList();
+  getDictsTree()      
   onQuery()
   eventBus.off('refreshCodeGroupDemo')
   eventBus.on('refreshCodeGroupDemo', async () => {
@@ -161,6 +193,13 @@ const getCodeGroupList = async () => {
     state.selectCodeGroupListData = []
   })
   state.selectCodeGroupListData = res?.data || []
+}
+
+//获取需要使用的字典树
+const getDictsTree = async () => {
+  let res = await new DictApi().getList(['sex'])
+  if(!res?.success)return;
+    state.dicts = res.data
 }
 
 const onQuery = async () => {

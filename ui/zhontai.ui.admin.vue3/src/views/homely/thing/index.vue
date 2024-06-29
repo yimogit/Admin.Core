@@ -4,12 +4,12 @@
       <el-row>
         <el-col :span="18">
           <el-form :inline="true" @submit.stop.prevent>
-            <el-form-item class="search-box-item">
-              <el-input clearable  v-model="state.filter.name" placeholder="物品名称" @keyup.enter="onQuery" >
+            <el-form-item class="search-box-item"  label="物品名称">
+              <el-input  clearable  v-model="state.filter.name" placeholder="" @keyup.enter="onQuery" >
               </el-input>
             </el-form-item>
-            <el-form-item class="search-box-item">
-              <el-date-picker clearable  v-model="state.filter.availableDate" placeholder="有效期" @keyup.enter="onQuery" >
+            <el-form-item class="search-box-item"  label="有效期">
+              <el-date-picker  clearable  v-model="state.filter.availableDate" placeholder="" @keyup.enter="onQuery" >
               </el-date-picker>
             </el-form-item>
             <el-form-item>
@@ -98,7 +98,6 @@ import {  FileGetPageOutput } from '/@/api/admin/data-contracts'
 import { ThingApi } from '/@/api/homely/Thing'
 import { ThingCategoryApi } from '/@/api/homely/ThingCategory'
 import { ThingTagApi } from '/@/api/homely/ThingTag'
-
 import eventBus from '/@/utils/mitt'
 import { auth, auths, authAll } from '/@/utils/authFunction'
 
@@ -167,6 +166,7 @@ const getThingTagList = async () => {
   })
   state.selectThingTagListData = res?.data || []
 }
+
 
 const onQuery = async () => {
   state.loading = true

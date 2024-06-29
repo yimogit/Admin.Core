@@ -58,8 +58,13 @@
         if (!string.IsNullOrWhiteSpace(col.DictTypeCode))
         {
             editorName = "el-select";
-            if( col.IsNullable)attrs += " clearable ";
+            if(col.IsNullable)attrs += " clearable ";
             innerBody = string.Concat("<el-option v-for=", "\"item in state.dicts['", col.DictTypeCode, "']\" :key=\"item.value\" :value=\"item.value\" :label=\"item.name\" />");
+        }
+        else if (col.Editor == "el-date-picker"){
+            editorName = "el-date-picker";
+            attrs += " value-format=\"YYYY-MM-DD\"";
+            if( col.IsNullable)attrs += " clearable";
         }
         else if (col.Editor == "el-select")
         {

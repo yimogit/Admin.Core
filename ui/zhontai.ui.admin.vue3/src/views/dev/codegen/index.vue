@@ -5,7 +5,7 @@
         <el-col :span="18">
           <el-form inline :model="state.filter">
             <el-form-item label="数据源" class="search-box-item">
-              <el-select v-model="state.filter.dbKey" @change="getConfigs" style="width: 150px" clearable>
+              <el-select v-model="state.filter.dbKey" @change="getConfigs"  clearable>
                 <el-option v-for="item in state.dbKeys" :key="item.dbKey" :value="item.dbKey"
                   :label="item.dbKey"></el-option>
               </el-select>

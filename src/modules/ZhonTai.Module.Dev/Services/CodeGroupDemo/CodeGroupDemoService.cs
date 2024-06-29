@@ -60,6 +60,11 @@ namespace ZhonTai.Module.Dev.Services.CodeGroupDemo
         {
             var list = await _codeGroupDemoRepository.Select
                 .WhereIf(!string.IsNullOrEmpty(input.InputText), a=>a.InputText == input.InputText)
+                .WhereIf(input.InputNumber != null, a=>a.InputNumber == input.InputNumber)
+                .WhereIf(input.InputDate != null, a=>a.InputDate == input.InputDate)
+                .WhereIf(input.InputSwitch != null, a=>a.InputSwitch == input.InputSwitch)
+                .WhereIf(!string.IsNullOrEmpty(input.InputSelectCustom), a=>a.InputSelectCustom == input.InputSelectCustom)
+                .WhereIf(!string.IsNullOrEmpty(input.InputSelectDict), a=>a.InputSelectDict == input.InputSelectDict)
                 .WhereIf(input.InputBussinessSingle != null, a=>a.InputBussinessSingle == input.InputBussinessSingle)
                 .OrderByDescending(a => a.Id)
                 .ToListAsync<CodeGroupDemoGetListOutput>();
@@ -68,7 +73,7 @@ namespace ZhonTai.Module.Dev.Services.CodeGroupDemo
                 .Contains(w.DictType.Code)).ToListAsync();
             return list.Select(s =>
             {
-                s.InputSelectDictDictName = dictList.FirstOrDefault(f => f.DictType.Code == "sex" && f.Code == s.InputSelectDict)?.Name;
+                s.InputSelectDictDictName = dictList.FirstOrDefault(f => f.DictType.Code == "sex" && f.Value == s.InputSelectDict)?.Name;
                return s;
             });
         }
@@ -84,6 +89,9 @@ namespace ZhonTai.Module.Dev.Services.CodeGroupDemo
             var list = await _codeGroupDemoRepository.Select
                 .WhereDynamicFilter(input.DynamicFilter)
                 .WhereIf(filter !=null && !string.IsNullOrEmpty(filter.InputText), a=> a.InputText != null && a.InputText.Contains(filter.InputText))
+                .WhereIf(filter !=null && filter.InputNumber != null, a=>a.InputNumber == filter.InputNumber)
+                .WhereIf(filter !=null && !string.IsNullOrEmpty(filter.InputSelectCustom), a=>a.InputSelectCustom == filter.InputSelectCustom)
+                .WhereIf(filter !=null && !string.IsNullOrEmpty(filter.InputSelectDict), a=>a.InputSelectDict == filter.InputSelectDict)
                 .WhereIf(filter !=null && filter.InputBussinessSingle != null, a=>a.InputBussinessSingle == filter.InputBussinessSingle)
                 .Count(out var total)
                 .OrderByDescending(c => c.Id)
@@ -96,7 +104,7 @@ namespace ZhonTai.Module.Dev.Services.CodeGroupDemo
             
             list = list.Select(s =>
             {
-                s.InputSelectDictDictName = dictList.FirstOrDefault(f => f.DictType.Code == "sex" && f.Code == s.InputSelectDict)?.Name;
+                s.InputSelectDictDictName = dictList.FirstOrDefault(f => f.DictType.Code == "sex" && f.Value == s.InputSelectDict)?.Name;
             
                return s;
             }).ToList();

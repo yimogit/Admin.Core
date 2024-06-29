@@ -183,6 +183,16 @@ namespace ZhonTai.Module.Dev.Services.CodeGroupDemo.Dto
 
         /// <summary>文本框</summary>       
         public string? InputText { get; set; }
+        /// <summary>数字框</summary>       
+        public int? InputNumber { get; set; }
+        /// <summary>日期</summary>       
+        public DateTime? InputDate { get; set; }
+        /// <summary>开关</summary>       
+        public bool? InputSwitch { get; set; }
+        /// <summary>下拉框</summary>       
+        public string? InputSelectCustom { get; set; }
+        /// <summary>字典</summary>       
+        public string? InputSelectDict { get; set; }
         /// <summary>模块业务单选</summary>       
         public long? InputBussinessSingle { get; set; }
     }

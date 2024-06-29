@@ -4,8 +4,8 @@
       <el-row>
         <el-col :span="18">
           <el-form :inline="true" @submit.stop.prevent>
-            <el-form-item class="search-box-item">
-              <el-input clearable  v-model="state.filter.name" placeholder="模板标题" @keyup.enter="onQuery" >
+            <el-form-item class="search-box-item"  label="模板标题">
+              <el-input  clearable  v-model="state.filter.name" placeholder="" @keyup.enter="onQuery" >
               </el-input>
             </el-form-item>
             <el-form-item>
@@ -60,7 +60,6 @@ import { PageInputCodeGroupGetPageInput, CodeGroupGetPageInput, CodeGroupGetPage
   CodeGroupGetListInput, CodeGroupGetListOutput,
 } from '/@/api/dev/data-contracts'
 import { CodeGroupApi } from '/@/api/dev/CodeGroup'
-
 import eventBus from '/@/utils/mitt'
 import { auth, auths, authAll } from '/@/utils/authFunction'
 
@@ -110,6 +109,7 @@ onMounted(() => {
 onBeforeMount(() => {
   eventBus.off('refreshCodeGroup')
 })
+
 
 
 const onQuery = async () => {

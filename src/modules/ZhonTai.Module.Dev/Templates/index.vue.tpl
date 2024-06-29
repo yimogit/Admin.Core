@@ -46,19 +46,27 @@
         .Select(s => new { ImportName = s.NamingPascalCase(), ImportPath = defineUiComponentsImportPath[s] });
 
 
+        
 
     // 获取数据输入控件
-    string editorName(ZhonTai.Module.Dev.Domain.CodeGen.CodeGenFieldEntity col, out string attrs, out string innerBody)
+    string editorName(ZhonTai.Module.Dev.Domain.CodeGen.CodeGenFieldEntity col, out string attrs, out string innerBody,out string subfix,out string colWidth)
     {
         attrs = string.Empty;
+        subfix = string.Empty;
         innerBody = string.Empty;
+        colWidth= new List<string>(){"my-upload","my-editor","my-input-textarea"}.Contains(col.Editor)?"24":"12";
         var editorName = col.Editor;
         if (String.IsNullOrWhiteSpace(editorName)) editorName = "el-input";
         if (!string.IsNullOrWhiteSpace(col.DictTypeCode))
         {
             editorName = "el-select";
             if( col.IsNullable)attrs += " clearable ";
-            innerBody = string.Concat("<el-option v-for=", "\"item in dicts['", col.DictTypeCode, "']\" :key=\"item.code\" :value=\"item.code\" :label=\"item.name\" />");
+            innerBody = string.Concat("<el-option v-for=", "\"item in state.dicts['", col.DictTypeCode, "']\" :key=\"item.value\" :value=\"item.value\" :label=\"item.name\" />");
+        }
+        else if (col.Editor == "el-date-picker"){
+            editorName = "el-date-picker";
+            attrs += " value-format=\"YYYY-MM-DD\"";
+            if( col.IsNullable)attrs += " clearable";
         }
         else if (col.Editor == "el-select")
         {
@@ -84,28 +92,47 @@
         else if (col.Editor == "my-upload")
         {
             editorName = "my-upload";
+            attrs += " v-if='state.showDialog' ";
+        }
+        else if (col.Editor == "my-editor")
+        {
+            editorName = "my-editor";
+            attrs += " v-if='state.showDialog' ";
         }
         else if (col.Editor == "my-input-textarea"){
             editorName= "el-input";
             attrs += " type=\"textarea\" ";
         }
         else if (col.Editor == "my-input-number"){
-            editorName= "el-input-number";
+            editorName= "el-input";
+            attrs += " type=\"number\" ";
         }
         else if (col.Editor == "my-bussiness-select"){
             editorName= "el-select";
             if (col.IsNullable) attrs += " clearable ";
+            if (col.IncludeMode == 1){
+                attrs += " multiple ";
+                subfix="_Values";
+            }
             if(!String.IsNullOrWhiteSpace(col.IncludeEntity)){
                 //业务下拉前缀
                 var selectPrefix = col.IncludeEntity.Replace("Entity", "");
-                innerBody = string.Concat("<el-option v-for=", "\"item in state.select",selectPrefix,"ListData\" :key=\"item.id\" :value=\"item.id\" :label=\"item.title\" />");
+                var selectTitle="name";
+                if(!String.IsNullOrWhiteSpace(col.IncludeEntityKey))
+                    selectTitle=col.IncludeEntityKey.NamingCamelCase();
+                if (col.IncludeMode == 1){
+                    //一对多,转换模型 xxxIds_Values
+                    innerBody = string.Concat("<el-option v-for=", "\"item in state.select",selectPrefix,"ListData\" :key=\"item.id\" :value=\"String(item.id)\" :label=\"item.",selectTitle,"\" />");
+                }else{
+                    innerBody = string.Concat("<el-option v-for=", "\"item in state.select",selectPrefix,"ListData\" :key=\"item.id\" :value=\"item.id\" :label=\"item.",selectTitle,"\" />");
+                }
             }
         }
 
         return editorName;
     }
-
-    var dictCodes = gen.Fields.Where(w => "dict" == w.EffectType).Select(s => s.DictTypeCode);// editors.Any(a => a == "my-select-dictionary");
+    
+    var dictCodes = gen.Fields.Where(w => !String.IsNullOrWhiteSpace(w.DictTypeCode)).Select(s => s.DictTypeCode).Distinct();// editors.Any(a => a == "my-select-dictionary");
     var hasDict = dictCodes.Any();
     //关联的模型
     var includeFieldEntitys = gen.Fields.Where(w => !String.IsNullOrWhiteSpace(w.IncludeEntity)).Select(w=>w.IncludeEntity.Replace("Entity", "")).Distinct();
@@ -119,7 +146,7 @@
     }
 }
 @{ 
-    string attributes, inner;
+    string attributes, inner, subfix,colWidth;
 }
 <template>
 <div class="my-layout">
@@ -129,9 +156,9 @@
           <el-form :inline="true" @(at)submit.stop.prevent>
             @foreach (var col in queryColumns.Where(w=>!w.IsIgnoreColumn()))
             {
-                var editor = editorName(col, out attributes, out inner);
-            @:<el-form-item class="search-box-item">
-            @:  <@(editor) @if(!attributes.Contains("clearable"))@("clearable") @(attributes) v-model="state.filter.@(col.ColumnName.NamingCamelCase())" placeholder="@(col.Title)" @(at)keyup.enter="onQuery" >
+                var editor = editorName(col, out attributes, out inner,out subfix,out colWidth);
+            @:<el-form-item class="search-box-item"  label="@(col.Title)">
+            @:  <@(editor)  @if(!attributes.Contains("clearable"))@("clearable") @(attributes) v-model="state.filter.@(col.ColumnName.NamingCamelCase())@(subfix)" placeholder="" @(at)keyup.enter="onQuery" >
             if(!string.IsNullOrWhiteSpace(inner)){
             @:    @(inner)
             }
@@ -281,7 +308,10 @@ import { @(apiName) } from '/@(at)/api/@(areaNameKc)/@(entityNamePc)'
 @:import { @(incField)Api } from '/@(at)/api/@(areaNameKc)/@(incField)'
     }
 }
-
+@if (hasDict)
+{
+@:import { DictApi } from '/@(at)/api/admin/Dict'
+}
 import eventBus from '/@(at)/utils/mitt'
 import { auth, auths, authAll } from '/@(at)/utils/authFunction'
 
@@ -325,6 +355,15 @@ const state = reactive({
 @foreach (var col in gen.Fields.Where(s=>s.Editor=="my-upload")){
 @:  file@(col.ColumnName)ListData: [] as Array<FileGetPageOutput>,
 }
+@if (hasDict){
+  @://字典相关
+  @:dicts:{
+    foreach (var d in dictCodes)
+    {
+    @:"@(d)":[],   
+    }
+  @:}
+    }
 })
 
 onMounted(() => {
@@ -332,6 +371,10 @@ onMounted(() => {
 @foreach(var incField in includeFieldEntitys){
 @:  get@(incField)List();
 }
+    @if (hasDict)
+    {
+@:  getDictsTree()      
+    }
   onQuery()
   eventBus.off('refresh@(entityNamePc)')
   eventBus.on('refresh@(entityNamePc)', async () => {
@@ -349,6 +392,16 @@ onBeforeMount(() => {
 @:    state.select@(incField)ListData = []
 @:  })
 @:  state.select@(incField)ListData = res?.data || []
+@:}
+}
+
+@if (hasDict)
+{
+@://获取需要使用的字典树
+@:const getDictsTree = async () => {
+@:  let res = await new DictApi().getList(['@(string.Join("','", dictCodes))'])
+@:  if(!res?.success)return;
+@:    state.dicts = res.data
 @:}
 }
 

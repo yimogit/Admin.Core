@@ -4,8 +4,8 @@
       <el-row>
         <el-col :span="18">
           <el-form :inline="true" @submit.stop.prevent>
-            <el-form-item class="search-box-item">
-              <el-input clearable  v-model="state.filter.name" placeholder="分类名称" @keyup.enter="onQuery" >
+            <el-form-item class="search-box-item"  label="分类名称">
+              <el-input  clearable  v-model="state.filter.name" placeholder="" @keyup.enter="onQuery" >
               </el-input>
             </el-form-item>
             <el-form-item>
@@ -68,7 +68,6 @@ import { PageInputThingCategoryGetPageInput, ThingCategoryGetPageInput, ThingCat
   ThingCategoryGetListInput, ThingCategoryGetListOutput,
 } from '/@/api/homely/data-contracts'
 import { ThingCategoryApi } from '/@/api/homely/ThingCategory'
-
 import eventBus from '/@/utils/mitt'
 import { auth, auths, authAll } from '/@/utils/authFunction'
 
@@ -118,6 +117,7 @@ onMounted(() => {
 onBeforeMount(() => {
   eventBus.off('refreshThingCategory')
 })
+
 
 
 const onQuery = async () => {

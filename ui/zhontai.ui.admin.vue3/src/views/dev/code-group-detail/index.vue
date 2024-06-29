@@ -4,9 +4,9 @@
       <el-row>
         <el-col :span="18">
           <el-form :inline="true" @submit.stop.prevent>
-            <el-form-item class="search-box-item">
-              <el-select clearable  v-model="state.filter.groupId" placeholder="模板分组" @keyup.enter="onQuery" >
-                <el-option v-for="item in state.selectCodeGroupListData" :key="item.id" :value="item.id" :label="item.title" />
+            <el-form-item class="search-box-item"  label="模板分组">
+              <el-select  clearable  v-model="state.filter.groupId" placeholder="" @keyup.enter="onQuery" >
+                <el-option v-for="item in state.selectCodeGroupListData" :key="item.id" :value="item.id" :label="item.name" />
               </el-select>
             </el-form-item>
             <el-form-item>
@@ -79,7 +79,6 @@ import { PageInputCodeGroupDetailGetPageInput, CodeGroupDetailGetPageInput, Code
 } from '/@/api/dev/data-contracts'
 import { CodeGroupDetailApi } from '/@/api/dev/CodeGroupDetail'
 import { CodeGroupApi } from '/@/api/dev/CodeGroup'
-
 import eventBus from '/@/utils/mitt'
 import { auth, auths, authAll } from '/@/utils/authFunction'
 
@@ -138,6 +137,7 @@ const getCodeGroupList = async () => {
   })
   state.selectCodeGroupListData = res?.data || []
 }
+
 
 const onQuery = async () => {
   state.loading = true

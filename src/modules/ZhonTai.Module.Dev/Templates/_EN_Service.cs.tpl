@@ -73,7 +73,7 @@ namespace @(gen.Namespace).Services.@(entityNamePc)
             @foreach(var col in gen.Fields.Where(w=>w.WhetherQuery)){
                 if(col.IsTextColumn()){
                 @:.WhereIf(!string.IsNullOrEmpty(input.@(col.ColumnName.NamingPascalCase())), a=>a.@(col.ColumnName.NamingPascalCase()) == input.@(col.ColumnName.NamingPascalCase()))
-                }else if(col.IsNumColumn()){
+                }else{
                 @:.WhereIf(input.@(col.ColumnName.NamingPascalCase()) != null, a=>a.@(col.ColumnName.NamingPascalCase()) == input.@(col.ColumnName.NamingPascalCase()))
                 }
             }
@@ -94,7 +94,7 @@ namespace @(gen.Namespace).Services.@(entityNamePc)
                             foreach(var col in usedDicCols)
                             {
 
-            @:    s.@(col.ColumnName.NamingPascalCase())DictName = dictList.FirstOrDefault(f => f.DictType.Code == "@(col.DictTypeCode)" && f.Code == @if(col.IsNumColumn())@("\"\" + ")s.@(col.ColumnName.NamingPascalCase()))?.Name;
+            @:    s.@(col.ColumnName.NamingPascalCase())DictName = dictList.FirstOrDefault(f => f.DictType.Code == "@(col.DictTypeCode)" && f.Value == @if(col.IsNumColumn())@("\"\" + ")s.@(col.ColumnName.NamingPascalCase()))?.Name;
                                 
                             }
             @:   return s;
@@ -148,7 +148,7 @@ namespace @(gen.Namespace).Services.@(entityNamePc)
                             foreach(var col in usedDicCols)
                             {
 
-            @:    s.@(col.ColumnName.NamingPascalCase())DictName = dictList.FirstOrDefault(f => f.DictType.Code == "@(col.DictTypeCode)" && f.Code == @if(col.IsNumColumn())@("\"\" + ")s.@(col.ColumnName.NamingPascalCase()))?.Name;
+            @:    s.@(col.ColumnName.NamingPascalCase())DictName = dictList.FirstOrDefault(f => f.DictType.Code == "@(col.DictTypeCode)" && f.Value == @if(col.IsNumColumn())@("\"\" + ")s.@(col.ColumnName.NamingPascalCase()))?.Name;
                                 
                             }
             @:
