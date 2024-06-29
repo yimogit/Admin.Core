@@ -72,6 +72,7 @@ export class CodeGenApi<SecurityDataType = unknown> extends HttpClient<SecurityD
   getList = (
     query?: {
       dbkey?: string
+      tableName?: string
     },
     params: RequestParams = {}
   ) =>
@@ -142,6 +143,24 @@ export class CodeGenApi<SecurityDataType = unknown> extends HttpClient<SecurityD
   update = (data: CodeGenUpdateInput, params: RequestParams = {}) =>
     this.request<AxiosResponse, any>({
       path: `/api/dev/code-gen/update`,
+      method: 'POST',
+      body: data,
+      secure: true,
+      type: ContentType.Json,
+      ...params,
+    })
+  /**
+   * No description
+   *
+   * @tags code-gen
+   * @name BatchGenerate
+   * @summary 批量生成
+   * @request POST:/api/dev/code-gen/batch-generate
+   * @secure
+   */
+  batchGenerate = (data: number[], params: RequestParams = {}) =>
+    this.request<AxiosResponse, any>({
+      path: `/api/dev/code-gen/batch-generate`,
       method: 'POST',
       body: data,
       secure: true,

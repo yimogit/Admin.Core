@@ -1,45 +1,54 @@
 ﻿<template>
   <div>
-    <el-dialog
-      v-model="state.showDialog"
-      destroy-on-close
-      :title="title"
-      draggable
-      :close-on-click-modal="false"
-      :close-on-press-escape="false"
-      width="769px"
-    >
-      <el-form ref="formRef" :model="form" size="default" label-width="80px">
-        <el-form-item label="物品名称" prop="name" v-show="editItemIsShow(true, true)">
-          <el-input  v-model="state.form.name" placeholder="" >
-          </el-input>
-        </el-form-item>
-        <el-form-item label="图片" prop="imageUrl" v-show="editItemIsShow(true, true)">
-          <my-upload  v-if='state.showDialog'  v-model="state.form.imageUrl" placeholder="" >
-          </my-upload>
-        </el-form-item>
-        <el-form-item label="有效期" prop="availableDate" v-show="editItemIsShow(true, true)">
-          <el-date-picker  v-model="state.form.availableDate" placeholder="" >
-          </el-date-picker>
-        </el-form-item>
-        <el-form-item label="备注" prop="remark" v-show="editItemIsShow(true, true)">
-          <el-input  type="textarea"  v-model="state.form.remark" placeholder="" >
-          </el-input>
-        </el-form-item>
-        <el-form-item label="排序" prop="sort" v-show="editItemIsShow(true, true)">
-          <el-input-number  v-model="state.form.sort" placeholder="" >
-          </el-input-number>
-        </el-form-item>
-        <el-form-item label="分类" prop="categoryId" v-show="editItemIsShow(true, true)">
-          <el-select  clearable  v-model="state.form.categoryId" placeholder="" >
-            <el-option v-for="item in state.selectThingCategoryListData" :key="item.id" :value="item.id" :label="item.name" />
-          </el-select>
-        </el-form-item>
-        <el-form-item label="标签" prop="tagIds_Values" v-show="editItemIsShow(true, true)">
-          <el-select  clearable  multiple  v-model="state.form.tagIds_Values" placeholder="" >
-            <el-option v-for="item in state.selectThingTagListData" :key="item.id" :value="String(item.id)" :label="item.name" />
-          </el-select>
-        </el-form-item>
+    <el-dialog v-model="state.showDialog" :title="title" draggable destroy-on-close :close-on-click-modal="false"
+      :close-on-press-escape="false" class="my-dialog-form">
+      <el-form ref="formRef" :model="form" size="default" label-width="auto">
+        <el-row :gutter="20">
+        <el-col :span="12">
+           <el-form-item label="物品名称" prop="name" v-show="editItemIsShow(true, true)">
+             <el-input  v-model="state.form.name" placeholder="" >
+             </el-input>
+           </el-form-item>
+        </el-col>
+        <el-col :span="12">
+           <el-form-item label="分类" prop="categoryId" v-show="editItemIsShow(true, true)">
+             <el-select  clearable  v-model="state.form.categoryId" placeholder="" >
+               <el-option v-for="item in state.selectThingCategoryListData" :key="item.id" :value="item.id" :label="item.name" />
+             </el-select>
+           </el-form-item>
+        </el-col>
+        <el-col :span="12">
+           <el-form-item label="有效期" prop="availableDate" v-show="editItemIsShow(true, true)">
+             <el-date-picker  v-model="state.form.availableDate" placeholder="" >
+             </el-date-picker>
+           </el-form-item>
+        </el-col>
+        <el-col :span="12">
+           <el-form-item label="排序" prop="sort" v-show="editItemIsShow(true, true)">
+             <el-input-number  v-model="state.form.sort" placeholder="" >
+             </el-input-number>
+           </el-form-item>
+        </el-col>
+        <el-col :span="12">
+           <el-form-item label="标签" prop="tagIds_Values" v-show="editItemIsShow(true, true)">
+             <el-select  clearable  multiple  v-model="state.form.tagIds_Values" placeholder="" >
+               <el-option v-for="item in state.selectThingTagListData" :key="item.id" :value="String(item.id)" :label="item.name" />
+             </el-select>
+           </el-form-item>
+        </el-col>
+        <el-col :span="24">
+           <el-form-item label="备注" prop="remark" v-show="editItemIsShow(true, true)">
+             <el-input  type="textarea"  v-model="state.form.remark" placeholder="" >
+             </el-input>
+           </el-form-item>
+        </el-col>
+        <el-col :span="24">
+           <el-form-item label="图片" prop="imageUrl" v-show="editItemIsShow(true, true)">
+             <my-upload  v-if='state.showDialog'  v-model="state.form.imageUrl" placeholder="" >
+             </my-upload>
+           </el-form-item>
+        </el-col>
+        </el-row>
       </el-form>
       <template #footer>
         <span class="dialog-footer">
@@ -85,7 +94,6 @@ const state = reactive({
   form: {} as ThingAddInput | ThingUpdateInput,
   selectThingCategoryListData: [] as ThingCategoryGetListOutput[],
   selectThingTagListData: [] as ThingTagGetListOutput[],
-
 })
 const { form } = toRefs(state)
 
@@ -94,6 +102,8 @@ const open = async (row: any = {}) => {
     
   getThingCategoryList();
   getThingTagList();
+
+
   if (row.id > 0) {
     const res = await new ThingApi().get({ id: row.id }, { loading: true }).catch(() => {
       proxy.$modal.closeLoading()
@@ -121,15 +131,16 @@ const getThingTagList = async () => {
   state.selectThingTagListData = res?.data || []
 }
 
+
 const defaultToAdd = (): ThingAddInput => {
   return {
     name: "",
-    imageUrl: null,
-    availableDate: null,
-    remark: null,
-    sort: null,
     categoryId: null,
+    availableDate: null,
+    sort: null,
     tagIds: null,
+    remark: null,
+    imageUrl: null,
   } as ThingAddInput
 }
 

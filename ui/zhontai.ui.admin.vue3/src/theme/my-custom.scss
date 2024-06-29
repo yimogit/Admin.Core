@@ -1,32 +1,43 @@
-.search-box{
-  .search-box-item{
-    min-width:150px;
+.search-box {
+  .search-box-item {
+    min-width: 150px;
   }
-  .el-card__body{
+
+  .el-card__body {
     padding-bottom: 0px;
   }
+  .el-input{
+    width: 200px;
+  }
 }
+
 .text-left {
   text-align: left;
 }
+
 .text-center {
   text-align: center;
 }
+
 .text-right {
   text-align: right;
 }
+
 .float-l {
   float: left;
 }
+
 .float-r {
   float: right;
 }
+
 /* 编辑弹框高度 */
 .my-dialog-form {
-  width:60%;
+  width: 60%;
   height: 60%;
-}
 
-.my-dialog-form>.el-dialog__body {
-  height: calc(100% - 120px);
+  >.el-dialog__body {
+    height: calc(100% - 120px);
+  }
+
 }

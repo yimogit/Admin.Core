@@ -1,37 +1,42 @@
 ﻿<template>
   <div>
-    <el-dialog
-      v-model="state.showDialog"
-      destroy-on-close
-      :title="title"
-      draggable
-      :close-on-click-modal="false"
-      :close-on-press-escape="false"
-      width="769px"
-    >
-      <el-form ref="formRef" :model="form" size="default" label-width="80px">
-        <el-form-item label="模板分组" prop="groupId" v-show="editItemIsShow(true, true)">
-          <el-select  v-model="state.form.groupId" placeholder="" >
-            <el-option v-for="item in state.selectCodeGroupListData" :key="item.id" :value="item.id" :label="item.title" />
-          </el-select>
-        </el-form-item>
-        <el-form-item label="模板名称" prop="title" v-show="editItemIsShow(true, true)">
-          <el-input  v-model="state.form.title" placeholder="" >
-          </el-input>
-        </el-form-item>
-        <el-form-item label="模板内容" prop="content" v-show="editItemIsShow(true, true)">
-          <el-input  type="textarea"  v-model="state.form.content" placeholder="" >
-          </el-input>
-        </el-form-item>
-        <el-form-item label="生成路径" prop="path" v-show="editItemIsShow(true, true)">
-          <el-input  v-model="state.form.path" placeholder="" >
-          </el-input>
-        </el-form-item>
-        <el-form-item label="模板分组" prop="groupIds_Values" v-show="editItemIsShow(true, true)">
-          <el-select  clearable  multiple  v-model="state.form.groupIds_Values" placeholder="" >
-            <el-option v-for="item in state.selectCodeGroupListData" :key="item.id" :value="String(item.id)" :label="item.title" />
-          </el-select>
-        </el-form-item>
+    <el-dialog v-model="state.showDialog" :title="title" draggable destroy-on-close :close-on-click-modal="false"
+      :close-on-press-escape="false" class="my-dialog-form">
+      <el-form ref="formRef" :model="form" size="default" label-width="auto">
+        <el-row :gutter="20">
+        <el-col :span="12">
+           <el-form-item label="模板名称" prop="name" v-show="editItemIsShow(true, true)">
+             <el-input  v-model="state.form.name" placeholder="" >
+             </el-input>
+           </el-form-item>
+        </el-col>
+        <el-col :span="12">
+           <el-form-item label="模板分组" prop="groupId" v-show="editItemIsShow(true, true)">
+             <el-select  v-model="state.form.groupId" placeholder="" >
+               <el-option v-for="item in state.selectCodeGroupListData" :key="item.id" :value="item.id" :label="item.name" />
+             </el-select>
+           </el-form-item>
+        </el-col>
+        <el-col :span="12">
+           <el-form-item label="生成路径" prop="path" v-show="editItemIsShow(true, true)">
+             <el-input  v-model="state.form.path" placeholder="" >
+             </el-input>
+           </el-form-item>
+        </el-col>
+        <el-col :span="12">
+           <el-form-item label="模板分组" prop="groupIds_Values" v-show="editItemIsShow(true, true)">
+             <el-select  clearable  multiple  v-model="state.form.groupIds_Values" placeholder="" >
+               <el-option v-for="item in state.selectCodeGroupListData" :key="item.id" :value="String(item.id)" :label="item.name" />
+             </el-select>
+           </el-form-item>
+        </el-col>
+        <el-col :span="24">
+           <el-form-item label="模板内容" prop="content" v-show="editItemIsShow(true, true)">
+             <el-input  type="textarea"  v-model="state.form.content" placeholder="" >
+             </el-input>
+           </el-form-item>
+        </el-col>
+        </el-row>
       </el-form>
       <template #footer>
         <span class="dialog-footer">
@@ -72,7 +77,6 @@ const state = reactive({
   sureLoading: false,
   form: {} as CodeGroupDetailAddInput | CodeGroupDetailUpdateInput,
   selectCodeGroupListData: [] as CodeGroupGetListOutput[],
-
 })
 const { form } = toRefs(state)
 
@@ -80,6 +84,8 @@ const { form } = toRefs(state)
 const open = async (row: any = {}) => {
     
   getCodeGroupList();
+
+
   if (row.id > 0) {
     const res = await new CodeGroupDetailApi().get({ id: row.id }, { loading: true }).catch(() => {
       proxy.$modal.closeLoading()
@@ -101,13 +107,14 @@ const getCodeGroupList = async () => {
   state.selectCodeGroupListData = res?.data || []
 }
 
+
 const defaultToAdd = (): CodeGroupDetailAddInput => {
   return {
+    name: "",
     groupId: 0,
-    title: "",
-    content: "",
     path: null,
     groupIds: null,
+    content: "",
   } as CodeGroupDetailAddInput
 }
 

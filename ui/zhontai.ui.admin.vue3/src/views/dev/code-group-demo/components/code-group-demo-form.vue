@@ -6,7 +6,7 @@
         <el-row :gutter="20">
         <el-col :span="12">
            <el-form-item label="文本框" prop="inputText" v-show="editItemIsShow(true, true)">
-             <el-input  v-model="state.form.inputText" placeholder="" >
+             <el-input  v-model="state.form.inputText" placeholder="请输入" >
              </el-input>
            </el-form-item>
         </el-col>
@@ -50,21 +50,21 @@
         <el-col :span="12">
            <el-form-item label="字典" prop="inputSelectDict" v-show="editItemIsShow(true, true)">
              <el-select  v-model="state.form.inputSelectDict" placeholder="" >
-               <el-option v-for="item in state.dicts['sex']" :key="item.code" :value="item.code" :label="item.name" />
+               <el-option v-for="item in state.dicts['sex']" :key="item.value" :value="item.value" :label="item.name" />
              </el-select>
            </el-form-item>
         </el-col>
         <el-col :span="12">
            <el-form-item label="模块业务单选" prop="inputBussinessSingle" v-show="editItemIsShow(true, true)">
              <el-select  clearable  v-model="state.form.inputBussinessSingle" placeholder="" >
-               <el-option v-for="item in state.selectCodeGroupListData" :key="item.id" :value="item.id" :label="item.title" />
+               <el-option v-for="item in state.selectCodeGroupListData" :key="item.id" :value="item.id" :label="item.name" />
              </el-select>
            </el-form-item>
         </el-col>
         <el-col :span="12">
            <el-form-item label="模块业务多选" prop="inputBussinessMultiple_Values" v-show="editItemIsShow(true, true)">
              <el-select  clearable  multiple  v-model="state.form.inputBussinessMultiple_Values" placeholder="" >
-               <el-option v-for="item in state.selectCodeGroupListData" :key="item.id" :value="String(item.id)" :label="item.title" />
+               <el-option v-for="item in state.selectCodeGroupListData" :key="item.id" :value="String(item.id)" :label="item.name" />
              </el-select>
            </el-form-item>
         </el-col>
@@ -76,7 +76,7 @@
         </el-col>
         <el-col :span="24">
            <el-form-item label="编辑器" prop="inputEditor" v-show="editItemIsShow(true, true)">
-             <my-editor  v-if='state.showDialog'  v-model="state.form.inputEditor" placeholder="" >
+             <my-editor  v-if='state.showDialog'  v-model="state.form.inputEditor" placeholder="请输入内容" >
              </my-editor>
            </el-form-item>
         </el-col>
@@ -103,7 +103,7 @@ import { CodeGroupDemoApi } from '/@/api/dev/CodeGroupDemo'
 import { CodeGroupApi } from '/@/api/dev/CodeGroup'
 import { auth, auths, authAll } from '/@/utils/authFunction'
 
-import { DictionaryTreeApi } from '/@/api/dev/DictionaryTree'
+import { DictApi } from '/@/api/admin/Dict'
  const MyUpload = defineAsyncComponent(() => import('/@/components/my-upload/index.vue'))      
  const MyEditor = defineAsyncComponent(() => import('/@/components/my-editor/index.vue'))      
 
@@ -161,11 +161,9 @@ const getCodeGroupList = async () => {
 
 //获取需要使用的字典树
 const getDictsTree = async () => {
-  let res = await new DictionaryTreeApi().get({codes:'sex'})
+  let res = await new DictApi().getList(['sex'])
   if(!res?.success)return;
-  res.data?.forEach((item: any) => {
-    state.dicts[item.code] = item.childrens
-  })
+    state.dicts = res.data
 }
 
 const defaultToAdd = (): CodeGroupDemoAddInput => {

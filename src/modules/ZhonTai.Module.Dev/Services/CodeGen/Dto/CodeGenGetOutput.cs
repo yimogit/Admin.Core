@@ -87,6 +87,10 @@ public class CodeGenGetOutput
     public String? FrontendOut { get; set; }
 
     /// <summary>
+    /// 数据库迁移目录
+    /// </summary>
+    public String? DbMigrateSqlOut { get; set; }
+    /// <summary>
     /// 备注说明
     /// </summary>
     public String? Comment { get; set; }

@@ -1,23 +1,22 @@
 ﻿<template>
   <div>
-    <el-dialog
-      v-model="state.showDialog"
-      destroy-on-close
-      :title="title"
-      draggable
-      :close-on-click-modal="false"
-      :close-on-press-escape="false"
-      width="769px"
-    >
-      <el-form ref="formRef" :model="form" size="default" label-width="80px">
-        <el-form-item label="标签名称" prop="name" v-show="editItemIsShow(true, true)">
-          <el-input  v-model="state.form.name" placeholder="" >
-          </el-input>
-        </el-form-item>
-        <el-form-item label="排序" prop="sort" v-show="editItemIsShow(true, true)">
-          <el-input  v-model="state.form.sort" placeholder="" >
-          </el-input>
-        </el-form-item>
+    <el-dialog v-model="state.showDialog" :title="title" draggable destroy-on-close :close-on-click-modal="false"
+      :close-on-press-escape="false" class="my-dialog-form">
+      <el-form ref="formRef" :model="form" size="default" label-width="auto">
+        <el-row :gutter="20">
+        <el-col :span="12">
+           <el-form-item label="标签名称" prop="name" v-show="editItemIsShow(true, true)">
+             <el-input  v-model="state.form.name" placeholder="" >
+             </el-input>
+           </el-form-item>
+        </el-col>
+        <el-col :span="12">
+           <el-form-item label="排序" prop="sort" v-show="editItemIsShow(true, true)">
+             <el-input  v-model="state.form.sort" placeholder="" >
+             </el-input>
+           </el-form-item>
+        </el-col>
+        </el-row>
       </el-form>
       <template #footer>
         <span class="dialog-footer">
@@ -54,13 +53,14 @@ const state = reactive({
   showDialog: false,
   sureLoading: false,
   form: {} as ThingTagAddInput | ThingTagUpdateInput,
-
 })
 const { form } = toRefs(state)
 
 // 打开对话框
 const open = async (row: any = {}) => {
     
+
+
   if (row.id > 0) {
     const res = await new ThingTagApi().get({ id: row.id }, { loading: true }).catch(() => {
       proxy.$modal.closeLoading()
@@ -74,6 +74,7 @@ const open = async (row: any = {}) => {
   }
   state.showDialog = true
 }
+
 
 
 const defaultToAdd = (): ThingTagAddInput => {

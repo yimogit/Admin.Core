@@ -109,8 +109,9 @@ public partial class CodeGenService : BaseService, ICodeGenService, IDynamicApi
     /// 获取列表
     /// </summary>
     /// <param name="dbkey"></param>
+    /// <param name="tableName"></param>
     /// <returns></returns>
-    public async Task<IEnumerable<CodeGenGetOutput>> GetListAsync(string? dbkey)
+    public async Task<IEnumerable<CodeGenGetOutput>> GetListAsync(string? dbkey, string? tableName)
     {
 #if DEBUG
         _cloud.Use(DbKeys.AppDb).CodeFirst.SyncStructure(typeof(CodeGenEntity), typeof(CodeGenFieldEntity));
@@ -118,6 +119,7 @@ public partial class CodeGenService : BaseService, ICodeGenService, IDynamicApi
 
         var gens = await _codeGenRepository
             .WhereIf(!string.IsNullOrEmpty(dbkey), w => w.DbKey == dbkey)
+            .WhereIf(!string.IsNullOrEmpty(tableName), w => w.TableName.Contains(tableName))
             .IncludeMany<CodeGenFieldEntity>(c => c.Fields.Where(w => w.CodeGenId == c.Id),
             then => then.OrderBy(o => new { o.Position, o.Id }))
             .OrderByDescending(o => o.CreatedTime)
@@ -336,6 +338,20 @@ public partial class CodeGenService : BaseService, ICodeGenService, IDynamicApi
     }
 
     /// <summary>
+    /// 批量生成
+    /// </summary>
+    /// <param name="ids"></param>
+    /// <returns></returns>
+    [HttpPost]
+    public async Task BatchGenerateAsync(long[] ids)
+    {
+        foreach (var id in ids)
+        {
+            await GenerateAsync(id);
+        }
+    }
+
+    /// <summary>
     /// 生成
     /// </summary>
     /// <param name="id"></param>
@@ -418,7 +434,11 @@ public partial class CodeGenService : BaseService, ICodeGenService, IDynamicApi
                     {
                         outPath = Path.Combine(outPath, outFileName);
                         Trace.WriteLine($"开始编译：{tpl.Source} 到 {outPath}");
-
+                        if (Path.Exists(outPath) && tpl.IsExistSkip)
+                        {
+                            Trace.WriteLine($"文件存在：{tpl.Source} 跳过输出 {outPath}");
+                            continue;
+                        }
                         _RazorCompile(RazorEngine.Engine.Razor, gen, tpl.Source, codeText, outPath);
                     }
                     catch (Exception ex)
@@ -495,7 +515,13 @@ public partial class CodeGenService : BaseService, ICodeGenService, IDynamicApi
                 {
                     var fsql = _cloud.Use(gen.DbKey);
                     var sql = fsql.CodeFirst.GetComparisonDDLStatements(entity);
-                    System.IO.File.WriteAllText(Path.Combine(gen.BackendOut, $"codefisrt-{gen.EntityName}.sql"), sql);
+                    var outPath = gen.DbMigrateSqlOut;
+                    if (!string.IsNullOrEmpty(outPath))
+                    {
+                        if (!Directory.Exists(outPath))
+                            Directory.CreateDirectory(outPath);
+                        File.WriteAllText(Path.Combine(outPath, $"{DateTime.Now.ToString("yyyyMMdd-HHmmss")}-{gen.EntityName}.sql"), sql);
+                    }
                     return sql;
                 }
             }

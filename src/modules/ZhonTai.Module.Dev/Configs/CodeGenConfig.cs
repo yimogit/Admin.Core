@@ -27,6 +27,10 @@ namespace ZhonTai.Module.Dev.Configs
         public string AuthorName { get; set; } = "SirHQ";
         public string BackendOut { get; set; } = "";
         public string FrontendOut { get; set; } = "";
+        /// <summary>
+        /// 迁移sql
+        /// </summary>
+        public string DbMigrateSqlOut { get; set; } = "";
 
         public string Namespace { get; set; } = "";
         public string ApiAreaName { get; set; } = "";
@@ -79,5 +83,9 @@ namespace ZhonTai.Module.Dev.Configs
 
         public string Source { get; set; } = "";
         public string OutTo { get; set; } = "";
+        /// <summary>
+        /// 存在则跳过
+        /// </summary>
+        public bool IsExistSkip { get; set; }
     }
 }

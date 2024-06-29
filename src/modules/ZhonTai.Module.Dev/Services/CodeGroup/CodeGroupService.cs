@@ -39,20 +39,6 @@ namespace ZhonTai.Module.Dev.Services.CodeGroup
         }
 
         /// <summary>
-        /// 新增
-        /// </summary>
-        /// <param name="input"></param>
-        /// <returns></returns>
-        [HttpPost]
-        public async Task<long> AddAsync(CodeGroupAddInput input)
-        {
-            var entity = Mapper.Map<CodeGroupEntity>(input);
-            var id = (await _codeGroupRepository.InsertAsync(entity)).Id;
-
-            return id;
-        }
-
-        /// <summary>
         /// 查询
         /// </summary>
         /// <param name="id"></param>
@@ -63,7 +49,21 @@ namespace ZhonTai.Module.Dev.Services.CodeGroup
             var output = await _codeGroupRepository.GetAsync<CodeGroupGetOutput>(id);
             return output;
         }
-
+        
+        /// <summary>
+        /// 列表查询
+        /// </summary>
+        /// <param name="input"></param>
+        /// <returns></returns>
+        [HttpPost]
+        public async Task<IEnumerable<CodeGroupGetListOutput>> GetListAsync(CodeGroupGetListInput input)
+        {
+            var list = await _codeGroupRepository.Select
+                .WhereIf(!string.IsNullOrEmpty(input.Name), a=>a.Name == input.Name)
+                .OrderByDescending(a => a.Id)
+                .ToListAsync<CodeGroupGetListOutput>();
+            return list;
+        }
         /// <summary>
         /// 分页查询
         /// </summary>
@@ -75,16 +75,33 @@ namespace ZhonTai.Module.Dev.Services.CodeGroup
             var filter = input.Filter;
             var list = await _codeGroupRepository.Select
                 .WhereDynamicFilter(input.DynamicFilter)
-                .WhereIf(filter !=null && !string.IsNullOrEmpty(filter.Title), a=> a.Title != null && a.Title.Contains(filter.Title))
+                .WhereIf(filter !=null && !string.IsNullOrEmpty(filter.Name), a=> a.Name != null && a.Name.Contains(filter.Name))
                 .Count(out var total)
                 .OrderByDescending(c => c.Id)
                 .Page(input.CurrentPage, input.PageSize)
                 .ToListAsync<CodeGroupGetPageOutput>();
         
 
+            //关联查询代码
+
             var data = new PageOutput<CodeGroupGetPageOutput> { List = list, Total = total };
         
             return data;
+        }
+        
+
+        /// <summary>
+        /// 新增
+        /// </summary>
+        /// <param name="input"></param>
+        /// <returns></returns>
+        [HttpPost]
+        public async Task<long> AddAsync(CodeGroupAddInput input)
+        {
+            var entity = Mapper.Map<CodeGroupEntity>(input);
+            var id = (await _codeGroupRepository.InsertAsync(entity)).Id;
+
+            return id;
         }
 
         /// <summary>
@@ -116,20 +133,6 @@ namespace ZhonTai.Module.Dev.Services.CodeGroup
             return await _codeGroupRepository.DeleteAsync(id) > 0;
         }
 
-        /// <summary>
-        /// 列表查询
-        /// </summary>
-        /// <param name="input"></param>
-        /// <returns></returns>
-        [HttpPost]
-        public async Task<IEnumerable<CodeGroupGetListOutput>> GetListAsync(CodeGroupGetListInput input)
-        {
-            var list = await _codeGroupRepository.Select
-                .WhereIf(!string.IsNullOrEmpty(input.Title), a=>a.Title == input.Title)
-                .OrderByDescending(a => a.Id)
-                .ToListAsync<CodeGroupGetListOutput>();
-            return list;
-        }
 
 
         /// <summary>

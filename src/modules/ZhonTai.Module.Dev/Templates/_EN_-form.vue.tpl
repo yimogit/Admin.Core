@@ -59,7 +59,7 @@
         {
             editorName = "el-select";
             if( col.IsNullable)attrs += " clearable ";
-            innerBody = string.Concat("<el-option v-for=", "\"item in state.dicts['", col.DictTypeCode, "']\" :key=\"item.code\" :value=\"item.code\" :label=\"item.name\" />");
+            innerBody = string.Concat("<el-option v-for=", "\"item in state.dicts['", col.DictTypeCode, "']\" :key=\"item.value\" :value=\"item.value\" :label=\"item.name\" />");
         }
         else if (col.Editor == "el-select")
         {
@@ -202,7 +202,7 @@ import { auth, auths, authAll } from '/@(at)/utils/authFunction'
 
     @if (hasDict)
     {
-@:import { DictionaryTreeApi } from '/@(at)/api/dev/DictionaryTree'
+@:import { DictApi } from '/@(at)/api/admin/Dict'
     }
     @foreach (var comp in uiComponentsInfo)
     {
@@ -287,11 +287,9 @@ const open = async (row: any = {}) => {
 {
 @://获取需要使用的字典树
 @:const getDictsTree = async () => {
-@:  let res = await new DictionaryTreeApi().get({codes:'@(string.Join(',', dictCodes))'})
+@:  let res = await new DictApi().getList(['@(string.Join("','", dictCodes))'])
 @:  if(!res?.success)return;
-@:  res.data?.forEach((item: any) => {
-@:    state.dicts[item.code] = item.childrens
-@:  })
+@:    state.dicts = res.data
 @:}
 }
 

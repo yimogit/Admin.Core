@@ -25,7 +25,7 @@
               <el-button type="warning">批量操作 <el-icon><ele-ArrowDown /></el-icon></el-button>
               <template #dropdown>
                 <el-dropdown-menu>
-                    <el-dropdown-item v-auth="perms.batSoftDelete" type="warning" :disabled="state.sels.length==0" @click="onBatchSoftDelete" icon="ele-DeleteFilled">批量删除</el-dropdown-item>
+                    <el-dropdown-item v-auth="perms.batSoftDelete" :disabled="state.sels.length==0" @click="onBatchSoftDelete" icon="ele-DeleteFilled">批量删除</el-dropdown-item>
                 </el-dropdown-menu>
               </template>
             </el-dropdown>
@@ -107,7 +107,6 @@ import { auth, auths, authAll } from '/@/utils/authFunction'
 
 // 引入组件
 const CodeGroupDemoForm = defineAsyncComponent(() => import('./components/code-group-demo-form.vue'))
-const MyDropdownMore = defineAsyncComponent(() => import('/@/components/my-dropdown-more/index.vue'))
 
 const { proxy } = getCurrentInstance() as any
 

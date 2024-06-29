@@ -1,21 +1,25 @@
 <template>
   <div>
-    <el-card shadow="never" :body-style="{ paddingBottom: '0' }" style="margin-top: 8px">
+    <el-card class="mt8 search-box" shadow="never">
       <el-row>
         <el-col :span="18">
-          <el-form class="ad-form-query" inline :model="state.filter">
-            <el-form-item label="数据源">
+          <el-form inline :model="state.filter">
+            <el-form-item label="数据源" class="search-box-item">
               <el-select v-model="state.filter.dbKey" @change="getConfigs" style="width: 150px" clearable>
                 <el-option v-for="item in state.dbKeys" :key="item.dbKey" :value="item.dbKey"
                   :label="item.dbKey"></el-option>
               </el-select>
             </el-form-item>
+            <el-form-item label="表名" class="search-box-item">
+              <el-input clearable v-model="state.filter.tableName" placeholder="模糊搜索" @keyup.enter="getConfigs">
+              </el-input>
+            </el-form-item>
             <el-form-item>
-              <el-dropdown split-button type="primary"  @click="getConfigs">
+              <el-dropdown split-button type="primary" @click="getConfigs">
                 <el-icon><ele-Search /></el-icon> 查询
                 <template #dropdown>
                   <el-dropdown-menu>
-                    <el-dropdown-item type="primary"  @click="getTables">查看数据源数据库结构</el-dropdown-item>
+                    <el-dropdown-item type="primary" @click="getTables">查看数据源数据库结构</el-dropdown-item>
                   </el-dropdown-menu>
                 </template>
               </el-dropdown>
@@ -23,17 +27,19 @@
           </el-form>
         </el-col>
         <el-col :span="6" class="text-right">
-          <el-button-group>
-            <el-dropdown split-button type="primary" @click="createTable">
-              创建表
+          <el-space>
+            <el-button type="primary" icon="ele-Plus" @click="createTable">创建表</el-button>
+            <el-dropdown :placement="'bottom-end'">
+              <el-button type="warning">批量操作 <el-icon><ele-ArrowDown /></el-icon></el-button>
               <template #dropdown>
                 <el-dropdown-menu>
-                  <el-dropdown-item type="primary" @click="exportConfig">复制选中配置到剪切板</el-dropdown-item>
-                  <el-dropdown-item type="primary" @click="importConfig">从剪切板导入配置</el-dropdown-item>
+                  <el-dropdown-item @click="exportConfig">复制选中配置到剪切板</el-dropdown-item>
+                  <el-dropdown-item @click="importConfig">从剪切板导入配置</el-dropdown-item>
+                  <el-dropdown-item @click="batchGenCode">批量生成代码</el-dropdown-item>
                 </el-dropdown-menu>
               </template>
             </el-dropdown>
-          </el-button-group>
+          </el-space>
         </el-col>
       </el-row>
     </el-card>
@@ -44,16 +50,20 @@
         <el-table-column type="selection" width="50" />
         <el-table-column type="expand" fixed>
           <template #default="scope">
-            <el-row>
-              <el-col :span="12">后端输出位置：{{ scope.row.backendOut }}</el-col>
-              <el-col :span="12">前端输出位置：{{ scope.row.frontendOut }}</el-col>
-            </el-row>
+            <el-card>
+
+              <el-row>
+                <el-col :span="24">后端输出位置：{{ scope.row.backendOut }}</el-col>
+                <el-col :span="24">前端输出位置：{{ scope.row.frontendOut }}</el-col>
+                <el-col :span="24">数据库迁移文件输出位置：{{ scope.row.dbMigrateSqlOut }}</el-col>
+              </el-row>
+            </el-card>
           </template>
         </el-table-column>
         <el-table-column prop="tableName" label="表名称" width="180" fixed></el-table-column>
-        <el-table-column prop="entityName" label="实体名" width="140" fixed></el-table-column>
+        <el-table-column prop="entityName" label="实体名" width="160" fixed></el-table-column>
         <el-table-column prop="namespace" label="命名空间" width="180"></el-table-column>
-        <el-table-column prop="dbKey" label="数据源" width="100" ></el-table-column>
+        <el-table-column prop="dbKey" label="数据源" width="100"></el-table-column>
         <el-table-column prop="busName" label="业务名" width="100"></el-table-column>
         <el-table-column prop="baseEntity" label="基类" width="120"></el-table-column>
         <el-table-column prop="apiAreaName" label="Api分区" width="100"></el-table-column>
@@ -108,8 +118,8 @@
         <el-table-column type="selection" width="50" />
         <el-table-column prop="importStatus" label="导入状态" width="120" fixed show-overflow-tooltip></el-table-column>
         <el-table-column prop="tableName" label="表名称" width="180"></el-table-column>
-        <el-table-column prop="entityName" label="实体名" width="140"></el-table-column>
-        <el-table-column prop="dbKey" label="数据源" width="100" ></el-table-column>
+        <el-table-column prop="entityName" label="实体名" width="160"></el-table-column>
+        <el-table-column prop="dbKey" label="数据源" width="100"></el-table-column>
         <el-table-column prop="namespace" label="命名空间" width="180"></el-table-column>
         <el-table-column prop="busName" label="业务名" width="100"></el-table-column>
         <el-table-column prop="baseEntity" label="基类" width="120"></el-table-column>
@@ -162,6 +172,7 @@ const codegenFormRef = ref()
 const state = reactive({
   filter: {
     dbKey: '',
+    tableName: '',
     dbType: '',
     config: {} as CodeGenGetOutput | null,
     dbTree: {} as DbTree,
@@ -201,6 +212,7 @@ const genDefaultConfig = (): CodeGenUpdateInput => {
     baseEntity: 'EntityBase',
     backendOut: state.defaultOption?.backendOut ?? '',
     frontendOut: state.defaultOption?.frontendOut ?? '',
+    dbMigrateSqlOut: state.defaultOption?.dbMigrateSqlOut ?? '',
 
     genEntity: true,
     genRepository: true,
@@ -254,7 +266,7 @@ const getTables = async () => {
 const getConfigs = async () => {
   // state.filter.config = null
   state.dataLoading = true
-  const res = await new CodeGenApi().getList({ dbkey: state.filter.dbKey })
+  const res = await new CodeGenApi().getList({ dbkey: state.filter.dbKey, tableName: state.filter.tableName })
   state.configs = res?.data ?? []
   state.dataLoading = false
 }
@@ -355,10 +367,10 @@ const onConfigEditSure = async (data: any) => {
     return res
   }
   if (data.data.importStatus == '等待导入') {
-    console.log(data.data.importKey)
-    console.log(state.importConfigs)
+    // console.log(data.data.importKey)
+    // console.log(state.importConfigs)
     let selectData = state.importConfigs.find(s => s.importKey == data.data.importKey)
-    console.log(selectData)
+    // console.log(selectData)
     if (selectData) {
       selectData.importStatus = '导入成功'
     }
@@ -418,6 +430,13 @@ const selsChange = (vals: CodeGenGetOutput[]) => {
   console.log(vals)
   state.sels = vals
 }
+
+const batchGenCode = async () => {
+  if (state.sels.length == 0)
+    return proxy.$modal.msgWarning('请选择要生成的表')
+  await new CodeGenApi().batchGenerate(state.sels.map(s => s.id) as number[], { loading: true, showSuccessMessage: true })
+}
+
 const exportConfig = () => {
   if (state.sels.length == 0)
     return proxy.$modal.msgWarning('请选择要复制的配置')
@@ -453,7 +472,6 @@ const importConfig = () => {
 const importSelsChange = (vals: CodeGenGetOutput[]) => {
   state.importSels = vals
 }
-
 const onSureImport = () => {
   if (state.importSels.length == 0)
     return proxy.$modal.msgWarning('选择要导入的数据')

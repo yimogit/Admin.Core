@@ -16,6 +16,7 @@ export interface BaseDataGetOutput {
   namespace?: string | null
   backendOut?: string | null
   frontendOut?: string | null
+  dbMigrateSqlOut?: string | null
   usings?: string | null
   menuAfterText?: string | null
 }
@@ -130,6 +131,8 @@ export interface CodeGenGetOutput {
   backendOut?: string | null
   /** 前端输出目录 */
   frontendOut?: string | null
+  /** 数据库迁移目录 */
+  dbMigrateSqlOut?: string | null
   /** 备注说明 */
   comment?: string | null
   /** 实体导入的命令空间 */
@@ -190,6 +193,8 @@ export interface CodeGenUpdateInput {
   backendOut?: string | null
   /** 前端输出目录 */
   frontendOut?: string | null
+  /** 数据库迁移目录 */
+  dbMigrateSqlOut?: string | null
   /** 备注说明 */
   comment?: string | null
   /** 实体导入的命令空间 */
@@ -223,7 +228,7 @@ export interface CodeGroupAddInput {
    * 模板标题
    * @minLength 1
    */
-  title: string
+  name: string
   /** 备注 */
   remark?: string | null
 }
@@ -502,26 +507,26 @@ export interface CodeGroupDemoUpdateInput {
 /** 模板明细新增输入 */
 export interface CodeGroupDetailAddInput {
   /**
+   * 模板名称
+   * @minLength 1
+   */
+  name: string
+  /**
    * 模板分组
    * @format int64
    */
   groupId: number
-  /**
-   * 模板名称
-   * @minLength 1
-   */
-  title: string
-  /**
-   * 模板内容
-   * @minLength 1
-   */
-  content: string
   /** 生成路径 */
   path?: string | null
   /** 模板分组 */
   groupIds?: string | null
   /** 页面提交的模板分组数组 */
   groupIds_Values?: string[] | null
+  /**
+   * 模板内容
+   * @minLength 1
+   */
+  content: string
 }
 
 /** 模板明细列表查询条件输入 */
@@ -543,6 +548,8 @@ export interface CodeGroupDetailGetListOutput {
   modifiedUserName?: string | null
   /** @format date-time */
   modifiedTime?: string | null
+  /** 模板名称 */
+  name?: string | null
   /**
    * 模板分组
    * @format int64
@@ -550,10 +557,6 @@ export interface CodeGroupDetailGetListOutput {
   groupId?: number
   /** 模板分组显示文本 */
   groupId_Text?: string | null
-  /** 模板名称 */
-  title?: string | null
-  /** 模板内容 */
-  content?: string | null
   /** 生成路径 */
   path?: string | null
   /** 模板分组 */
@@ -562,12 +565,16 @@ export interface CodeGroupDetailGetListOutput {
   groupIds_Texts?: string[] | null
   /** 页面使用的模板分组数组 */
   groupIds_Values?: string[] | null
+  /** 模板内容 */
+  content?: string | null
 }
 
 /** 模板明细查询结果输出 */
 export interface CodeGroupDetailGetOutput {
   /** @format int64 */
   id?: number
+  /** 模板名称 */
+  name?: string | null
   /**
    * 模板分组
    * @format int64
@@ -575,10 +582,6 @@ export interface CodeGroupDetailGetOutput {
   groupId?: number
   /** 模板分组显示文本 */
   groupId_Text?: string | null
-  /** 模板名称 */
-  title?: string | null
-  /** 模板内容 */
-  content?: string | null
   /** 生成路径 */
   path?: string | null
   /** 模板分组 */
@@ -587,6 +590,8 @@ export interface CodeGroupDetailGetOutput {
   groupIds_Texts?: string[] | null
   /** 页面使用的模板分组数组 */
   groupIds_Values?: string[] | null
+  /** 模板内容 */
+  content?: string | null
 }
 
 /** 模板明细分页查询条件输入 */
@@ -608,6 +613,8 @@ export interface CodeGroupDetailGetPageOutput {
   modifiedUserName?: string | null
   /** @format date-time */
   modifiedTime?: string | null
+  /** 模板名称 */
+  name?: string | null
   /**
    * 模板分组
    * @format int64
@@ -615,10 +622,6 @@ export interface CodeGroupDetailGetPageOutput {
   groupId?: number
   /** 模板分组显示文本 */
   groupId_Text?: string | null
-  /** 模板名称 */
-  title?: string | null
-  /** 模板内容 */
-  content?: string | null
   /** 生成路径 */
   path?: string | null
   /** 模板分组 */
@@ -627,6 +630,8 @@ export interface CodeGroupDetailGetPageOutput {
   groupIds_Texts?: string[] | null
   /** 页面使用的模板分组数组 */
   groupIds_Values?: string[] | null
+  /** 模板内容 */
+  content?: string | null
 }
 
 /** 模板明细更新数据输入 */
@@ -634,32 +639,32 @@ export interface CodeGroupDetailUpdateInput {
   /** @format int64 */
   id?: number
   /**
+   * 模板名称
+   * @minLength 1
+   */
+  name: string
+  /**
    * 模板分组
    * @format int64
    */
   groupId: number
-  /**
-   * 模板名称
-   * @minLength 1
-   */
-  title: string
-  /**
-   * 模板内容
-   * @minLength 1
-   */
-  content: string
   /** 生成路径 */
   path?: string | null
   /** 模板分组 */
   groupIds?: string | null
   /** 页面提交的模板分组数组 */
   groupIds_Values?: string[] | null
+  /**
+   * 模板内容
+   * @minLength 1
+   */
+  content: string
 }
 
 /** 模板组列表查询条件输入 */
 export interface CodeGroupGetListInput {
   /** 模板标题 */
-  title?: string | null
+  name?: string | null
 }
 
 /** 模板组列表查询结果输出 */
@@ -673,7 +678,7 @@ export interface CodeGroupGetListOutput {
   /** @format date-time */
   modifiedTime?: string | null
   /** 模板标题 */
-  title?: string | null
+  name?: string | null
   /** 备注 */
   remark?: string | null
 }
@@ -683,7 +688,7 @@ export interface CodeGroupGetOutput {
   /** @format int64 */
   id?: number
   /** 模板标题 */
-  title?: string | null
+  name?: string | null
   /** 备注 */
   remark?: string | null
 }
@@ -691,7 +696,7 @@ export interface CodeGroupGetOutput {
 /** 模板组分页查询条件输入 */
 export interface CodeGroupGetPageInput {
   /** 模板标题 */
-  title?: string | null
+  name?: string | null
 }
 
 /** 模板组分页查询结果输出 */
@@ -705,7 +710,7 @@ export interface CodeGroupGetPageOutput {
   /** @format date-time */
   modifiedTime?: string | null
   /** 模板标题 */
-  title?: string | null
+  name?: string | null
   /** 备注 */
   remark?: string | null
 }
@@ -718,7 +723,7 @@ export interface CodeGroupUpdateInput {
    * 模板标题
    * @minLength 1
    */
-  title: string
+  name: string
   /** 备注 */
   remark?: string | null
 }
@@ -726,16 +731,6 @@ export interface CodeGroupUpdateInput {
 export interface DatabaseGetOutput {
   dbKey?: string | null
   type?: string | null
-}
-
-export interface DictionaryTreeOutput {
-  /** @format int64 */
-  id?: number
-  /** 字典名称 */
-  name?: string | null
-  /** 字典编码 */
-  code?: string | null
-  childrens?: DictionaryTreeOutput[] | null
 }
 
 export interface DynamicFilterInfo {
@@ -960,18 +955,6 @@ export interface ResultOutputIEnumerableCodeGroupGetListOutput {
   msg?: string | null
   /** 数据 */
   data?: CodeGroupGetListOutput[] | null
-}
-
-/** 结果输出 */
-export interface ResultOutputIEnumerableDictionaryTreeOutput {
-  /** 是否成功标记 */
-  success?: boolean
-  /** 编码 */
-  code?: string | null
-  /** 消息 */
-  msg?: string | null
-  /** 数据 */
-  data?: DictionaryTreeOutput[] | null
 }
 
 /** 结果输出 */

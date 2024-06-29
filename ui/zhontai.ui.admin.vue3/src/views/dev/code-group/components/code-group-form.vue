@@ -1,23 +1,22 @@
 ﻿<template>
   <div>
-    <el-dialog
-      v-model="state.showDialog"
-      destroy-on-close
-      :title="title"
-      draggable
-      :close-on-click-modal="false"
-      :close-on-press-escape="false"
-      width="769px"
-    >
-      <el-form ref="formRef" :model="form" size="default" label-width="80px">
-        <el-form-item label="模板标题" prop="title" v-show="editItemIsShow(true, true)">
-          <el-input  v-model="state.form.title" placeholder="" >
-          </el-input>
-        </el-form-item>
-        <el-form-item label="备注" prop="remark" v-show="editItemIsShow(true, true)">
-          <el-input  v-model="state.form.remark" placeholder="" >
-          </el-input>
-        </el-form-item>
+    <el-dialog v-model="state.showDialog" :title="title" draggable destroy-on-close :close-on-click-modal="false"
+      :close-on-press-escape="false" class="my-dialog-form">
+      <el-form ref="formRef" :model="form" size="default" label-width="auto">
+        <el-row :gutter="20">
+        <el-col :span="12">
+           <el-form-item label="模板标题" prop="name" v-show="editItemIsShow(true, true)">
+             <el-input  v-model="state.form.name" placeholder="" >
+             </el-input>
+           </el-form-item>
+        </el-col>
+        <el-col :span="24">
+           <el-form-item label="备注" prop="remark" v-show="editItemIsShow(true, true)">
+             <el-input  type="textarea"  v-model="state.form.remark" placeholder="" >
+             </el-input>
+           </el-form-item>
+        </el-col>
+        </el-row>
       </el-form>
       <template #footer>
         <span class="dialog-footer">
@@ -59,6 +58,8 @@ const { form } = toRefs(state)
 
 // 打开对话框
 const open = async (row: any = {}) => {
+    
+
 
   if (row.id > 0) {
     const res = await new CodeGroupApi().get({ id: row.id }, { loading: true }).catch(() => {
@@ -74,9 +75,11 @@ const open = async (row: any = {}) => {
   state.showDialog = true
 }
 
+
+
 const defaultToAdd = (): CodeGroupAddInput => {
   return {
-    title: "",
+    name: "",
     remark: null,
   } as CodeGroupAddInput
 }
@@ -118,6 +121,7 @@ const editItemIsShow = (add: Boolean, edit: Boolean): Boolean => {
     if(edit && isEdit)return true;
     return false;
 }
+
 
 defineExpose({
   open,

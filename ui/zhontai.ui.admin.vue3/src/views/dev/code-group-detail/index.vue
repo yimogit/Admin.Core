@@ -1,37 +1,48 @@
 ﻿<template>
 <div class="my-layout">
-    <el-card class="mt8 search-box" shadow="never" :body-style="{ paddingBottom: '0' }">
-      <el-form :inline="true" @submit.stop.prevent>
-        <el-form-item class="search-box-item">
-          <el-select clearable  v-model="state.filter.groupId" placeholder="模板分组" @keyup.enter="onQuery" >
-            <el-option v-for="item in state.selectCodeGroupListData" :key="item.id" :value="item.id" :label="item.title" />
-          </el-select>
-        </el-form-item>
-        <el-form-item>
-          <el-button type="primary" icon="ele-Search" @click="onQuery">查询</el-button>
-        </el-form-item>
-        <el-form-item>
+    <el-card class="mt8 search-box" shadow="never">
+      <el-row>
+        <el-col :span="18">
+          <el-form :inline="true" @submit.stop.prevent>
+            <el-form-item class="search-box-item">
+              <el-select clearable  v-model="state.filter.groupId" placeholder="模板分组" @keyup.enter="onQuery" >
+                <el-option v-for="item in state.selectCodeGroupListData" :key="item.id" :value="item.id" :label="item.title" />
+              </el-select>
+            </el-form-item>
+            <el-form-item>
+              <el-button type="primary" icon="ele-Search" @click="onQuery">查询</el-button>
+            </el-form-item>
+          </el-form>
+        </el-col>
+        <el-col :span="6" class="text-right">
+          <el-space>
           <el-button type="primary" icon="ele-Plus" @click="onAdd">新增</el-button>
-        </el-form-item>
-          <el-form-item v-auths="[perms.batDelete, perms.batSoftDelete]" >
-            <el-button v-auth="perms.batSoftDelete" type="warning" :disabled="state.sels.length==0" :placement="'bottom-end'" @click="onBatchSoftDelete" icon="ele-DeleteFilled">批量删除</el-button>
-          </el-form-item>
-      </el-form>
+            <el-dropdown :placement="'bottom-end'">
+              <el-button type="warning">批量操作 <el-icon><ele-ArrowDown /></el-icon></el-button>
+              <template #dropdown>
+                <el-dropdown-menu>
+                    <el-dropdown-item v-auth="perms.batSoftDelete" :disabled="state.sels.length==0" @click="onBatchSoftDelete" icon="ele-DeleteFilled">批量删除</el-dropdown-item>
+                </el-dropdown-menu>
+              </template>
+            </el-dropdown>
+          </el-space>
+        </el-col>
+      </el-row>
     </el-card>
 
     <el-card class="my-fill mt8" shadow="never">
       <el-table v-loading="state.loading" :data="state.codeGroupDetailListData" row-key="id" height="'100%'" style="width: 100%; height: 100%" @selection-change="selsChange">
         
           <el-table-column type="selection" width="50" />
+          <el-table-column prop="name" label="模板名称" show-overflow-tooltip width />
           <el-table-column prop="groupId_Text" label="模板分组" show-overflow-tooltip width />
-          <el-table-column prop="title" label="模板名称" show-overflow-tooltip width />
-          <el-table-column prop="content" label="模板内容" show-overflow-tooltip width />
           <el-table-column prop="path" label="生成路径" show-overflow-tooltip width />
           <el-table-column prop="groupIds_Texts" label="模板分组" show-overflow-tooltip width >
             <template #default="{ row }">
               {{ row.groupIds_Texts ? row.groupIds_Texts.join(',') : '' }}
             </template>
-            </el-table-column>
+          </el-table-column>
+          <el-table-column prop="content" label="模板内容" show-overflow-tooltip width />
           <el-table-column v-auths="[perms.update,perms.softDelete,perms.delete]" label="操作" :width="actionColWidth" fixed="right">
             <template #default="{ row }">
               <el-button v-auth="perms.update" icon="ele-EditPen" size="small" text type="primary" @click="onEdit(row)">编辑</el-button>
@@ -60,7 +71,7 @@
 </template>
 
 <script lang="ts" setup name="dev/code-group-detail">
-import { ref, reactive, onMounted, getCurrentInstance, onBeforeMount, defineAsyncComponent } from 'vue'
+import { ref, reactive, onMounted, getCurrentInstance, onBeforeMount, defineAsyncComponent, computed } from 'vue'
 import { PageInputCodeGroupDetailGetPageInput, CodeGroupDetailGetPageInput, CodeGroupDetailGetPageOutput, CodeGroupDetailGetOutput, CodeGroupDetailAddInput, CodeGroupDetailUpdateInput,
   CodeGroupDetailGetListInput, CodeGroupDetailGetListOutput,
   CodeGroupGetListOutput,
@@ -74,7 +85,6 @@ import { auth, auths, authAll } from '/@/utils/authFunction'
 
 // 引入组件
 const CodeGroupDetailForm = defineAsyncComponent(() => import('./components/code-group-detail-form.vue'))
-const MyDropdownMore = defineAsyncComponent(() => import('/@/components/my-dropdown-more/index.vue'))
 
 const { proxy } = getCurrentInstance() as any
 
@@ -139,6 +149,9 @@ const onQuery = async () => {
   state.codeGroupDetailListData = res?.data?.list ?? []
   state.total = res?.data?.total ?? 0
   state.loading = false
+
+
+
 }
 
 const onAdd = () => {

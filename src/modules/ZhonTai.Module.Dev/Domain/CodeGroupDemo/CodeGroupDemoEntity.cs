@@ -16,7 +16,7 @@ namespace ZhonTai.Module.Dev.Domain.CodeGroupDemo
         /// <summary>
         /// 文本框
         /// </summary>
-        /// <remarks></remarks>
+        /// <remarks>请输入</remarks>
         [Column(Position=1)]
         public string InputText { get; set; }
         /// <summary>
@@ -82,7 +82,7 @@ namespace ZhonTai.Module.Dev.Domain.CodeGroupDemo
         /// <summary>
         /// 编辑器
         /// </summary>
-        /// <remarks></remarks>
+        /// <remarks>请输入内容</remarks>
         [Column(Position=12)]
         public string? InputEditor { get; set; }
     }

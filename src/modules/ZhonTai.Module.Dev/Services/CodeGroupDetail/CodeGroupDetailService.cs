@@ -22,7 +22,6 @@ using ZhonTai.Admin.Domain.Dict;
 using ZhonTai.Module.Dev.Domain.CodeGroupDetail;
 using ZhonTai.Module.Dev.Services.CodeGroupDetail.Dto;
 using ZhonTai.Module.Dev.Core.Consts;
-using ZhonTai.Module.Dev.Domain.CodeGroup;
 
 
 namespace ZhonTai.Module.Dev.Services.CodeGroupDetail
@@ -34,7 +33,6 @@ namespace ZhonTai.Module.Dev.Services.CodeGroupDetail
     public class CodeGroupDetailService : BaseService, ICodeGroupDetailService, IDynamicApi
     {
         private ICodeGroupDetailRepository _codeGroupDetailRepository => LazyGetRequiredService<ICodeGroupDetailRepository>();
-        private ICodeGroupRepository _codeGroupRepository => LazyGetRequiredService<ICodeGroupRepository>();
 
         public CodeGroupDetailService()
         {
@@ -49,18 +47,9 @@ namespace ZhonTai.Module.Dev.Services.CodeGroupDetail
         public async Task<CodeGroupDetailGetOutput> GetAsync(long id)
         {
             var output = await _codeGroupDetailRepository.GetAsync<CodeGroupDetailGetOutput>(id);
-            if (output.GroupId > 0)
-            {
-                output.GroupId_Text = await _codeGroupRepository.Where(s => s.Id == output.GroupId).ToOneAsync(s => s.Title);
-            }
-            if (output.GroupIds_Values != null && output.GroupIds_Values.Any())
-            {
-                var groupIds = output.GroupIds_Values.Select(s => long.Parse(s)).ToList();
-                output.GroupIds_Texts = await _codeGroupRepository.Where(s => groupIds.Contains(s.Id)).ToListAsync(s => s.Title);
-            }
             return output;
         }
-
+        
         /// <summary>
         /// 列表查询
         /// </summary>
@@ -70,7 +59,7 @@ namespace ZhonTai.Module.Dev.Services.CodeGroupDetail
         public async Task<IEnumerable<CodeGroupDetailGetListOutput>> GetListAsync(CodeGroupDetailGetListInput input)
         {
             var list = await _codeGroupDetailRepository.Select
-                .WhereIf(input.GroupId != null, a => a.GroupId == input.GroupId)
+                .WhereIf(input.GroupId != null, a=>a.GroupId == input.GroupId)
                 .OrderByDescending(a => a.Id)
                 .ToListAsync<CodeGroupDetailGetListOutput>();
             return list;
@@ -86,40 +75,44 @@ namespace ZhonTai.Module.Dev.Services.CodeGroupDetail
             var filter = input.Filter;
             var list = await _codeGroupDetailRepository.Select
                 .WhereDynamicFilter(input.DynamicFilter)
-                .WhereIf(filter != null && filter.GroupId != null, a => a.GroupId == filter.GroupId)
+                .WhereIf(filter !=null && filter.GroupId != null, a=>a.GroupId == filter.GroupId)
                 .Count(out var total)
                 .OrderByDescending(c => c.Id)
                 .Page(input.CurrentPage, input.PageSize)
                 .ToListAsync<CodeGroupDetailGetPageOutput>();
+        
 
+            //关联查询代码
             //数据转换-单个关联
             var groupIdRows = list.Where(s => s.GroupId > 0).ToList();
             if (groupIdRows.Any())
             {
+                var groupIdRepo = LazyGetRequiredService<Domain.CodeGroup.ICodeGroupRepository>();
                 var groupIdRowsIds = groupIdRows.Select(s => s.GroupId).Distinct().ToList();
-                var groupIdRowsIdsData = await _codeGroupRepository.Where(s => groupIdRowsIds.Contains(s.Id)).ToListAsync(s => new { s.Id, s.Title });
+                var groupIdRowsIdsData = await groupIdRepo.Where(s => groupIdRowsIds.Contains(s.Id)).ToListAsync(s => new { s.Id, s.Name });
                 groupIdRows.ForEach(s =>
                 {
-                    s.GroupId_Text = groupIdRowsIdsData.FirstOrDefault(s2 => s2.Id == s.GroupId)?.Title;
+                    s.GroupId_Text = groupIdRowsIdsData.FirstOrDefault(s2 => s2.Id == s.GroupId)?.Name;
                 });
             }
             //数据转换-多个关联
             var groupIdsRows = list.Where(s => s.GroupIds_Values != null && s.GroupIds_Values.Any()).ToList();
             if (groupIdsRows.Any())
             {
-                var groupIdsRowsIds = groupIdsRows.SelectMany(s => s.GroupIds_Values).Select(s => long.TryParse(s, out long s2) ? s2 : 0).Distinct().ToList();
-                var groupIdsRowsIdsData = await _codeGroupRepository.Where(s => groupIdsRowsIds.Contains(s.Id)).ToListAsync(s => new { s.Id, s.Title });
+                var groupIdsRepo = LazyGetRequiredService<Domain.CodeGroup.ICodeGroupRepository>();
+                var groupIdsRowsIds =groupIdsRows.SelectMany(s => s.GroupIds_Values).Select(s => long.TryParse(s, out long s2) ? s2 : 0).Distinct().ToList();
+                var groupIdsRowsIdsData = await groupIdsRepo.Where(s => groupIdsRowsIds.Contains(s.Id)).ToListAsync(s => new { s.Id, s.Name });
                 groupIdsRows.ForEach(s =>
                 {
-                    s.GroupIds_Texts = groupIdsRowsIdsData.Where(s2 => s.GroupIds_Values.Contains(s2.Id.ToString())).OrderBy(s2 => s.GroupIds_Values.IndexOf(s2.Id.ToString())).Select(s2 => s2.Title).ToList();
+                    s.GroupIds_Texts = groupIdsRowsIdsData.Where(s2 => s.GroupIds_Values.Contains(s2.Id.ToString())).OrderBy(s2 => s.GroupIds_Values.IndexOf(s2.Id.ToString())).Select(s2 => s2.Name).ToList();
                 });
             }
 
             var data = new PageOutput<CodeGroupDetailGetPageOutput> { List = list, Total = total };
-
+        
             return data;
         }
-
+        
 
         /// <summary>
         /// 新增

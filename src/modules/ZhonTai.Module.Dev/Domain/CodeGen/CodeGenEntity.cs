@@ -104,6 +104,12 @@ public class CodeGenEntity : EntityBase
     public String? FrontendOut { get; set; }
 
     /// <summary>
+    /// 数据迁移输出目录
+    /// </summary>
+    [Column(StringLength = 256)]
+    public String DbMigrateSqlOut { get; set; }
+
+    /// <summary>
     /// 备注说明
     /// </summary>
     [Column(StringLength = 256)]

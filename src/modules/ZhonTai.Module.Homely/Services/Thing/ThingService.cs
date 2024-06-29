@@ -60,7 +60,6 @@ namespace ZhonTai.Module.Homely.Services.Thing
         {
             var list = await _thingRepository.Select
                 .WhereIf(!string.IsNullOrEmpty(input.Name), a=>a.Name == input.Name)
-                .WhereIf(!string.IsNullOrEmpty(input.Remark), a=>a.Remark == input.Remark)
                 .OrderByDescending(a => a.Id)
                 .ToListAsync<ThingGetListOutput>();
             return list;
@@ -77,7 +76,6 @@ namespace ZhonTai.Module.Homely.Services.Thing
             var list = await _thingRepository.Select
                 .WhereDynamicFilter(input.DynamicFilter)
                 .WhereIf(filter !=null && !string.IsNullOrEmpty(filter.Name), a=> a.Name != null && a.Name.Contains(filter.Name))
-                .WhereIf(filter !=null && !string.IsNullOrEmpty(filter.Remark), a=> a.Remark != null && a.Remark.Contains(filter.Remark))
                 .Count(out var total)
                 .OrderByDescending(c => c.Id)
                 .Page(input.CurrentPage, input.PageSize)

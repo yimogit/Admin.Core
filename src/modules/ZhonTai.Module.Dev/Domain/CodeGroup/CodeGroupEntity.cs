@@ -11,14 +11,14 @@ namespace ZhonTai.Module.Dev.Domain.CodeGroup
     /// </summary>
     /// <remarks></remarks>
     [Table(Name="dev_code_group")]
-    public partial class CodeGroupEntity: EntityTenant
+    public partial class CodeGroupEntity: EntityBase
     {
         /// <summary>
         /// 模板标题
         /// </summary>
         /// <remarks></remarks>
         [Column(StringLength=200)]
-        public string Title { get; set; }
+        public string Name { get; set; }
         /// <summary>
         /// 备注
         /// </summary>

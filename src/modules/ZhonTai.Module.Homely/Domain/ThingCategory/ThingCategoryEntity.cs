@@ -11,7 +11,7 @@ namespace ZhonTai.Module.Homely.Domain.ThingCategory
     /// </summary>
     /// <remarks></remarks>
     [Table(Name="homely_thing_category")]
-    public partial class ThingCategoryEntity: EntityTenant
+    public partial class ThingCategoryEntity: EntityBase
     {
         /// <summary>
         /// 分类名称

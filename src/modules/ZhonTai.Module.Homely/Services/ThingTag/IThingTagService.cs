@@ -99,6 +99,8 @@ namespace ZhonTai.Module.Homely.Services.ThingTag.Dto
     /// <summary>物品标签分页查询条件输入</summary>
     public partial class ThingTagGetPageInput {
 
+        /// <summary>标签名称</summary>       
+        public string? Name { get; set; }
     }
     
     /// <summary>物品标签新增输入</summary>

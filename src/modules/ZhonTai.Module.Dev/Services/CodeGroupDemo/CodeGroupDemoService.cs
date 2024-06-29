@@ -108,10 +108,10 @@ namespace ZhonTai.Module.Dev.Services.CodeGroupDemo
             {
                 var inputBussinessSingleRepo = LazyGetRequiredService<Domain.CodeGroup.ICodeGroupRepository>();
                 var inputBussinessSingleRowsIds = inputBussinessSingleRows.Select(s => s.InputBussinessSingle).Distinct().ToList();
-                var inputBussinessSingleRowsIdsData = await inputBussinessSingleRepo.Where(s => inputBussinessSingleRowsIds.Contains(s.Id)).ToListAsync(s => new { s.Id, s.Title });
+                var inputBussinessSingleRowsIdsData = await inputBussinessSingleRepo.Where(s => inputBussinessSingleRowsIds.Contains(s.Id)).ToListAsync(s => new { s.Id, s.Name });
                 inputBussinessSingleRows.ForEach(s =>
                 {
-                    s.InputBussinessSingle_Text = inputBussinessSingleRowsIdsData.FirstOrDefault(s2 => s2.Id == s.InputBussinessSingle)?.Title;
+                    s.InputBussinessSingle_Text = inputBussinessSingleRowsIdsData.FirstOrDefault(s2 => s2.Id == s.InputBussinessSingle)?.Name;
                 });
             }
             //数据转换-多个关联
@@ -120,10 +120,10 @@ namespace ZhonTai.Module.Dev.Services.CodeGroupDemo
             {
                 var inputBussinessMultipleRepo = LazyGetRequiredService<Domain.CodeGroup.ICodeGroupRepository>();
                 var inputBussinessMultipleRowsIds =inputBussinessMultipleRows.SelectMany(s => s.InputBussinessMultiple_Values).Select(s => long.TryParse(s, out long s2) ? s2 : 0).Distinct().ToList();
-                var inputBussinessMultipleRowsIdsData = await inputBussinessMultipleRepo.Where(s => inputBussinessMultipleRowsIds.Contains(s.Id)).ToListAsync(s => new { s.Id, s.Title });
+                var inputBussinessMultipleRowsIdsData = await inputBussinessMultipleRepo.Where(s => inputBussinessMultipleRowsIds.Contains(s.Id)).ToListAsync(s => new { s.Id, s.Name });
                 inputBussinessMultipleRows.ForEach(s =>
                 {
-                    s.InputBussinessMultiple_Texts = inputBussinessMultipleRowsIdsData.Where(s2 => s.InputBussinessMultiple_Values.Contains(s2.Id.ToString())).OrderBy(s2 => s.InputBussinessMultiple_Values.IndexOf(s2.Id.ToString())).Select(s2 => s2.Title).ToList();
+                    s.InputBussinessMultiple_Texts = inputBussinessMultipleRowsIdsData.Where(s2 => s.InputBussinessMultiple_Values.Contains(s2.Id.ToString())).OrderBy(s2 => s.InputBussinessMultiple_Values.IndexOf(s2.Id.ToString())).Select(s2 => s2.Name).ToList();
                 });
             }
 

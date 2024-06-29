@@ -141,7 +141,7 @@
             @if (queryColumns.Count() > 0)
             {
             @:<el-form-item>
-            @:  <el-button type="default" icon="ele-Search" @(at)click="onQuery">查询</el-button>
+            @:  <el-button type="primary" icon="ele-Search" @(at)click="onQuery">查询</el-button>
             @:</el-form-item>
             }
           </el-form>
@@ -157,10 +157,10 @@
             @:  <template #dropdown>
             @:    <el-dropdown-menu>
                 if(gen.GenBatchSoftDelete){
-                  @:  <el-dropdown-item v-auth="perms.batSoftDelete" type="warning" :disabled="state.sels.length==0" @(at)click="onBatchSoftDelete" icon="ele-DeleteFilled">批量删除</el-dropdown-item>
+                  @:  <el-dropdown-item v-auth="perms.batSoftDelete" :disabled="state.sels.length==0" @(at)click="onBatchSoftDelete" icon="ele-DeleteFilled">批量删除</el-dropdown-item>
                   }
                   if(gen.GenBatchDelete){
-                  @:  <el-dropdown-item v-auth="perms.batDelete" type="danger" :disabled="state.sels.length==0" @(at)click="onBatchDelete" icon="ele-Delete">批量删除</el-dropdown-item>
+                  @:  <el-dropdown-item v-auth="perms.batDelete"  :disabled="state.sels.length==0" @(at)click="onBatchDelete" icon="ele-Delete">批量删除</el-dropdown-item>
                   }
             @:    </el-dropdown-menu>
             @:  </template>
@@ -287,7 +287,6 @@ import { auth, auths, authAll } from '/@(at)/utils/authFunction'
 
 // 引入组件
 const @(entityNamePc)Form = defineAsyncComponent(() => import('./components/@(entityNameKc)-form.vue'))
-const MyDropdownMore = defineAsyncComponent(() => import('/@(at)/components/my-dropdown-more/index.vue'))
 
 const { proxy } = getCurrentInstance() as any
 

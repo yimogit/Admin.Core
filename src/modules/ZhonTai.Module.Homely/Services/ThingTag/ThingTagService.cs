@@ -59,6 +59,7 @@ namespace ZhonTai.Module.Homely.Services.ThingTag
         public async Task<IEnumerable<ThingTagGetListOutput>> GetListAsync(ThingTagGetListInput input)
         {
             var list = await _thingTagRepository.Select
+                .WhereIf(!string.IsNullOrEmpty(input.Name), a=>a.Name == input.Name)
                 .OrderByDescending(a => a.Id)
                 .ToListAsync<ThingTagGetListOutput>();
             return list;
@@ -74,6 +75,7 @@ namespace ZhonTai.Module.Homely.Services.ThingTag
             var filter = input.Filter;
             var list = await _thingTagRepository.Select
                 .WhereDynamicFilter(input.DynamicFilter)
+                .WhereIf(filter !=null && !string.IsNullOrEmpty(filter.Name), a=> a.Name != null && a.Name.Contains(filter.Name))
                 .Count(out var total)
                 .OrderByDescending(c => c.Id)
                 .Page(input.CurrentPage, input.PageSize)

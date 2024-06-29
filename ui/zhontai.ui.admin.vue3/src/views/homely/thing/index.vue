@@ -1,29 +1,36 @@
 ﻿<template>
 <div class="my-layout">
-    <el-card class="mt8 search-box" shadow="never" :body-style="{ paddingBottom: '0' }">
-      <el-form :inline="true" @submit.stop.prevent>
-        <el-form-item class="search-box-item">
-          <el-input clearable  v-model="state.filter.name" placeholder="物品名称" @keyup.enter="onQuery" >
-          </el-input>
-        </el-form-item>
-        <el-form-item class="search-box-item">
-          <el-date-picker clearable  v-model="state.filter.availableDate" placeholder="有效期" @keyup.enter="onQuery" >
-          </el-date-picker>
-        </el-form-item>
-        <el-form-item class="search-box-item">
-          <el-input clearable  type="textarea"  v-model="state.filter.remark" placeholder="备注" @keyup.enter="onQuery" >
-          </el-input>
-        </el-form-item>
-        <el-form-item>
-          <el-button type="primary" icon="ele-Search" @click="onQuery">查询</el-button>
-        </el-form-item>
-        <el-form-item>
+    <el-card class="mt8 search-box" shadow="never">
+      <el-row>
+        <el-col :span="18">
+          <el-form :inline="true" @submit.stop.prevent>
+            <el-form-item class="search-box-item">
+              <el-input clearable  v-model="state.filter.name" placeholder="物品名称" @keyup.enter="onQuery" >
+              </el-input>
+            </el-form-item>
+            <el-form-item class="search-box-item">
+              <el-date-picker clearable  v-model="state.filter.availableDate" placeholder="有效期" @keyup.enter="onQuery" >
+              </el-date-picker>
+            </el-form-item>
+            <el-form-item>
+              <el-button type="primary" icon="ele-Search" @click="onQuery">查询</el-button>
+            </el-form-item>
+          </el-form>
+        </el-col>
+        <el-col :span="6" class="text-right">
+          <el-space>
           <el-button type="primary" icon="ele-Plus" @click="onAdd">新增</el-button>
-        </el-form-item>
-          <el-form-item v-auths="[perms.batDelete, perms.batSoftDelete]" >
-            <el-button v-auth="perms.batSoftDelete" type="warning" :disabled="state.sels.length==0" :placement="'bottom-end'" @click="onBatchSoftDelete" icon="ele-DeleteFilled">批量删除</el-button>
-          </el-form-item>
-      </el-form>
+            <el-dropdown :placement="'bottom-end'">
+              <el-button type="warning">批量操作 <el-icon><ele-ArrowDown /></el-icon></el-button>
+              <template #dropdown>
+                <el-dropdown-menu>
+                    <el-dropdown-item v-auth="perms.batSoftDelete" :disabled="state.sels.length==0" @click="onBatchSoftDelete" icon="ele-DeleteFilled">批量删除</el-dropdown-item>
+                </el-dropdown-menu>
+              </template>
+            </el-dropdown>
+          </el-space>
+        </el-col>
+      </el-row>
     </el-card>
 
     <el-card class="my-fill mt8" shadow="never">
@@ -31,6 +38,15 @@
         
           <el-table-column type="selection" width="50" />
           <el-table-column prop="name" label="物品名称" show-overflow-tooltip width />
+          <el-table-column prop="categoryId_Text" label="分类" show-overflow-tooltip width />
+          <el-table-column prop="availableDate" label="有效期" show-overflow-tooltip width />
+          <el-table-column prop="sort" label="排序" show-overflow-tooltip width />
+          <el-table-column prop="tagIds_Texts" label="标签" show-overflow-tooltip width >
+            <template #default="{ row }">
+              {{ row.tagIds_Texts ? row.tagIds_Texts.join(',') : '' }}
+            </template>
+          </el-table-column>
+          <el-table-column prop="remark" label="备注" show-overflow-tooltip width />
           <el-table-column prop="imageUrl" label="图片" show-overflow-tooltip width >
             <template #default="{ row }">
              <div class="my-flex">
@@ -41,15 +57,6 @@
                </div>
              </div>
            </template>
-          </el-table-column>
-          <el-table-column prop="availableDate" label="有效期" show-overflow-tooltip width />
-          <el-table-column prop="remark" label="备注" show-overflow-tooltip width />
-          <el-table-column prop="sort" label="排序" show-overflow-tooltip width />
-          <el-table-column prop="categoryId_Text" label="分类" show-overflow-tooltip width />
-          <el-table-column prop="tagIds_Texts" label="标签" show-overflow-tooltip width >
-            <template #default="{ row }">
-              {{ row.tagIds_Texts ? row.tagIds_Texts.join(',') : '' }}
-            </template>
           </el-table-column>
           <el-table-column v-auths="[perms.update,perms.softDelete,perms.delete]" label="操作" :width="actionColWidth" fixed="right">
             <template #default="{ row }">
@@ -97,7 +104,6 @@ import { auth, auths, authAll } from '/@/utils/authFunction'
 
 // 引入组件
 const ThingForm = defineAsyncComponent(() => import('./components/thing-form.vue'))
-const MyDropdownMore = defineAsyncComponent(() => import('/@/components/my-dropdown-more/index.vue'))
 
 const { proxy } = getCurrentInstance() as any
 
@@ -123,7 +129,6 @@ const state = reactive({
   filter: {
     name: null,
     availableDate: null,
-    remark: null,
   } as ThingGetPageInput | ThingGetListInput,
   pageInput: {
     currentPage: 1,

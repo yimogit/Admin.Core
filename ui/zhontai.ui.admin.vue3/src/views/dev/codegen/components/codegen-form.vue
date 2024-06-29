@@ -25,7 +25,7 @@
             <el-radio-button label="field">字段配置</el-radio-button>
           </el-radio-group>
         </div>
-        <el-form ref="tableInfoFromRef" :model="state.config" label-width="110px" label-position="right"
+        <el-form ref="tableInfoFromRef" :model="state.config" label-width="auto" label-position="right"
           v-show="state.editor == 'infor'" :rules="editRules">
           <el-row>
             <el-col :xl="8" :lg="8" :md="12" :sm="12" :xs="24">
@@ -109,12 +109,17 @@
 
             <el-col :xl="12" :lg="12" :md="24" :sm="24" :xs="24">
               <el-form-item label="后端输出目录" prop="backendOut">
-                <el-input v-model="state.config.backendOut" required></el-input>
+                <el-input v-model="state.config.backendOut" required placeholder="后端实体，仓储，服务代码目录"></el-input>
               </el-form-item>
             </el-col>
             <el-col :xl="12" :lg="12" :md="24" :sm="24" :xs="24">
               <el-form-item label="前端输出目录" prop="frontendOut">
-                <el-input v-model="state.config.frontendOut" required></el-input>
+                <el-input v-model="state.config.frontendOut" required placeholder="前端视图目录"></el-input>
+              </el-form-item>
+            </el-col>
+            <el-col :xl="12" :lg="12" :md="24" :sm="24" :xs="24">
+              <el-form-item label="脚本输出目录" prop="dbMigrateSqlOut">
+                <el-input v-model="state.config.dbMigrateSqlOut" placeholder="数据库迁移脚本.sql"></el-input>
               </el-form-item>
             </el-col>
             <el-col :xl="24" :lg="24" :md="24" :sm="24" :xs="24">
@@ -519,6 +524,7 @@ const editRules = reactive<FormRules>({
   backendOut: [{ required: true, message: '后端代码生成输出目录不能为空', trigger: 'blur' }],
   /** 前端输出目录 */
   frontendOut: [],
+  dbMigrateSqlOut: [],
   menuAfterText: [],
 })
 const state = reactive({

@@ -67,24 +67,24 @@ namespace ZhonTai.Module.Homely.Services.Thing.Dto
         public DateTime? ModifiedTime { get; set; }
         /// <summary>物品名称</summary>
         public string Name { get; set; }
-        /// <summary>图片</summary>
-        public string? ImageUrl { get; set; }
-        /// <summary>有效期</summary>
-        public DateTime? AvailableDate { get; set; }
-        /// <summary>备注</summary>
-        public string? Remark { get; set; }
-        /// <summary>排序</summary>
-        public int? Sort { get; set; }
         /// <summary>分类</summary>
         public long? CategoryId { get; set; }
         ///<summary>分类显示文本</summary>
         public string? CategoryId_Text { get; set; }
+        /// <summary>有效期</summary>
+        public DateTime? AvailableDate { get; set; }
+        /// <summary>排序</summary>
+        public int? Sort { get; set; }
         /// <summary>标签</summary>
         public string? TagIds { get; set; }
         ///<summary>标签显示文本</summary>
         public List<string>? TagIds_Texts { get; set; }
         ///<summary>页面使用的标签数组</summary>
         public List<string>? TagIds_Values { get { return TagIds?.Split(",", StringSplitOptions.RemoveEmptyEntries).ToList() ?? new List<string>(); } }
+        /// <summary>备注</summary>
+        public string? Remark { get; set; }
+        /// <summary>图片</summary>
+        public string? ImageUrl { get; set; }
     }
     /// <summary>物品列表查询条件输入</summary>
     public partial class ThingGetListInput : ThingGetPageInput {
@@ -95,24 +95,24 @@ namespace ZhonTai.Module.Homely.Services.Thing.Dto
         public long Id { get; set; }
         /// <summary>物品名称</summary>
         public string Name { get; set; }
-        /// <summary>图片</summary>
-        public string? ImageUrl { get; set; }
-        /// <summary>有效期</summary>
-        public DateTime? AvailableDate { get; set; }
-        /// <summary>备注</summary>
-        public string? Remark { get; set; }
-        /// <summary>排序</summary>
-        public int? Sort { get; set; }
         /// <summary>分类</summary>
         public long? CategoryId { get; set; }
         ///<summary>分类显示文本</summary>
         public string? CategoryId_Text { get; set; }
+        /// <summary>有效期</summary>
+        public DateTime? AvailableDate { get; set; }
+        /// <summary>排序</summary>
+        public int? Sort { get; set; }
         /// <summary>标签</summary>
         public string? TagIds { get; set; }
         ///<summary>标签显示文本</summary>
         public List<string>? TagIds_Texts { get; set; }
         ///<summary>页面使用的标签数组</summary>
         public List<string>? TagIds_Values { get { return TagIds?.Split(",", StringSplitOptions.RemoveEmptyEntries).ToList() ?? new List<string>(); } }
+        /// <summary>备注</summary>
+        public string? Remark { get; set; }
+        /// <summary>图片</summary>
+        public string? ImageUrl { get; set; }
     }
 
     /// <summary>物品分页查询结果输出</summary>
@@ -124,24 +124,24 @@ namespace ZhonTai.Module.Homely.Services.Thing.Dto
         public DateTime? ModifiedTime { get; set; }
         /// <summary>物品名称</summary>
         public string Name { get; set; }
-        /// <summary>图片</summary>
-        public string? ImageUrl { get; set; }
-        /// <summary>有效期</summary>
-        public DateTime? AvailableDate { get; set; }
-        /// <summary>备注</summary>
-        public string? Remark { get; set; }
-        /// <summary>排序</summary>
-        public int? Sort { get; set; }
         /// <summary>分类</summary>
         public long? CategoryId { get; set; }
         ///<summary>分类显示文本</summary>
         public string? CategoryId_Text { get; set; }
+        /// <summary>有效期</summary>
+        public DateTime? AvailableDate { get; set; }
+        /// <summary>排序</summary>
+        public int? Sort { get; set; }
         /// <summary>标签</summary>
         public string? TagIds { get; set; }
         ///<summary>标签显示文本</summary>
         public List<string>? TagIds_Texts { get; set; }
         ///<summary>页面使用的标签数组</summary>
         public List<string>? TagIds_Values { get { return TagIds?.Split(",", StringSplitOptions.RemoveEmptyEntries).ToList() ?? new List<string>(); } }
+        /// <summary>备注</summary>
+        public string? Remark { get; set; }
+        /// <summary>图片</summary>
+        public string? ImageUrl { get; set; }
     }
 
     /// <summary>物品分页查询条件输入</summary>
@@ -151,8 +151,6 @@ namespace ZhonTai.Module.Homely.Services.Thing.Dto
         public string? Name { get; set; }
         /// <summary>有效期</summary>       
         public DateTime? AvailableDate { get; set; }
-        /// <summary>备注</summary>       
-        public string? Remark { get; set; }
     }
     
     /// <summary>物品新增输入</summary>
@@ -160,20 +158,20 @@ namespace ZhonTai.Module.Homely.Services.Thing.Dto
         /// <summary>物品名称</summary>
         [Required(ErrorMessage = "物品名称不能为空")]
         public string Name { get; set; }                                                    
-        /// <summary>图片</summary>
-        public string? ImageUrl { get; set; }                                                    
-        /// <summary>有效期</summary>
-        public DateTime? AvailableDate { get; set; }                                                    
-        /// <summary>备注</summary>
-        public string? Remark { get; set; }                                                    
-        /// <summary>排序</summary>
-        public int? Sort { get; set; }                                                    
         /// <summary>分类</summary>
         public long? CategoryId { get; set; }                                                    
+        /// <summary>有效期</summary>
+        public DateTime? AvailableDate { get; set; }                                                    
+        /// <summary>排序</summary>
+        public int? Sort { get; set; }                                                    
         /// <summary>标签</summary>
         public string? TagIds { get { return string.Join(',', TagIds_Values ?? new List<string>()); } }
         ///<summary>页面提交的标签数组</summary>
         public List<string>? TagIds_Values { get; set; }                                                    
+        /// <summary>备注</summary>
+        public string? Remark { get; set; }                                                    
+        /// <summary>图片</summary>
+        public string? ImageUrl { get; set; }                                                    
     }
 
 
@@ -183,20 +181,20 @@ namespace ZhonTai.Module.Homely.Services.Thing.Dto
         /// <summary>物品名称</summary>
         [Required(ErrorMessage = "物品名称不能为空")]
         public string Name { get; set; }
-        /// <summary>图片</summary>
-        public string? ImageUrl { get; set; }
-        /// <summary>有效期</summary>
-        public DateTime? AvailableDate { get; set; }
-        /// <summary>备注</summary>
-        public string? Remark { get; set; }
-        /// <summary>排序</summary>
-        public int? Sort { get; set; }
         /// <summary>分类</summary>
         public long? CategoryId { get; set; }
+        /// <summary>有效期</summary>
+        public DateTime? AvailableDate { get; set; }
+        /// <summary>排序</summary>
+        public int? Sort { get; set; }
         /// <summary>标签</summary>
         public string? TagIds { get { return string.Join(',', TagIds_Values ?? new List<string>()); } }
         ///<summary>页面提交的标签数组</summary>
         public List<string>? TagIds_Values { get; set; }
+        /// <summary>备注</summary>
+        public string? Remark { get; set; }
+        /// <summary>图片</summary>
+        public string? ImageUrl { get; set; }
     }
 
 

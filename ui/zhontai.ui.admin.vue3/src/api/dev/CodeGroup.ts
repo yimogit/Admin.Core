@@ -28,25 +28,6 @@ export class CodeGroupApi<SecurityDataType = unknown> extends HttpClient<Securit
    * No description
    *
    * @tags code-group
-   * @name Add
-   * @summary 新增
-   * @request POST:/api/dev/code-group/add
-   * @secure
-   */
-  add = (data: CodeGroupAddInput, params: RequestParams = {}) =>
-    this.request<ResultOutputInt64, any>({
-      path: `/api/dev/code-group/add`,
-      method: 'POST',
-      body: data,
-      secure: true,
-      type: ContentType.Json,
-      format: 'json',
-      ...params,
-    })
-  /**
-   * No description
-   *
-   * @tags code-group
    * @name Get
    * @summary 查询
    * @request GET:/api/dev/code-group/get
@@ -71,6 +52,25 @@ export class CodeGroupApi<SecurityDataType = unknown> extends HttpClient<Securit
    * No description
    *
    * @tags code-group
+   * @name GetList
+   * @summary 列表查询
+   * @request POST:/api/dev/code-group/get-list
+   * @secure
+   */
+  getList = (data: CodeGroupGetListInput, params: RequestParams = {}) =>
+    this.request<ResultOutputIEnumerableCodeGroupGetListOutput, any>({
+      path: `/api/dev/code-group/get-list`,
+      method: 'POST',
+      body: data,
+      secure: true,
+      type: ContentType.Json,
+      format: 'json',
+      ...params,
+    })
+  /**
+   * No description
+   *
+   * @tags code-group
    * @name GetPage
    * @summary 分页查询
    * @request POST:/api/dev/code-group/get-page
@@ -79,6 +79,25 @@ export class CodeGroupApi<SecurityDataType = unknown> extends HttpClient<Securit
   getPage = (data: PageInputCodeGroupGetPageInput, params: RequestParams = {}) =>
     this.request<ResultOutputPageOutputCodeGroupGetPageOutput, any>({
       path: `/api/dev/code-group/get-page`,
+      method: 'POST',
+      body: data,
+      secure: true,
+      type: ContentType.Json,
+      format: 'json',
+      ...params,
+    })
+  /**
+   * No description
+   *
+   * @tags code-group
+   * @name Add
+   * @summary 新增
+   * @request POST:/api/dev/code-group/add
+   * @secure
+   */
+  add = (data: CodeGroupAddInput, params: RequestParams = {}) =>
+    this.request<ResultOutputInt64, any>({
+      path: `/api/dev/code-group/add`,
       method: 'POST',
       body: data,
       secure: true,
@@ -125,25 +144,6 @@ export class CodeGroupApi<SecurityDataType = unknown> extends HttpClient<Securit
       method: 'DELETE',
       query: query,
       secure: true,
-      format: 'json',
-      ...params,
-    })
-  /**
-   * No description
-   *
-   * @tags code-group
-   * @name GetList
-   * @summary 列表查询
-   * @request POST:/api/dev/code-group/get-list
-   * @secure
-   */
-  getList = (data: CodeGroupGetListInput, params: RequestParams = {}) =>
-    this.request<ResultOutputIEnumerableCodeGroupGetListOutput, any>({
-      path: `/api/dev/code-group/get-list`,
-      method: 'POST',
-      body: data,
-      secure: true,
-      type: ContentType.Json,
       format: 'json',
       ...params,
     })

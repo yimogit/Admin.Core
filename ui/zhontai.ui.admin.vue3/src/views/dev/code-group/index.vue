@@ -1,25 +1,31 @@
 ﻿<template>
 <div class="my-layout">
-    <el-card class="mt8" shadow="never" :body-style="{ paddingBottom: '0' }">
-      <el-form :inline="true" @submit.stop.prevent>
-        <el-form-item>
-          <el-input clearable  v-model="state.filter.title" placeholder="模板标题" @keyup.enter="onQuery" >
-          </el-input>
-        </el-form-item>
-        <el-form-item>
-          <el-button type="primary" icon="ele-Search" @click="onQuery">查询</el-button>
-        </el-form-item>
-        <el-form-item>
+    <el-card class="mt8 search-box" shadow="never">
+      <el-row>
+        <el-col :span="18">
+          <el-form :inline="true" @submit.stop.prevent>
+            <el-form-item class="search-box-item">
+              <el-input clearable  v-model="state.filter.name" placeholder="模板标题" @keyup.enter="onQuery" >
+              </el-input>
+            </el-form-item>
+            <el-form-item>
+              <el-button type="primary" icon="ele-Search" @click="onQuery">查询</el-button>
+            </el-form-item>
+          </el-form>
+        </el-col>
+        <el-col :span="6" class="text-right">
+          <el-space>
           <el-button type="primary" icon="ele-Plus" @click="onAdd">新增</el-button>
-        </el-form-item>
-      </el-form>
+          </el-space>
+        </el-col>
+      </el-row>
     </el-card>
 
     <el-card class="my-fill mt8" shadow="never">
       <el-table v-loading="state.loading" :data="state.codeGroupListData" row-key="id" height="'100%'" style="width: 100%; height: 100%" @selection-change="selsChange">
         
           <el-table-column type="selection" width="50" />
-          <el-table-column prop="title" label="分组标题" show-overflow-tooltip width />
+          <el-table-column prop="name" label="模板标题" show-overflow-tooltip width />
           <el-table-column prop="remark" label="备注" show-overflow-tooltip width />
           <el-table-column v-auths="[perms.update,perms.softDelete,perms.delete]" label="操作" :width="actionColWidth" fixed="right">
             <template #default="{ row }">
@@ -49,17 +55,17 @@
 </template>
 
 <script lang="ts" setup name="dev/code-group">
-import { ref, reactive, onMounted, getCurrentInstance, onBeforeMount, defineAsyncComponent } from 'vue'
+import { ref, reactive, onMounted, getCurrentInstance, onBeforeMount, defineAsyncComponent, computed } from 'vue'
 import { PageInputCodeGroupGetPageInput, CodeGroupGetPageInput, CodeGroupGetPageOutput, CodeGroupGetOutput, CodeGroupAddInput, CodeGroupUpdateInput,
   CodeGroupGetListInput, CodeGroupGetListOutput,
 } from '/@/api/dev/data-contracts'
 import { CodeGroupApi } from '/@/api/dev/CodeGroup'
+
 import eventBus from '/@/utils/mitt'
 import { auth, auths, authAll } from '/@/utils/authFunction'
 
 // 引入组件
 const CodeGroupForm = defineAsyncComponent(() => import('./components/code-group-form.vue'))
-const MyDropdownMore = defineAsyncComponent(() => import('/@/components/my-dropdown-more/index.vue'))
 
 const { proxy } = getCurrentInstance() as any
 
@@ -83,7 +89,7 @@ const state = reactive({
   total: 0,
   sels: [] as Array<CodeGroupGetPageOutput>,
   filter: {
-    title: null,
+    name: null,
   } as CodeGroupGetPageInput | CodeGroupGetListInput,
   pageInput: {
     currentPage: 1,
@@ -93,6 +99,7 @@ const state = reactive({
 })
 
 onMounted(() => {
+
   onQuery()
   eventBus.off('refreshCodeGroup')
   eventBus.on('refreshCodeGroup', async () => {
@@ -104,6 +111,7 @@ onBeforeMount(() => {
   eventBus.off('refreshCodeGroup')
 })
 
+
 const onQuery = async () => {
   state.loading = true
   state.pageInput.filter = state.filter
@@ -114,6 +122,9 @@ const onQuery = async () => {
   state.codeGroupListData = res?.data?.list ?? []
   state.total = res?.data?.total ?? 0
   state.loading = false
+
+
+
 }
 
 const onAdd = () => {

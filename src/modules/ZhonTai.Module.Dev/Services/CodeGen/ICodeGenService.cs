@@ -9,7 +9,7 @@ public interface ICodeGenService
 {
     Task<BaseDataGetOutput> GetBaseDataAsync();
     Task<IEnumerable<CodeGenGetOutput>> GetTablesAsync(String dbkey);
-    Task<IEnumerable<CodeGenGetOutput>> GetListAsync(String dbkey);
+    Task<IEnumerable<CodeGenGetOutput>> GetListAsync(String dbkey,String tableName);
     Task<CodeGenGetOutput> GetAsync(long id);
     Task UpdateAsync(CodeGenUpdateInput input);
     Task DeleteAsync(long id);

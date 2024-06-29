@@ -9,6 +9,7 @@ public class BaseDataGetOutput
     public String Namespace { get; set; } = "";
     public String BackendOut { get; set; } = "";
     public String FrontendOut { get; set; } = "";
+    public String DbMigrateSqlOut { get; set; } = "";
     public String Usings { get; set; } = "";
     public String MenuAfterText { get; set; } = ""; 
 }

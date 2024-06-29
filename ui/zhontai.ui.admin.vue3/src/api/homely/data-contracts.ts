@@ -257,29 +257,29 @@ export interface ThingAddInput {
    * @minLength 1
    */
   name: string
-  /** 图片 */
-  imageUrl?: string | null
-  /**
-   * 有效期
-   * @format date-time
-   */
-  availableDate?: string | null
-  /** 备注 */
-  remark?: string | null
-  /**
-   * 排序
-   * @format int32
-   */
-  sort?: number | null
   /**
    * 分类
    * @format int64
    */
   categoryId?: number | null
+  /**
+   * 有效期
+   * @format date-time
+   */
+  availableDate?: string | null
+  /**
+   * 排序
+   * @format int32
+   */
+  sort?: number | null
   /** 标签 */
   tagIds?: string | null
   /** 页面提交的标签数组 */
   tagIds_Values?: string[] | null
+  /** 备注 */
+  remark?: string | null
+  /** 图片 */
+  imageUrl?: string | null
 }
 
 /** 物品分类新增输入 */
@@ -384,8 +384,6 @@ export interface ThingGetListInput {
    * @format date-time
    */
   availableDate?: string | null
-  /** 备注 */
-  remark?: string | null
 }
 
 /** 物品列表查询结果输出 */
@@ -400,20 +398,6 @@ export interface ThingGetListOutput {
   modifiedTime?: string | null
   /** 物品名称 */
   name?: string | null
-  /** 图片 */
-  imageUrl?: string | null
-  /**
-   * 有效期
-   * @format date-time
-   */
-  availableDate?: string | null
-  /** 备注 */
-  remark?: string | null
-  /**
-   * 排序
-   * @format int32
-   */
-  sort?: number | null
   /**
    * 分类
    * @format int64
@@ -421,12 +405,26 @@ export interface ThingGetListOutput {
   categoryId?: number | null
   /** 分类显示文本 */
   categoryId_Text?: string | null
+  /**
+   * 有效期
+   * @format date-time
+   */
+  availableDate?: string | null
+  /**
+   * 排序
+   * @format int32
+   */
+  sort?: number | null
   /** 标签 */
   tagIds?: string | null
   /** 标签显示文本 */
   tagIds_Texts?: string[] | null
   /** 页面使用的标签数组 */
   tagIds_Values?: string[] | null
+  /** 备注 */
+  remark?: string | null
+  /** 图片 */
+  imageUrl?: string | null
 }
 
 /** 物品查询结果输出 */
@@ -435,20 +433,6 @@ export interface ThingGetOutput {
   id?: number
   /** 物品名称 */
   name?: string | null
-  /** 图片 */
-  imageUrl?: string | null
-  /**
-   * 有效期
-   * @format date-time
-   */
-  availableDate?: string | null
-  /** 备注 */
-  remark?: string | null
-  /**
-   * 排序
-   * @format int32
-   */
-  sort?: number | null
   /**
    * 分类
    * @format int64
@@ -456,12 +440,26 @@ export interface ThingGetOutput {
   categoryId?: number | null
   /** 分类显示文本 */
   categoryId_Text?: string | null
+  /**
+   * 有效期
+   * @format date-time
+   */
+  availableDate?: string | null
+  /**
+   * 排序
+   * @format int32
+   */
+  sort?: number | null
   /** 标签 */
   tagIds?: string | null
   /** 标签显示文本 */
   tagIds_Texts?: string[] | null
   /** 页面使用的标签数组 */
   tagIds_Values?: string[] | null
+  /** 备注 */
+  remark?: string | null
+  /** 图片 */
+  imageUrl?: string | null
 }
 
 /** 物品分页查询条件输入 */
@@ -473,8 +471,6 @@ export interface ThingGetPageInput {
    * @format date-time
    */
   availableDate?: string | null
-  /** 备注 */
-  remark?: string | null
 }
 
 /** 物品分页查询结果输出 */
@@ -489,20 +485,6 @@ export interface ThingGetPageOutput {
   modifiedTime?: string | null
   /** 物品名称 */
   name?: string | null
-  /** 图片 */
-  imageUrl?: string | null
-  /**
-   * 有效期
-   * @format date-time
-   */
-  availableDate?: string | null
-  /** 备注 */
-  remark?: string | null
-  /**
-   * 排序
-   * @format int32
-   */
-  sort?: number | null
   /**
    * 分类
    * @format int64
@@ -510,12 +492,26 @@ export interface ThingGetPageOutput {
   categoryId?: number | null
   /** 分类显示文本 */
   categoryId_Text?: string | null
+  /**
+   * 有效期
+   * @format date-time
+   */
+  availableDate?: string | null
+  /**
+   * 排序
+   * @format int32
+   */
+  sort?: number | null
   /** 标签 */
   tagIds?: string | null
   /** 标签显示文本 */
   tagIds_Texts?: string[] | null
   /** 页面使用的标签数组 */
   tagIds_Values?: string[] | null
+  /** 备注 */
+  remark?: string | null
+  /** 图片 */
+  imageUrl?: string | null
 }
 
 /** 物品标签新增输入 */
@@ -533,7 +529,10 @@ export interface ThingTagAddInput {
 }
 
 /** 物品标签列表查询条件输入 */
-export type ThingTagGetListInput = object
+export interface ThingTagGetListInput {
+  /** 标签名称 */
+  name?: string | null
+}
 
 /** 物品标签列表查询结果输出 */
 export interface ThingTagGetListOutput {
@@ -568,7 +567,10 @@ export interface ThingTagGetOutput {
 }
 
 /** 物品标签分页查询条件输入 */
-export type ThingTagGetPageInput = object
+export interface ThingTagGetPageInput {
+  /** 标签名称 */
+  name?: string | null
+}
 
 /** 物品标签分页查询结果输出 */
 export interface ThingTagGetPageOutput {
@@ -614,27 +616,27 @@ export interface ThingUpdateInput {
    * @minLength 1
    */
   name: string
-  /** 图片 */
-  imageUrl?: string | null
-  /**
-   * 有效期
-   * @format date-time
-   */
-  availableDate?: string | null
-  /** 备注 */
-  remark?: string | null
-  /**
-   * 排序
-   * @format int32
-   */
-  sort?: number | null
   /**
    * 分类
    * @format int64
    */
   categoryId?: number | null
+  /**
+   * 有效期
+   * @format date-time
+   */
+  availableDate?: string | null
+  /**
+   * 排序
+   * @format int32
+   */
+  sort?: number | null
   /** 标签 */
   tagIds?: string | null
   /** 页面提交的标签数组 */
   tagIds_Values?: string[] | null
+  /** 备注 */
+  remark?: string | null
+  /** 图片 */
+  imageUrl?: string | null
 }
