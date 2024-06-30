@@ -237,7 +237,7 @@ const formRef = ref()
 const state = reactive({
   showDialog: false,
   sureLoading: false,
-  form: {} as @(entityNamePc)AddInput | @(entityNamePc)UpdateInput,
+  form: {} as @(entityNamePc)AddInput | @(entityNamePc)UpdateInput | any,
 @foreach(var incField in includeFieldEntitys){
 @:  select@(incField)ListData: [] as @(incField)GetListOutput[],
 }
