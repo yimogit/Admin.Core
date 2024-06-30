@@ -60,11 +60,11 @@
             </el-card>
           </template>
         </el-table-column>
-        <el-table-column prop="tableName" label="表名称" width="180" fixed></el-table-column>
-        <el-table-column prop="entityName" label="实体名" width="160" fixed></el-table-column>
+        <el-table-column prop="tableName" label="表名称" width="200" fixed></el-table-column>
+        <el-table-column prop="entityName" label="实体名" width="180" fixed></el-table-column>
         <el-table-column prop="namespace" label="命名空间" width="180"></el-table-column>
         <el-table-column prop="dbKey" label="数据源" width="100"></el-table-column>
-        <el-table-column prop="busName" label="业务名" width="100"></el-table-column>
+        <el-table-column prop="busName" label="业务名" width="120"></el-table-column>
         <el-table-column prop="baseEntity" label="基类" width="120"></el-table-column>
         <el-table-column prop="apiAreaName" label="Api分区" width="100"></el-table-column>
         <el-table-column prop="generateType" label="生成方式" width="100">
@@ -117,11 +117,11 @@
         @row-click="dialogTalbeToggleSelection" @row-dblclick="modifyConfig" ref="importDialogTableRef">
         <el-table-column type="selection" width="50" />
         <el-table-column prop="importStatus" label="导入状态" width="120" fixed show-overflow-tooltip></el-table-column>
-        <el-table-column prop="tableName" label="表名称" width="180"></el-table-column>
-        <el-table-column prop="entityName" label="实体名" width="160"></el-table-column>
+        <el-table-column prop="tableName" label="表名称" width="200"></el-table-column>
+        <el-table-column prop="entityName" label="实体名" width="180"></el-table-column>
         <el-table-column prop="dbKey" label="数据源" width="100"></el-table-column>
         <el-table-column prop="namespace" label="命名空间" width="180"></el-table-column>
-        <el-table-column prop="busName" label="业务名" width="100"></el-table-column>
+        <el-table-column prop="busName" label="业务名" width="120"></el-table-column>
         <el-table-column prop="baseEntity" label="基类" width="120"></el-table-column>
         <el-table-column prop="apiAreaName" label="Api分区" width="100"></el-table-column>
         <el-table-column prop="generateType" label="生成方式" width="100">

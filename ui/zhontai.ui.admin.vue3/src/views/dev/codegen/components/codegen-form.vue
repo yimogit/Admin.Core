@@ -147,7 +147,7 @@
                 </el-dropdown>
               </template>
               <template #default="scope">
-                <el-button size="small" type="warning" @click="removeField(scope.row)"> - </el-button>
+                <el-button size="small" type="warning" @click="removeField(scope.row,scope.$index)"> - </el-button>
               </template>
             </el-table-column>
             <el-table-column prop="columnName" label="列名" fixed width="150">
@@ -572,7 +572,7 @@ function _newCol(name: string, title: string, netType: string, options: CodeGenU
     includeEntity: '',
     includeMode: 0,
     includeEntityKey: '',
-    frontendRuleTrigger: 'blur',
+    frontendRuleTrigger: 'blur'
   }
 
   if (options != null) {
@@ -580,7 +580,6 @@ function _newCol(name: string, title: string, netType: string, options: CodeGenU
       col[idx] = options[idx]
     }
   }
-
   return col
 }
 // // 打开对话框
@@ -647,12 +646,13 @@ const appendField = async (fieldType: number) => {
   }
 }
 
-const removeField = async (row: CodeGenFieldGetOutput) => {
+const removeField = async (row: CodeGenFieldGetOutput,index: number) => {
   if (!state.config?.fields) return
   var cols = state.config.fields
-  state.config.fields = cols.filter((item: CodeGenFieldGetOutput) => {
-    return item.id != row.id && item.columnName != row.columnName
-  })
+  state.config.fields.splice(index, 1);
+  // state.config.fields = cols.filter((item: CodeGenFieldGetOutput) => {
+  //   return item.id != row.id && item.columnName != row.columnName
+  // })
 }
 const onCancel = () => {
   state.showDialog = false
