@@ -4,7 +4,7 @@
       <el-row>
         <el-col :span="18">
           <el-form :inline="true" @submit.stop.prevent>
-            <el-form-item class="search-box-item"  label="模板标题">
+            <el-form-item class="search-box-item"  label="模板组名称">
               <el-input  clearable  v-model="state.filter.name" placeholder="" @keyup.enter="onQuery" >
               </el-input>
             </el-form-item>
@@ -25,7 +25,7 @@
       <el-table v-loading="state.loading" :data="state.codeGroupListData" row-key="id" height="'100%'" style="width: 100%; height: 100%" @selection-change="selsChange">
         
           <el-table-column type="selection" width="50" />
-          <el-table-column prop="name" label="模板标题" show-overflow-tooltip width />
+          <el-table-column prop="name" label="模板组名称" show-overflow-tooltip width />
           <el-table-column prop="remark" label="备注" show-overflow-tooltip width />
           <el-table-column v-auths="[perms.update,perms.softDelete,perms.delete]" label="操作" :width="actionColWidth" fixed="right">
             <template #default="{ row }">

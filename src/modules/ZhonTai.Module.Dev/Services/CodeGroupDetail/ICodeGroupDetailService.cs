@@ -136,6 +136,8 @@ namespace ZhonTai.Module.Dev.Services.CodeGroupDetail.Dto
     /// <summary>模板明细分页查询条件输入</summary>
     public partial class CodeGroupDetailGetPageInput {
 
+        /// <summary>模板名称</summary>       
+        public string? Name { get; set; }
         /// <summary>模板分组</summary>       
         public long? GroupId { get; set; }
     }

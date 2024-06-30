@@ -14,7 +14,7 @@ namespace ZhonTai.Module.Dev.Domain.CodeGroup
     public partial class CodeGroupEntity: EntityBase
     {
         /// <summary>
-        /// 模板标题
+        /// 模板组名称
         /// </summary>
         /// <remarks></remarks>
         [Column(StringLength=200)]

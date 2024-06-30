@@ -61,7 +61,7 @@ namespace ZhonTai.Module.Dev.Services.CodeGroup.Dto
         public string CreatedUserName { get; set; }
         public string ModifiedUserName { get; set; }
         public DateTime? ModifiedTime { get; set; }
-        /// <summary>模板标题</summary>
+        /// <summary>模板组名称</summary>
         public string Name { get; set; }
         /// <summary>备注</summary>
         public string? Remark { get; set; }
@@ -73,7 +73,7 @@ namespace ZhonTai.Module.Dev.Services.CodeGroup.Dto
     /// <summary>模板组查询结果输出</summary>
     public partial class CodeGroupGetOutput {
         public long Id { get; set; }
-        /// <summary>模板标题</summary>
+        /// <summary>模板组名称</summary>
         public string Name { get; set; }
         /// <summary>备注</summary>
         public string? Remark { get; set; }
@@ -86,7 +86,7 @@ namespace ZhonTai.Module.Dev.Services.CodeGroup.Dto
         public string CreatedUserName { get; set; }
         public string ModifiedUserName { get; set; }
         public DateTime? ModifiedTime { get; set; }
-        /// <summary>模板标题</summary>
+        /// <summary>模板组名称</summary>
         public string Name { get; set; }
         /// <summary>备注</summary>
         public string? Remark { get; set; }
@@ -95,14 +95,14 @@ namespace ZhonTai.Module.Dev.Services.CodeGroup.Dto
     /// <summary>模板组分页查询条件输入</summary>
     public partial class CodeGroupGetPageInput {
 
-        /// <summary>模板标题</summary>       
+        /// <summary>模板组名称</summary>       
         public string? Name { get; set; }
     }
     
     /// <summary>模板组新增输入</summary>
     public partial class CodeGroupAddInput {
-        /// <summary>模板标题</summary>
-        [Required(ErrorMessage = "模板标题不能为空")]
+        /// <summary>模板组名称</summary>
+        [Required(ErrorMessage = "模板组名称不能为空")]
         public string Name { get; set; }                                                    
         /// <summary>备注</summary>
         public string? Remark { get; set; }                                                    
@@ -112,8 +112,8 @@ namespace ZhonTai.Module.Dev.Services.CodeGroup.Dto
     /// <summary>模板组更新数据输入</summary>
     public partial class CodeGroupUpdateInput {
         public long Id { get; set; }
-        /// <summary>模板标题</summary>
-        [Required(ErrorMessage = "模板标题不能为空")]
+        /// <summary>模板组名称</summary>
+        [Required(ErrorMessage = "模板组名称不能为空")]
         public string Name { get; set; }
         /// <summary>备注</summary>
         public string? Remark { get; set; }

@@ -4,6 +4,10 @@
       <el-row>
         <el-col :span="18">
           <el-form :inline="true" @submit.stop.prevent>
+            <el-form-item class="search-box-item"  label="模板名称">
+              <el-input  clearable  v-model="state.filter.name" placeholder="" @keyup.enter="onQuery" >
+              </el-input>
+            </el-form-item>
             <el-form-item class="search-box-item"  label="模板分组">
               <el-select  clearable  v-model="state.filter.groupId" placeholder="" @keyup.enter="onQuery" >
                 <el-option v-for="item in state.selectCodeGroupListData" :key="item.id" :value="item.id" :label="item.name" />
@@ -107,6 +111,7 @@ const state = reactive({
   total: 0,
   sels: [] as Array<CodeGroupDetailGetPageOutput>,
   filter: {
+    name: null,
     groupId: null,
   } as CodeGroupDetailGetPageInput | CodeGroupDetailGetListInput,
   pageInput: {

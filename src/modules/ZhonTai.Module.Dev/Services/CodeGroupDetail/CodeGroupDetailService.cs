@@ -59,6 +59,7 @@ namespace ZhonTai.Module.Dev.Services.CodeGroupDetail
         public async Task<IEnumerable<CodeGroupDetailGetListOutput>> GetListAsync(CodeGroupDetailGetListInput input)
         {
             var list = await _codeGroupDetailRepository.Select
+                .WhereIf(!string.IsNullOrEmpty(input.Name), a=>a.Name == input.Name)
                 .WhereIf(input.GroupId != null, a=>a.GroupId == input.GroupId)
                 .OrderByDescending(a => a.Id)
                 .ToListAsync<CodeGroupDetailGetListOutput>();
@@ -75,6 +76,7 @@ namespace ZhonTai.Module.Dev.Services.CodeGroupDetail
             var filter = input.Filter;
             var list = await _codeGroupDetailRepository.Select
                 .WhereDynamicFilter(input.DynamicFilter)
+                .WhereIf(filter !=null && !string.IsNullOrEmpty(filter.Name), a=> a.Name != null && a.Name.Contains(filter.Name))
                 .WhereIf(filter !=null && filter.GroupId != null, a=>a.GroupId == filter.GroupId)
                 .Count(out var total)
                 .OrderByDescending(c => c.Id)

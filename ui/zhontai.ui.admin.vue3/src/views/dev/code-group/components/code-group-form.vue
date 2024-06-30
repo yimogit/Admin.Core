@@ -5,7 +5,7 @@
       <el-form ref="formRef" :model="form" size="default" label-width="auto">
         <el-row :gutter="20">
         <el-col :span="12">
-           <el-form-item label="模板标题" prop="name" v-show="editItemIsShow(true, true)">
+           <el-form-item label="模板组名称" prop="name" v-show="editItemIsShow(true, true)">
              <el-input  v-model="state.form.name" placeholder="" >
              </el-input>
            </el-form-item>
