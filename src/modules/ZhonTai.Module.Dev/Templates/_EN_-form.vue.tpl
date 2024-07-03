@@ -151,7 +151,7 @@
   <div>
     <el-dialog v-model="state.showDialog" :title="title" draggable destroy-on-close :close-on-click-modal="false"
       :close-on-press-escape="false" class="my-dialog-form">
-      <el-form ref="formRef" :model="form" size="default" label-width="auto">
+      <el-form ref="formRef" :model="form" size="default" label-width="auto" @(at)submit="onSure">
         <el-row :gutter="20">
       @foreach(var col in gen.Fields.Where(w=>!w.IsIgnoreColumn() && ( w.WhetherAdd || w.WhetherUpdate )))
       {
