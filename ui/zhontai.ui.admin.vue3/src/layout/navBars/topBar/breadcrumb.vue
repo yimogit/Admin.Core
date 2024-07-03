@@ -31,6 +31,8 @@ import other from '/@/utils/other'
 import { storeToRefs } from 'pinia'
 import { useThemeConfig } from '/@/stores/themeConfig'
 import { useRoutesList } from '/@/stores/routesList'
+import { filterTree, treeToList } from '/@/utils/tree'
+import { cloneDeep } from 'lodash-es'
 
 // 定义变量内容
 const stores = useRoutesList()
@@ -69,14 +71,36 @@ const setLocalThemeConfig = () => {
   Local.set('themeConfig', themeConfig.value)
 }
 // 处理面包屑数据
-const getBreadcrumbList = (arr: RouteItems) => {
+const getBreadcrumbList = (arr: RouteItems, path: string) => {
+  //第一次初始化时执行时,避免使用路由查找时重复执行
+  if (state.routeSplitIndex == 1) {
+    //优先使用菜单判断面包屑显示，如果找不到匹配的路由菜单，则执行旧的逻辑使用地址判断
+    let routeTree = filterTree(cloneDeep(arr), path, {
+      children: 'children',
+      filterWhere: (item: any, filterword: string) => {
+        return item.path?.toLocaleLowerCase().indexOf(filterword) > -1
+      },
+    })
+    if (routeTree.length > 0) {
+      //查找第一个匹配的路由，将其展开添加到面包屑中
+      const routeArr = treeToList([routeTree[0]])
+      if (routeArr.length > 0) {
+        routeArr.forEach((item: RouteItem, k: number) => {
+          !state.breadcrumbList.find((a) => a.path === item.path) && state.breadcrumbList.push(item)
+        })
+        //匹配不到再使用路径去匹配
+        if (state.breadcrumbList.length > 0) return
+      }
+    }
+  }
+  //不存在则使用顶级的分类
   arr.forEach((item: RouteItem) => {
     state.routeSplit.forEach((v: string, k: number, arrs: string[]) => {
       if (state.routeSplitFirst === item.path) {
         state.routeSplitFirst += `/${arrs[state.routeSplitIndex]}`
         !state.breadcrumbList.find((a) => a.path === item.path) && state.breadcrumbList.push(item)
         state.routeSplitIndex++
-        if (item.children) getBreadcrumbList(item.children)
+        if (item.children) getBreadcrumbList(item.children, path)
       }
     })
   })
@@ -89,7 +113,7 @@ const initRouteSplit = (toRoute: RouteLocationNormalized) => {
   state.routeSplit.shift()
   state.routeSplitFirst = `/${state.routeSplit[0]}`
   state.routeSplitIndex = 1
-  getBreadcrumbList(routesList.value)
+  getBreadcrumbList(routesList.value, toRoute.path)
   if (toRoute.name === 'home' || (toRoute.name === 'notFound' && state.breadcrumbList.length > 1)) state.breadcrumbList.shift()
   if (state.breadcrumbList.length > 0)
     state.breadcrumbList[state.breadcrumbList.length - 1].meta.tagsViewName = other.setTagsViewNameI18n(<RouteToFrom>route)

@@ -192,6 +192,21 @@
             分组名称列表
             </summary>
         </member>
+        <member name="T:ZhonTai.Admin.Core.Attributes.InjectScopedAttribute">
+            <summary>
+            作用域注入
+            </summary>
+        </member>
+        <member name="T:ZhonTai.Admin.Core.Attributes.InjectSingletonAttribute">
+            <summary>
+            单例注入
+            </summary>
+        </member>
+        <member name="T:ZhonTai.Admin.Core.Attributes.InjectTransientAttribute">
+            <summary>
+            瞬时注入
+            </summary>
+        </member>
         <member name="T:ZhonTai.Admin.Core.Attributes.LoginAttribute">
             <summary>
             启用登录
@@ -610,7 +625,32 @@
         </member>
         <member name="P:ZhonTai.Admin.Core.Configs.AppConfig.Lang">
             <summary>
+            语言配置
+            </summary>
+        </member>
+        <member name="T:ZhonTai.Admin.Core.Configs.LangConfig">
+            <summary>
+            语言配置
+            </summary>
+        </member>
+        <member name="P:ZhonTai.Admin.Core.Configs.LangConfig.Enable">
+            <summary>
+            启用
+            </summary>
+        </member>
+        <member name="P:ZhonTai.Admin.Core.Configs.LangConfig.DefaultLang">
+            <summary>
             默认语言
+            </summary>
+        </member>
+        <member name="P:ZhonTai.Admin.Core.Configs.LangConfig.Langs">
+            <summary>
+            语言列表
+            </summary>
+        </member>
+        <member name="P:ZhonTai.Admin.Core.Configs.LangConfig.RequestCultureProviders">
+            <summary>
+            语言请求解析列表
             </summary>
         </member>
         <member name="T:ZhonTai.Admin.Core.Configs.SwaggerConfig">
@@ -2268,6 +2308,21 @@
             异常中间件
             </summary>
         </member>
+        <member name="T:ZhonTai.Admin.Core.ModuleInfo">
+            <summary>
+            模块信息
+            </summary>
+        </member>
+        <member name="P:ZhonTai.Admin.Core.ModuleInfo.Assembly">
+            <summary>
+            任务层程序集
+            </summary>
+        </member>
+        <member name="P:ZhonTai.Admin.Core.ModuleInfo.LocalizerType">
+            <summary>
+            多语言文件类型
+            </summary>
+        </member>
         <member name="M:ZhonTai.Admin.Core.RegisterModules.ControllerModule.#ctor">
             <summary>
             控制器注入
@@ -2278,15 +2333,14 @@
             注册到第三方IOC容器
             </summary>
         </member>
+        <member name="T:ZhonTai.Admin.Core.RegisterModules.LifecycleModule">
+            <summary>
+            生命周期注入
+            </summary>
+        </member>
         <member name="M:ZhonTai.Admin.Core.RegisterModules.RegisterModule.#ctor(ZhonTai.Admin.Core.Configs.AppConfig)">
             <summary>
             模块注入
-            </summary>
-            <param name="appConfig">AppConfig</param>
-        </member>
-        <member name="M:ZhonTai.Admin.Core.RegisterModules.SingleInstanceModule.#ctor(ZhonTai.Admin.Core.Configs.AppConfig)">
-            <summary>
-            单例注入
             </summary>
             <param name="appConfig">AppConfig</param>
         </member>
@@ -4441,6 +4495,11 @@
             </summary>
             <param name="idList"></param>
             <returns></returns>
+        </member>
+        <member name="T:ZhonTai.Admin.Resources.AdminLocalizer">
+            <summary>
+            Admin国际化
+            </summary>
         </member>
         <member name="T:ZhonTai.Admin.Services.Api.ApiService">
             <summary>

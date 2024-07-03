@@ -1,32 +1,33 @@
-﻿using System.Linq;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Linq.Expressions;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Identity;
+using Yitter.IdGenerator;
 using ZhonTai.Admin.Core.Attributes;
-using ZhonTai.Common.Helpers;
+using ZhonTai.Admin.Core.Consts;
+using ZhonTai.Admin.Core.Configs;
 using ZhonTai.Admin.Core.Dto;
+using ZhonTai.Admin.Core.Helpers;
 using ZhonTai.Admin.Domain.Role;
 using ZhonTai.Admin.Domain.RolePermission;
 using ZhonTai.Admin.Domain.Tenant;
 using ZhonTai.Admin.Domain.User;
 using ZhonTai.Admin.Domain.UserRole;
-using ZhonTai.Admin.Services.Tenant.Dto;
 using ZhonTai.Admin.Domain.Tenant.Dto;
-using ZhonTai.DynamicApi;
-using ZhonTai.DynamicApi.Attributes;
-using ZhonTai.Admin.Core.Consts;
-using ZhonTai.Admin.Core.Configs;
 using ZhonTai.Admin.Domain.Org;
 using ZhonTai.Admin.Domain.UserStaff;
 using ZhonTai.Admin.Domain.UserOrg;
-using Microsoft.AspNetCore.Identity;
-using System.Linq.Expressions;
-using System;
-using System.Collections.Generic;
-using Yitter.IdGenerator;
 using ZhonTai.Admin.Domain.Pkg;
 using ZhonTai.Admin.Domain.TenantPkg;
+using ZhonTai.Admin.Services.Tenant.Dto;
 using ZhonTai.Admin.Services.Pkg;
-using ZhonTai.Admin.Core.Helpers;
+using ZhonTai.Common.Helpers;
+using ZhonTai.DynamicApi;
+using ZhonTai.DynamicApi.Attributes;
+using ZhonTai.Admin.Resources;
 
 namespace ZhonTai.Admin.Services.Tenant;
 
@@ -49,6 +50,7 @@ public class TenantService : BaseService, ITenantService, IDynamicApi
     private readonly Lazy<IUserOrgRepository> _userOrgRep;
     private readonly Lazy<IPasswordHasher<UserEntity>> _passwordHasher;
     private readonly Lazy<UserHelper> _userHelper;
+    private readonly AdminLocalizer _adminLocalizer;
 
     public TenantService(
         ITenantRepository tenantRep,
@@ -61,7 +63,8 @@ public class TenantService : BaseService, ITenantService, IDynamicApi
         Lazy<IUserStaffRepository> userStaffRep,
         Lazy<IUserOrgRepository> userOrgRep,
         Lazy<IPasswordHasher<UserEntity>> passwordHasher,
-        Lazy<UserHelper> userHelper)
+        Lazy<UserHelper> userHelper,
+        AdminLocalizer adminLocalizer)
     {
         _tenantRep = tenantRep;
         _tenantPkgRep = tenantPkgRep;
@@ -74,6 +77,7 @@ public class TenantService : BaseService, ITenantService, IDynamicApi
         _userOrgRep = userOrgRep;
         _passwordHasher = passwordHasher;
         _userHelper = userHelper;
+        _adminLocalizer = adminLocalizer;
     }
 
     /// <summary>
@@ -155,7 +159,9 @@ public class TenantService : BaseService, ITenantService, IDynamicApi
         }
         _userHelper.Value.CheckPassword(input.Password);
 
-        using var _ = _tenantRep.DataFilter.Disable(FilterNames.Tenant);
+        using var _t = _tenantRep.DataFilter.Disable(FilterNames.Tenant);
+        using var _o = _orgRep.DataFilter.Disable(FilterNames.Tenant);
+        using var _u = _userRep.DataFilter.Disable(FilterNames.Tenant);
 
         var existsOrg = await _orgRep.Select
         .Where(a => (a.Name == input.Name || a.Code == input.Code) && a.ParentId == 0)
@@ -165,12 +171,12 @@ public class TenantService : BaseService, ITenantService, IDynamicApi
         {
             if (existsOrg.Name == input.Name)
             {
-                throw ResultOutput.Exception($"企业名称已存在");
+                throw ResultOutput.Exception(_adminLocalizer["企业名称已存在"]);
             }
 
             if (existsOrg.Code == input.Code)
             {
-                throw ResultOutput.Exception($"企业编码已存在");
+                throw ResultOutput.Exception(_adminLocalizer["企业编码已存在"]);
             }
         }
 
@@ -185,17 +191,17 @@ public class TenantService : BaseService, ITenantService, IDynamicApi
         {
             if (existsUser.UserName == input.UserName)
             {
-                throw ResultOutput.Exception($"企业账号已存在");
+                throw ResultOutput.Exception(_adminLocalizer["企业账号已存在"]);
             }
 
             if (input.Phone.NotNull() && existsUser.Mobile == input.Phone)
             {
-                throw ResultOutput.Exception($"企业手机号已存在");
+                throw ResultOutput.Exception(_adminLocalizer["企业手机号已存在"]);
             }
 
             if (input.Email.NotNull() && existsUser.Email == input.Email)
             {
-                throw ResultOutput.Exception($"企业邮箱已存在");
+                throw ResultOutput.Exception(_adminLocalizer["企业邮箱已存在"]);
             }
         }
 
@@ -341,102 +347,103 @@ public class TenantService : BaseService, ITenantService, IDynamicApi
     /// <returns></returns>
     public async Task UpdateAsync(TenantUpdateInput input)
     {
-        using (_tenantRep.DataFilter.Disable(FilterNames.Tenant))
+        using var _t = _tenantRep.DataFilter.Disable(FilterNames.Tenant);
+        using var _o = _orgRep.DataFilter.Disable(FilterNames.Tenant);
+        using var _u = _userRep.DataFilter.Disable(FilterNames.Tenant);
+
+        var tenant = await _tenantRep.GetAsync(input.Id);
+        if (!(tenant?.Id > 0))
         {
-            var tenant = await _tenantRep.GetAsync(input.Id);
-            if (!(tenant?.Id > 0))
+            throw ResultOutput.Exception(_adminLocalizer["租户不存在"]);
+        }
+
+        var existsOrg = await _orgRep.Select
+            .Where(a => a.Id != tenant.OrgId && a.ParentId == 0 && (a.Name == input.Name || a.Code == input.Code))
+            .FirstAsync(a => new { a.Name, a.Code });
+
+        if (existsOrg != null)
+        {
+            if (existsOrg.Name == input.Name)
             {
-                throw ResultOutput.Exception("租户不存在");
+                throw ResultOutput.Exception(_adminLocalizer["企业名称已存在"]);
             }
 
-            var existsOrg = await _orgRep.Select
-                .Where(a => a.Id != tenant.OrgId && (a.Name == input.Name || a.Code == input.Code))
-                .FirstAsync(a => new { a.Name, a.Code });
-
-            if (existsOrg != null)
+            if (existsOrg.Code == input.Code)
             {
-                if (existsOrg.Name == input.Name)
-                {
-                    throw ResultOutput.Exception($"企业名称已存在");
-                }
+                throw ResultOutput.Exception(_adminLocalizer["企业编码已存在"]);
+            }
+        }
 
-                if (existsOrg.Code == input.Code)
-                {
-                    throw ResultOutput.Exception($"企业编码已存在");
-                }
+        Expression<Func<UserEntity, bool>> where = (a => a.UserName == input.UserName);
+        where = where.Or(input.Phone.NotNull(), a => a.Mobile == input.Phone)
+            .Or(input.Email.NotNull(), a => a.Email == input.Email);
+
+        var existsUser = await _userRep.Select.Where(a => a.Id != tenant.UserId).Where(where)
+            .FirstAsync(a => new { a.Id, a.Name, a.UserName, a.Mobile, a.Email });
+
+        if (existsUser != null)
+        {
+            if (existsUser.UserName == input.UserName)
+            {
+                throw ResultOutput.Exception(_adminLocalizer["企业账号已存在"]);
             }
 
-            Expression<Func<UserEntity, bool>> where = (a => a.UserName == input.UserName);
-            where = where.Or(input.Phone.NotNull(), a => a.Mobile == input.Phone)
-                .Or(input.Email.NotNull(), a => a.Email == input.Email);
-
-            var existsUser = await _userRep.Select.Where(a => a.Id != tenant.UserId).Where(where)
-                .FirstAsync(a => new { a.Id, a.Name, a.UserName, a.Mobile, a.Email });
-
-            if (existsUser != null)
+            if (input.Phone.NotNull() && existsUser.Mobile == input.Phone)
             {
-                if (existsUser.UserName == input.UserName)
-                {
-                    throw ResultOutput.Exception($"企业账号已存在");
-                }
-
-                if (input.Phone.NotNull() && existsUser.Mobile == input.Phone)
-                {
-                    throw ResultOutput.Exception($"企业手机号已存在");
-                }
-
-                if (input.Email.NotNull() && existsUser.Email == input.Email)
-                {
-                    throw ResultOutput.Exception($"企业邮箱已存在");
-                }
+                throw ResultOutput.Exception(_adminLocalizer["企业手机号已存在"]);
             }
 
-            //更新用户
-            await _userRep.UpdateDiy.DisableGlobalFilter(FilterNames.Tenant).SetSource(
-            new UserEntity()
+            if (input.Email.NotNull() && existsUser.Email == input.Email)
             {
-                Id = tenant.UserId,
-                Name = input.RealName,
-                UserName = input.UserName,
-                Mobile = input.Phone,
-                Email = input.Email
-            })
-            .UpdateColumns(a => new { a.Name, a.UserName, a.Mobile, a.Email, a.ModifiedTime }).ExecuteAffrowsAsync();
-
-            //更新部门
-            await _orgRep.UpdateDiy.DisableGlobalFilter(FilterNames.Tenant).SetSource(
-            new OrgEntity()
-            {
-                Id = tenant.OrgId,
-                Name = input.Name,
-                Code = input.Code
-            })
-            .UpdateColumns(a => new { a.Name, a.Code, a.ModifiedTime }).ExecuteAffrowsAsync();
-
-            //更新租户
-            await _tenantRep.UpdateDiy.DisableGlobalFilter(FilterNames.Tenant).SetSource(
-            new TenantEntity()
-            {
-                Id = tenant.Id,
-                Description = input.Description,
-            })
-            .UpdateColumns(a => new { a.Description, a.ModifiedTime }).ExecuteAffrowsAsync();
-
-            //更新租户套餐
-            await _tenantPkgRep.DeleteAsync(a => a.TenantId == tenant.Id);
-            if (input.PkgIds != null && input.PkgIds.Any())
-            {
-                var pkgs = input.PkgIds.Select(pkgId => new TenantPkgEntity
-                {
-                    TenantId = tenant.Id,
-                    PkgId = pkgId
-                }).ToList();
-
-                await _tenantPkgRep.InsertAsync(pkgs);
-
-                //清除租户下所有用户权限缓存
-                await LazyGetRequiredService<PkgService>().ClearUserPermissionsAsync(new List<long> { tenant.Id });
+                throw ResultOutput.Exception(_adminLocalizer["企业邮箱已存在"]);
             }
+        }
+
+        //更新用户
+        await _userRep.UpdateDiy.DisableGlobalFilter(FilterNames.Tenant).SetSource(
+        new UserEntity()
+        {
+            Id = tenant.UserId,
+            Name = input.RealName,
+            UserName = input.UserName,
+            Mobile = input.Phone,
+            Email = input.Email
+        })
+        .UpdateColumns(a => new { a.Name, a.UserName, a.Mobile, a.Email, a.ModifiedTime }).ExecuteAffrowsAsync();
+
+        //更新部门
+        await _orgRep.UpdateDiy.DisableGlobalFilter(FilterNames.Tenant).SetSource(
+        new OrgEntity()
+        {
+            Id = tenant.OrgId,
+            Name = input.Name,
+            Code = input.Code
+        })
+        .UpdateColumns(a => new { a.Name, a.Code, a.ModifiedTime }).ExecuteAffrowsAsync();
+
+        //更新租户
+        await _tenantRep.UpdateDiy.DisableGlobalFilter(FilterNames.Tenant).SetSource(
+        new TenantEntity()
+        {
+            Id = tenant.Id,
+            Description = input.Description,
+        })
+        .UpdateColumns(a => new { a.Description, a.ModifiedTime }).ExecuteAffrowsAsync();
+
+        //更新租户套餐
+        await _tenantPkgRep.DeleteAsync(a => a.TenantId == tenant.Id);
+        if (input.PkgIds != null && input.PkgIds.Any())
+        {
+            var pkgs = input.PkgIds.Select(pkgId => new TenantPkgEntity
+            {
+                TenantId = tenant.Id,
+                PkgId = pkgId
+            }).ToList();
+
+            await _tenantPkgRep.InsertAsync(pkgs);
+
+            //清除租户下所有用户权限缓存
+            await LazyGetRequiredService<PkgService>().ClearUserPermissionsAsync(new List<long> { tenant.Id });
         }
     }
 
@@ -453,7 +460,7 @@ public class TenantService : BaseService, ITenantService, IDynamicApi
             var tenantType = await _tenantRep.Select.WhereDynamic(id).ToOneAsync(a => a.TenantType);
             if (tenantType == TenantType.Platform)
             {
-                throw ResultOutput.Exception("平台租户禁止删除");
+                throw ResultOutput.Exception(_adminLocalizer["平台租户禁止删除"]);
             }
 
             //删除角色权限
@@ -501,7 +508,7 @@ public class TenantService : BaseService, ITenantService, IDynamicApi
             var tenantType = await _tenantRep.Select.WhereDynamic(id).ToOneAsync(a => a.TenantType);
             if (tenantType == TenantType.Platform)
             {
-                throw ResultOutput.Exception("平台租户禁止删除");
+                throw ResultOutput.Exception(_adminLocalizer["平台租户禁止删除"]);
             }
 
             //删除部门
@@ -534,7 +541,7 @@ public class TenantService : BaseService, ITenantService, IDynamicApi
             var tenantType = await _tenantRep.Select.WhereDynamic(ids).ToOneAsync(a => a.TenantType);
             if (tenantType == TenantType.Platform)
             {
-                throw ResultOutput.Exception("平台租户禁止删除");
+                throw ResultOutput.Exception(_adminLocalizer["平台租户禁止删除"]);
             }
 
             //删除部门
@@ -564,7 +571,7 @@ public class TenantService : BaseService, ITenantService, IDynamicApi
         var entity = await _tenantRep.GetAsync(input.TenantId);
         if (entity.TenantType == TenantType.Platform)
         {
-            throw ResultOutput.Exception("平台租户禁止禁用");
+            throw ResultOutput.Exception(_adminLocalizer["平台租户禁止禁用"]);
         }
         entity.Enabled = input.Enabled;
         await _tenantRep.UpdateAsync(entity);

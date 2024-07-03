@@ -12,7 +12,6 @@ using ZhonTai.Admin.Domain.UserOrg;
 using System.Collections.Generic;
 using System.Linq;
 using ZhonTai.Admin.Domain.Role;
-using Microsoft.Extensions.Localization;
 using ZhonTai.Admin.Resources;
 
 namespace ZhonTai.Admin.Services.Org;
@@ -27,13 +26,13 @@ public class OrgService : BaseService, IOrgService, IDynamicApi
     private readonly IOrgRepository _orgRep;
     private readonly IUserOrgRepository _userOrgRep;
     private readonly IRoleOrgRepository _roleOrgRep;
-    private readonly IStringLocalizer<AdminLocalizer> _localizer;
+    private readonly AdminLocalizer _localizer;
 
     public OrgService(
         IOrgRepository orgRep,
         IUserOrgRepository userOrgRep,
         IRoleOrgRepository roleOrgRep,
-        IStringLocalizer<AdminLocalizer> localizer
+        AdminLocalizer localizer
     )
     {
         _orgRep = orgRep;
