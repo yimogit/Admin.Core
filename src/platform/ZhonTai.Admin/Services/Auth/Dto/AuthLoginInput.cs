@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using ZhonTai.Admin.Domain.User;
 
 namespace ZhonTai.Admin.Services.Auth.Dto;
 
@@ -8,10 +9,24 @@ namespace ZhonTai.Admin.Services.Auth.Dto;
 public class AuthLoginInput
 {
     /// <summary>
-    /// 账号
+    /// 用户名
     /// </summary>
-    [Required(ErrorMessage = "用户名不能为空")]
     public string UserName { get; set; }
+
+    /// <summary>
+    /// 手机号
+    /// </summary>
+    public string Mobile { get; set; }
+
+    /// <summary>
+    /// 邮箱地址
+    /// </summary>
+    public string Email { get; set; }
+
+    /// <summary>
+    /// 账号类型
+    /// </summary>
+    public AccountType AccountType { get; set; }
 
     /// <summary>
     /// 密码

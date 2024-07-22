@@ -1,44 +1,46 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using System.Text;
-using System.Security.Claims;
-using System.Threading.Tasks;
+﻿using FreeSql;
+using Lazy.SlideCaptcha.Core.Validator;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.Extensions.Options;
-using Microsoft.IdentityModel.Tokens;
 using Microsoft.IdentityModel.JsonWebTokens;
+using Microsoft.IdentityModel.Tokens;
 using Newtonsoft.Json;
-using ZhonTai.Admin.Core.Auth;
+using Org.BouncyCastle.Utilities.Encoders;
+using System;
+using System.Collections.Generic;
+using System.Diagnostics;
+using System.Linq;
+using System.Security.Claims;
+using System.Text;
+using System.Threading.Tasks;
 using ZhonTai.Admin.Core.Attributes;
+using ZhonTai.Admin.Core.Auth;
+using ZhonTai.Admin.Core.Captcha;
 using ZhonTai.Admin.Core.Configs;
 using ZhonTai.Admin.Core.Consts;
 using ZhonTai.Admin.Core.Dto;
+using ZhonTai.Admin.Core.Helpers;
 using ZhonTai.Admin.Domain.Permission;
-using ZhonTai.Admin.Domain.User;
-using ZhonTai.Admin.Domain.Tenant;
-using ZhonTai.Admin.Services.Auth.Dto;
+using ZhonTai.Admin.Domain.PkgPermission;
 using ZhonTai.Admin.Domain.RolePermission;
+using ZhonTai.Admin.Domain.Tenant;
+using ZhonTai.Admin.Domain.TenantPermission;
+using ZhonTai.Admin.Domain.TenantPkg;
+using ZhonTai.Admin.Domain.User;
 using ZhonTai.Admin.Domain.UserRole;
-using ZhonTai.Admin.Services.LoginLog.Dto;
+using ZhonTai.Admin.Resources;
+using ZhonTai.Admin.Services.Auth.Dto;
 using ZhonTai.Admin.Services.LoginLog;
+using ZhonTai.Admin.Services.LoginLog.Dto;
 using ZhonTai.Admin.Services.User;
 using ZhonTai.Common.Extensions;
 using ZhonTai.Common.Helpers;
 using ZhonTai.DynamicApi;
 using ZhonTai.DynamicApi.Attributes;
-using ZhonTai.Admin.Domain.TenantPermission;
-using ZhonTai.Admin.Core.Captcha;
-using ZhonTai.Admin.Domain.PkgPermission;
-using ZhonTai.Admin.Domain.TenantPkg;
-using FreeSql;
-using Lazy.SlideCaptcha.Core.Validator;
 using static Lazy.SlideCaptcha.Core.ValidateResult;
-using ZhonTai.Admin.Resources;
 
 namespace ZhonTai.Admin.Services.Auth;
 
@@ -56,6 +58,7 @@ public class AuthService : BaseService, IAuthService, IDynamicApi
     private readonly Lazy<IPermissionRepository> _permissionRep;
     private readonly Lazy<IPasswordHasher<UserEntity>> _passwordHasher;
     private readonly Lazy<ISlideCaptcha> _captcha;
+    private readonly UserHelper _userHelper;
     private readonly AdminLocalizer _adminLocalizer;
 
     public AuthService(
@@ -66,6 +69,7 @@ public class AuthService : BaseService, IAuthService, IDynamicApi
         Lazy<IPermissionRepository> permissionRep,
         Lazy<IPasswordHasher<UserEntity>> passwordHasher,
         Lazy<ISlideCaptcha> captcha,
+        UserHelper userHelper,
         AdminLocalizer adminLocalizer
     )
     {
@@ -76,6 +80,7 @@ public class AuthService : BaseService, IAuthService, IDynamicApi
         _permissionRep = permissionRep;
         _passwordHasher = passwordHasher;
         _captcha = captcha;
+        _userHelper = userHelper;
         _adminLocalizer = adminLocalizer;
     }
 
@@ -128,9 +133,19 @@ public class AuthService : BaseService, IAuthService, IDynamicApi
         //写入Redis
         var guid = Guid.NewGuid().ToString("N");
         var key = CacheKeys.PassWordEncrypt + guid;
-        var encyptKey = StringHelper.GenerateRandom(8);
-        await Cache.SetAsync(key, encyptKey, TimeSpan.FromMinutes(5));
-        return new AuthGetPasswordEncryptKeyOutput { Key = guid, EncyptKey = encyptKey };
+        //创建key
+        byte[] keyBytes = Encoding.Default.GetBytes(StringHelper.GenerateRandom(16));
+        string keyHexString = BitConverter.ToString(keyBytes);
+        var encryptKey = keyHexString.Replace("-", "").ToLower();
+        //创建iv
+        byte[] ivBytes = Encoding.Default.GetBytes(StringHelper.GenerateRandom(16));
+        string ivHexString = BitConverter.ToString(ivBytes);
+        var iv = ivHexString.Replace("-", "").ToLower();
+        //输出
+        var passwordKeyOutput= new AuthGetPasswordEncryptKeyOutput { Key = guid, EncryptKey = encryptKey, Iv = iv };
+        //写缓存
+        await Cache.SetAsync(key, passwordKeyOutput, TimeSpan.FromMinutes(5));
+        return passwordKeyOutput;
     }
 
     /// <summary>
@@ -146,13 +161,33 @@ public class AuthService : BaseService, IAuthService, IDynamicApi
         }
 
         var userRep = _userRep.Value;
+        using var _u = userRep.DataFilter.Disable(FilterNames.Self, FilterNames.Data);
 
-        using (userRep.DataFilter.Disable(FilterNames.Self, FilterNames.Data))
+        var profile = await userRep
+        .Where(u => u.Id == User.Id)
+        .FirstAsync(u => new AuthUserProfileDto 
         {
-            var profile = await userRep.GetAsync<AuthUserProfileDto>(User.Id);
+            DeptName = u.Org.Name,
+            CorpName = u.Tenant.Org.Name,
+            Position = u.Staff.Position
+        });
 
-            return profile;
+        var mobile = profile.Mobile?.ToString();
+        string number = string.Empty;
+        if (mobile.NotNull())
+        {
+            number = mobile.Length >= 4 ? mobile.Substring(mobile.Length - 4) : mobile;
         }
+
+        if (number.IsNull())
+        {
+            var userId = User.Id.ToString();
+            number = userId.Length >= 4 ? userId.Substring(userId.Length - 4) : userId;
+        }
+
+        profile.WatermarkText = $"{profile.Name}@{profile.CorpName} {number}";
+            
+        return profile;
     }
    
     /// <summary>
@@ -226,11 +261,7 @@ public class AuthService : BaseService, IAuthService, IDynamicApi
 
         using (userRep.DataFilter.Disable(FilterNames.Self, FilterNames.Data))
         {
-            var authGetUserPermissionsOutput = new AuthGetUserPermissionsOutput
-            {
-                //用户信息
-                User = await userRep.GetAsync<AuthUserProfileDto>(User.Id)
-            };
+            var authGetUserPermissionsOutput = new AuthGetUserPermissionsOutput();
 
             var dotSelect = permissionRep.Select.Where(a => a.Type == PermissionType.Dot);
 
@@ -362,11 +393,6 @@ public class AuthService : BaseService, IAuthService, IDynamicApi
     [NoOprationLog]
     public async Task<dynamic> LoginAsync(AuthLoginInput input)
     {
-        var userRep = _userRep.Value;
-
-        using var _ = userRep.DataFilter.DisableAll();
-        using var __ = userRep.DataFilter.Enable(FilterNames.Delete);
-
         var stopwatch = Stopwatch.StartNew();
 
         #region 验证码校验
@@ -394,12 +420,12 @@ public class AuthService : BaseService, IAuthService, IDynamicApi
             var existsPasswordKey = await Cache.ExistsAsync(passwordEncryptKey);
             if (existsPasswordKey)
             {
-                var secretKey = await Cache.GetAsync(passwordEncryptKey);
-                if (secretKey.IsNull())
+                var secretKey = await Cache.GetAsync<AuthGetPasswordEncryptKeyOutput>(passwordEncryptKey);
+                if (secretKey.EncryptKey.IsNull())
                 {
                     throw ResultOutput.Exception(_adminLocalizer["解密失败"]);
                 }
-                input.Password = DesEncrypt.Decrypt(input.Password, secretKey);
+                input.Password = SM4Encryption.Decrypt(input.Password, Hex.Decode(secretKey.EncryptKey), Hex.Decode(secretKey.Iv), "CBC", true).TrimEnd('\0');//SM4解密后会有\0符号，需要去除。
                 await Cache.DelAsync(passwordEncryptKey);
             }
             else
@@ -411,9 +437,51 @@ public class AuthService : BaseService, IAuthService, IDynamicApi
         #endregion
 
         #region 登录
-        var user = await userRep.Select.Where(a => a.UserName == input.UserName).ToOneAsync();
+        var userRep = _userRep.Value;
+        using var _ = userRep.DataFilter.DisableAll();
+        using var __ = userRep.DataFilter.Enable(FilterNames.Delete);
+
+        UserEntity user = null;
+        switch (input.AccountType)
+        {
+            case AccountType.UserName:
+                {
+                    if (input.UserName.IsNull())
+                    {
+                        throw ResultOutput.Exception(_adminLocalizer["请输入账号"]);
+                    }
+                    user = await userRep.Select.Where(a => a.UserName == input.UserName).ToOneAsync();
+                    break;
+                }
+
+            case AccountType.Mobile:
+                {
+                    if (input.Mobile.IsNull())
+                    {
+                        throw ResultOutput.Exception(_adminLocalizer["请输入手机号"]);
+                    }
+                    user = await userRep.Select.Where(a => a.Mobile == input.Mobile).ToOneAsync();
+                    break;
+                }
+
+            case AccountType.Email:
+                {
+                    if (input.Email.IsNull())
+                    {
+                        throw ResultOutput.Exception(_adminLocalizer["请输入邮箱地址"]);
+                    }
+                    user = await userRep.Select.Where(a => a.Email == input.Email).ToOneAsync();
+                    break;
+                }
+        }
+
         var valid = user?.Id > 0;
-        if(valid)
+        if (!valid)
+        {
+            throw ResultOutput.Exception(_adminLocalizer["账号不存在"]);
+        }
+
+        if (valid)
         {
             if (user.PasswordEncryptType == PasswordEncryptType.PasswordHasher)
             {
@@ -429,7 +497,7 @@ public class AuthService : BaseService, IAuthService, IDynamicApi
             
         if(!valid)
         {
-            throw ResultOutput.Exception(_adminLocalizer["用户名或密码错误"]);
+            throw ResultOutput.Exception(_adminLocalizer["账号或密码错误"]);
         }
 
         if (!user.Enabled)
@@ -474,7 +542,7 @@ public class AuthService : BaseService, IAuthService, IDynamicApi
     }
 
     /// <summary>
-    /// 手机号登录
+    /// 手机登录
     /// </summary>
     /// <param name="input"></param>
     /// <returns></returns>
@@ -555,6 +623,222 @@ public class AuthService : BaseService, IAuthService, IDynamicApi
         #endregion 添加登录日志
 
         return new { token };
+    }
+
+    /// <summary>
+    /// 邮箱登录
+    /// </summary>
+    /// <param name="input"></param>
+    /// <returns></returns>
+    [HttpPost]
+    [AllowAnonymous]
+    [NoOprationLog]
+    public async Task<dynamic> EmailLoginAsync(AuthEmailLoginInput input)
+    {
+        var userRep = _userRep.Value;
+
+        using var _ = userRep.DataFilter.DisableAll();
+        using var __ = userRep.DataFilter.Enable(FilterNames.Delete);
+
+        var stopwatch = Stopwatch.StartNew();
+
+        #region 邮箱验证码验证
+        if (input.CodeId.IsNull() || input.Code.IsNull())
+        {
+            throw ResultOutput.Exception(_adminLocalizer["验证码错误"]);
+        }
+        var codeKey = CacheKeys.GetEmailCodeKey(input.Email, input.CodeId);
+        var code = await Cache.GetAsync(codeKey);
+        if (code.IsNull())
+        {
+            throw ResultOutput.Exception(_adminLocalizer["验证码错误"]);
+        }
+        await Cache.DelAsync(codeKey);
+        if (code != input.Code)
+        {
+            throw ResultOutput.Exception(_adminLocalizer["验证码错误"]);
+        }
+
+        #endregion
+
+        #region 登录
+        var user = await userRep.Select.Where(a => a.Email == input.Email).ToOneAsync();
+        if (!(user?.Id > 0))
+        {
+            throw ResultOutput.Exception(_adminLocalizer["账号不存在"]);
+        }
+
+        if (!user.Enabled)
+        {
+            throw ResultOutput.Exception(_adminLocalizer["账号已停用，禁止登录"]);
+        }
+        #endregion
+
+        #region 获得token
+        var authLoginOutput = Mapper.Map<AuthLoginOutput>(user);
+        if (_appConfig.Value.Value.Tenant)
+        {
+            var tenant = await _tenantRep.Value.Select.WhereDynamic(user.TenantId).ToOneAsync<AuthLoginTenantDto>();
+            if (!(tenant != null && tenant.Enabled))
+            {
+                throw ResultOutput.Exception(_adminLocalizer["企业已停用，禁止登录"]);
+            }
+            authLoginOutput.Tenant = tenant;
+        }
+        string token = GetToken(authLoginOutput);
+        #endregion
+
+        stopwatch.Stop();
+
+        #region 添加登录日志
+
+        var loginLogAddInput = new LoginLogAddInput
+        {
+            TenantId = authLoginOutput.TenantId,
+            Name = authLoginOutput.Name,
+            ElapsedMilliseconds = stopwatch.ElapsedMilliseconds,
+            Status = true,
+            CreatedUserId = authLoginOutput.Id,
+            CreatedUserName = user.UserName,
+        };
+
+        await LazyGetRequiredService<ILoginLogService>().AddAsync(loginLogAddInput);
+
+        #endregion 添加登录日志
+
+        return new { token };
+    }
+
+    /// <summary>
+    /// 邮箱更改密码
+    /// </summary>
+    /// <param name="input"></param>
+    /// <returns></returns>
+    [HttpPost]
+    [AllowAnonymous]
+    [NoOprationLog]
+    public async Task ChangePasswordByEmailAsync(AuthChangePasswordByEmailInput input)
+    {
+        if (input.ConfirmPassword.NotNull() && input.ConfirmPassword != input.NewPassword)
+        {
+            throw ResultOutput.Exception(_adminLocalizer["新密码和确认密码不一致"]);
+        }
+
+        //检查密码格式
+        _userHelper.CheckPassword(input.NewPassword);
+
+        #region 邮箱验证码验证
+
+        if (input.Email.IsNull())
+        {
+            throw ResultOutput.Exception(_adminLocalizer["请输入邮箱地址"]);
+        }
+
+        if (input.CodeId.IsNull() || input.Code.IsNull())
+        {
+            throw ResultOutput.Exception(_adminLocalizer["验证码错误"]);
+        }
+        var codeKey = CacheKeys.GetEmailCodeKey(input.Email, input.CodeId);
+        var code = await Cache.GetAsync(codeKey);
+        if (code.IsNull())
+        {
+            throw ResultOutput.Exception(_adminLocalizer["验证码错误"]);
+        }
+        await Cache.DelAsync(codeKey);
+        if (code != input.Code)
+        {
+            throw ResultOutput.Exception(_adminLocalizer["验证码错误"]);
+        }
+
+        #endregion
+
+        var userRep = _userRep.Value;
+        using var _ = userRep.DataFilter.DisableAll();
+        using var __ = userRep.DataFilter.Enable(FilterNames.Delete);
+
+        UserEntity user = await userRep.Select.Where(a => a.Email == input.Email).ToOneAsync();
+
+        if (user == null) 
+        {
+            throw ResultOutput.Exception(_adminLocalizer["账号不存在"]);
+        }
+
+        if (user.PasswordEncryptType == PasswordEncryptType.PasswordHasher)
+        {
+            user.Password = _passwordHasher.Value.HashPassword(user, input.NewPassword);
+        }
+        else
+        {
+            user.Password = MD5Encrypt.Encrypt32(input.NewPassword);
+        }
+
+        await userRep.UpdateAsync(user);
+    }
+
+    /// <summary>
+    /// 手机更改密码
+    /// </summary>
+    /// <param name="input"></param>
+    /// <returns></returns>
+    [HttpPost]
+    [AllowAnonymous]
+    [NoOprationLog]
+    public async Task ChangePasswordByMobileAsync(AuthChangePasswordByMobileInput input)
+    {
+        if (input.ConfirmPassword.NotNull() && input.ConfirmPassword != input.NewPassword)
+        {
+            throw ResultOutput.Exception(_adminLocalizer["新密码和确认密码不一致"]);
+        }
+
+        //检查密码格式
+        _userHelper.CheckPassword(input.NewPassword);
+
+        #region 短信验证码验证
+
+        if (input.Mobile.IsNull())
+        {
+            throw ResultOutput.Exception(_adminLocalizer["请输入手机号"]);
+        }
+
+        if (input.CodeId.IsNull() || input.Code.IsNull())
+        {
+            throw ResultOutput.Exception(_adminLocalizer["验证码错误"]);
+        }
+        var codeKey = CacheKeys.GetSmsCodeKey(input.Mobile, input.CodeId);
+        var code = await Cache.GetAsync(codeKey);
+        if (code.IsNull())
+        {
+            throw ResultOutput.Exception(_adminLocalizer["验证码错误"]);
+        }
+        await Cache.DelAsync(codeKey);
+        if (code != input.Code)
+        {
+            throw ResultOutput.Exception(_adminLocalizer["验证码错误"]);
+        }
+
+        #endregion
+
+        var userRep = _userRep.Value;
+        using var _ = userRep.DataFilter.DisableAll();
+        using var __ = userRep.DataFilter.Enable(FilterNames.Delete);
+
+        UserEntity user = await userRep.Select.Where(a => a.Mobile == input.Mobile).ToOneAsync();
+
+        if (user == null)
+        {
+            throw ResultOutput.Exception(_adminLocalizer["账号不存在"]);
+        }
+
+        if (user.PasswordEncryptType == PasswordEncryptType.PasswordHasher)
+        {
+            user.Password = _passwordHasher.Value.HashPassword(user, input.NewPassword);
+        }
+        else
+        {
+            user.Password = MD5Encrypt.Encrypt32(input.NewPassword);
+        }
+
+        await userRep.UpdateAsync(user);
     }
 
     /// <summary>

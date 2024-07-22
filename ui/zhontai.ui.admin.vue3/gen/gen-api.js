@@ -23,7 +23,7 @@ const genEnums = async (api) => {
     console.error(error)
   })
 
-  if (res.data?.data?.length > 0) {
+  if (res?.data?.data?.length > 0) {
     ejs.renderFile(path.resolve(__dirname, './templates/enum-contracts.ejs'), res.data, {}, function (err, content) {
       fs.writeFile(path.resolve(api.output + '/enum-contracts.ts'), content, (err) => {})
       console.log(`✅   api file "enum-contracts.ts" created in ${api.output}\n`)
@@ -32,7 +32,9 @@ const genEnums = async (api) => {
 }
 
 apis?.forEach(async (api) => {
-  await genEnums(api)
+  if (api.enumUrl) {
+    await genEnums(api)
+  }
 
   await generateApi({
     output: api.output,

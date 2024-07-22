@@ -182,6 +182,27 @@
             启用权限库事务
             </summary>
         </member>
+        <member name="T:ZhonTai.Admin.Core.Attributes.ApiAccessAttribute">
+            <summary>
+            接口访问
+            </summary>
+        </member>
+        <member name="P:ZhonTai.Admin.Core.Attributes.ApiAccessAttribute.All">
+            <summary>
+            默认 false， 满足任意一个可访问。若设置 true 全部满足可访问
+            </summary>
+        </member>
+        <member name="P:ZhonTai.Admin.Core.Attributes.ApiAccessAttribute.Codes">
+            <summary>
+            权限点
+            </summary>
+        </member>
+        <member name="M:ZhonTai.Admin.Core.Attributes.ApiAccessAttribute.#ctor(System.String[])">
+            <summary>
+            
+            </summary>
+            <param name="codes">权限点</param>
+        </member>
         <member name="T:ZhonTai.Admin.Core.Attributes.ApiGroupAttribute">
             <summary>
             接口分组
@@ -342,12 +363,13 @@
             权限处理接口
             </summary>
         </member>
-        <member name="M:ZhonTai.Admin.Core.Auth.IPermissionHandler.ValidateAsync(System.String,System.String)">
+        <member name="M:ZhonTai.Admin.Core.Auth.IPermissionHandler.ValidateAsync(System.String,System.String,ZhonTai.Admin.Core.Attributes.ApiAccessAttribute)">
             <summary>
             权限验证
             </summary>
             <param name="api"></param>
             <param name="httpMethod"></param>
+            <param name="apiAccess"></param>
             <returns></returns>
         </member>
         <member name="T:ZhonTai.Admin.Core.Auth.IUser">
@@ -410,17 +432,38 @@
             数据权限
             </summary>
         </member>
+        <member name="P:ZhonTai.Admin.Core.Auth.IUser.UserPermission">
+            <summary>
+            用户权限
+            </summary>
+        </member>
+        <member name="M:ZhonTai.Admin.Core.Auth.IUser.HasPermission(System.String)">
+            <summary>
+            检查用户是否拥有某个权限点
+            </summary>
+            <param name="permissionCode">权限点编码</param>
+            <returns></returns>
+        </member>
+        <member name="M:ZhonTai.Admin.Core.Auth.IUser.HasPermissions(System.String[],System.Boolean)">
+            <summary>
+            检查用户是否拥有这些权限点
+            </summary>
+            <param name="permissionCodes">权限点编码列表</param>
+            <param name="all">是否全部满足</param>
+            <returns></returns>
+        </member>
         <member name="T:ZhonTai.Admin.Core.Auth.PermissionHandler">
             <summary>
             权限处理
             </summary>
         </member>
-        <member name="M:ZhonTai.Admin.Core.Auth.PermissionHandler.ValidateAsync(System.String,System.String)">
+        <member name="M:ZhonTai.Admin.Core.Auth.PermissionHandler.ValidateAsync(System.String,System.String,ZhonTai.Admin.Core.Attributes.ApiAccessAttribute)">
             <summary>
             权限验证
             </summary>
             <param name="api">接口路径</param>
             <param name="httpMethod">http请求方法</param>
+            <param name="apiAccess">接口访问</param>
             <returns></returns>
         </member>
         <member name="T:ZhonTai.Admin.Core.Auth.ResponseAuthenticationHandler">
@@ -493,6 +536,32 @@
             <summary>
             数据权限
             </summary>
+        </member>
+        <member name="M:ZhonTai.Admin.Core.Auth.User.GetUserPermission">
+            <summary>
+            获得用户权限
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="P:ZhonTai.Admin.Core.Auth.User.UserPermission">
+            <summary>
+            用户权限
+            </summary>
+        </member>
+        <member name="M:ZhonTai.Admin.Core.Auth.User.HasPermission(System.String)">
+            <summary>
+            检查用户是否拥有某个权限点
+            </summary>
+            <param name="permissionCode">权限点编码</param>
+            <returns></returns>
+        </member>
+        <member name="M:ZhonTai.Admin.Core.Auth.User.HasPermissions(System.String[],System.Boolean)">
+            <summary>
+            检查用户是否拥有这些权限点
+            </summary>
+            <param name="permissionCodes">权限点编码列表</param>
+            <param name="all">是否全部满足</param>
+            <returns></returns>
         </member>
         <member name="T:ZhonTai.Admin.Core.BaseController">
             <summary>
@@ -603,6 +672,11 @@
             最大请求大小
             </summary>
         </member>
+        <member name="P:ZhonTai.Admin.Core.Configs.AppConfig.Kestrel">
+            <summary>
+            Kestrel服务器
+            </summary>
+        </member>
         <member name="P:ZhonTai.Admin.Core.Configs.AppConfig.HealthChecks">
             <summary>
             健康检查配置
@@ -626,6 +700,26 @@
         <member name="P:ZhonTai.Admin.Core.Configs.AppConfig.Lang">
             <summary>
             语言配置
+            </summary>
+        </member>
+        <member name="T:ZhonTai.Admin.Core.Configs.KestrelConfig">
+            <summary>
+            Kestrel服务器配置
+            </summary>
+        </member>
+        <member name="P:ZhonTai.Admin.Core.Configs.KestrelConfig.KeepAliveTimeout">
+            <summary>
+            HTTP连接保活最长时间，单位秒
+            </summary>
+        </member>
+        <member name="P:ZhonTai.Admin.Core.Configs.KestrelConfig.RequestHeadersTimeout">
+            <summary>
+            发送请求头最长时间，单位秒
+            </summary>
+        </member>
+        <member name="P:ZhonTai.Admin.Core.Configs.KestrelConfig.MaxRequestBodySize">
+            <summary>
+            最大请求大小，单位bytes
             </summary>
         </member>
         <member name="T:ZhonTai.Admin.Core.Configs.LangConfig">
@@ -1293,7 +1387,7 @@
             密码加密 admin:password:encrypt:guid
             </summary>
         </member>
-        <member name="F:ZhonTai.Admin.Core.Consts.CacheKeys.UserPermissions">
+        <member name="F:ZhonTai.Admin.Core.Consts.CacheKeys.UserPermission">
             <summary>
             用户权限 admin:user:permissions:用户主键
             </summary>
@@ -1308,11 +1402,24 @@
             短信验证码 admin:sms:code:guid
             </summary>
         </member>
+        <member name="F:ZhonTai.Admin.Core.Consts.CacheKeys.EmailCode">
+            <summary>
+            邮箱验证码 admin:email:code:guid
+            </summary>
+        </member>
         <member name="M:ZhonTai.Admin.Core.Consts.CacheKeys.GetSmsCodeKey(System.String,System.String)">
             <summary>
             获取短信验证码缓存键
             </summary>
             <param name="mobile">手机号</param>
+            <param name="code">唯一码</param>
+            <returns></returns>
+        </member>
+        <member name="M:ZhonTai.Admin.Core.Consts.CacheKeys.GetEmailCodeKey(System.String,System.String)">
+            <summary>
+            获取邮箱验证码缓存键
+            </summary>
+            <param name="email">邮件地址</param>
             <param name="code">唯一码</param>
             <returns></returns>
         </member>
@@ -1322,6 +1429,13 @@
             </summary>
             <param name="userId">用户Id</param>
             <param name="apiPath">请求接口路径</param>
+            <returns></returns>
+        </member>
+        <member name="M:ZhonTai.Admin.Core.Consts.CacheKeys.GetUserPermissionKey(System.Int64)">
+            <summary>
+            获取数据权限缓存键
+            </summary>
+            <param name="userId">用户Id</param>
             <returns></returns>
         </member>
         <member name="M:ZhonTai.Admin.Core.Consts.CacheKeys.GetDataPermissionPattern(System.Int64)">
@@ -1386,15 +1500,35 @@
             短信单发
             </summary>
         </member>
+        <member name="F:ZhonTai.Admin.Core.Consts.SubscribeNames.SmsSendCode">
+            <summary>
+            短信验证码发送
+            </summary>
+        </member>
         <member name="F:ZhonTai.Admin.Core.Consts.SubscribeNames.EmailSingleSend">
             <summary>
             邮件单发
+            </summary>
+        </member>
+        <member name="F:ZhonTai.Admin.Core.Consts.SubscribeNames.EmailSendCode">
+            <summary>
+            邮箱验证码发送
             </summary>
         </member>
         <member name="T:ZhonTai.Admin.Core.Conventions.ApiGroupConvention">
             <summary>
             Api分组约定
             </summary>
+        </member>
+        <member name="M:ZhonTai.Admin.Core.Db.Data.GenerateData.SaveEntityAsync``1(IFreeSql,ZhonTai.Admin.Core.Configs.AppConfig,System.String)">
+            <summary>
+            保存实体数据
+            </summary>
+            <typeparam name="T"></typeparam>
+            <param name="db"></param>
+            <param name="appConfig">应用配置</param>
+            <param name="outPath">输出路径 InitData/xxx </param>
+            <returns></returns>
         </member>
         <member name="T:ZhonTai.Admin.Core.Db.Data.IGenerateData">
             <summary>
@@ -1429,6 +1563,17 @@
             <param name="tran"></param>
             <param name="dataList"></param>
             <param name="dbConfig"></param>
+            <returns></returns>
+        </member>
+        <member name="M:ZhonTai.Admin.Core.Db.Data.SyncData.SyncEntityAsync``1(IFreeSql,FreeSql.IRepositoryUnitOfWork,ZhonTai.Admin.Core.Configs.DbConfig,ZhonTai.Admin.Core.Configs.AppConfig,System.String)">
+            <summary>
+            同步实体数据
+            </summary>
+            <param name="db"></param>
+            <param name="unitOfWork"></param>
+            <param name="dbConfig">模块数据库配置</param>
+            <param name="appConfig">应用配置</param>
+            <param name="readPath">读取数据路径 InitData/xxx </param>
             <returns></returns>
         </member>
         <member name="F:ZhonTai.Admin.Core.Db.DbHelper.timeOffset">
@@ -2077,6 +2222,21 @@
         <member name="F:ZhonTai.Admin.Core.Enums.ApiVersion.V2">
             <summary>
             V2 版本
+            </summary>
+        </member>
+        <member name="T:ZhonTai.Admin.Core.Enums.ContentTypeEnum">
+            <summary>
+            内容类型
+            </summary>
+        </member>
+        <member name="F:ZhonTai.Admin.Core.Enums.ContentTypeEnum.FormData">
+            <summary>
+            表单数据
+            </summary>
+        </member>
+        <member name="F:ZhonTai.Admin.Core.Enums.ContentTypeEnum.Json">
+            <summary>
+            Json格式
             </summary>
         </member>
         <member name="T:ZhonTai.Admin.Core.Enums.StatusCodes">
@@ -3649,6 +3809,11 @@
             租户类型
             </summary>
         </member>
+        <member name="P:ZhonTai.Admin.Domain.Tenant.TenantEntity.Domain">
+            <summary>
+            域名
+            </summary>
+        </member>
         <member name="P:ZhonTai.Admin.Domain.Tenant.TenantEntity.DbKey">
             <summary>
             数据库注册键
@@ -3881,6 +4046,26 @@
         <member name="P:ZhonTai.Admin.Domain.UserStaff.UserStaffEntity.Introduce">
             <summary>
             个人简介
+            </summary>
+        </member>
+        <member name="T:ZhonTai.Admin.Domain.User.AccountType">
+            <summary>
+            账号类型
+            </summary>
+        </member>
+        <member name="F:ZhonTai.Admin.Domain.User.AccountType.UserName">
+            <summary>
+            账号
+            </summary>
+        </member>
+        <member name="F:ZhonTai.Admin.Domain.User.AccountType.Mobile">
+            <summary>
+            手机
+            </summary>
+        </member>
+        <member name="F:ZhonTai.Admin.Domain.User.AccountType.Email">
+            <summary>
+            邮箱
             </summary>
         </member>
         <member name="P:ZhonTai.Admin.Domain.User.Dto.DataPermissionDto.OrgId">
@@ -4809,7 +4994,28 @@
         </member>
         <member name="M:ZhonTai.Admin.Services.Auth.AuthService.MobileLoginAsync(ZhonTai.Admin.Services.Auth.Dto.AuthMobileLoginInput)">
             <summary>
-            手机号登录
+            手机登录
+            </summary>
+            <param name="input"></param>
+            <returns></returns>
+        </member>
+        <member name="M:ZhonTai.Admin.Services.Auth.AuthService.EmailLoginAsync(ZhonTai.Admin.Services.Auth.Dto.AuthEmailLoginInput)">
+            <summary>
+            邮箱登录
+            </summary>
+            <param name="input"></param>
+            <returns></returns>
+        </member>
+        <member name="M:ZhonTai.Admin.Services.Auth.AuthService.ChangePasswordByEmailAsync(ZhonTai.Admin.Services.Auth.Dto.AuthChangePasswordByEmailInput)">
+            <summary>
+            邮箱更改密码
+            </summary>
+            <param name="input"></param>
+            <returns></returns>
+        </member>
+        <member name="M:ZhonTai.Admin.Services.Auth.AuthService.ChangePasswordByMobileAsync(ZhonTai.Admin.Services.Auth.Dto.AuthChangePasswordByMobileInput)">
+            <summary>
+            手机更改密码
             </summary>
             <param name="input"></param>
             <returns></returns>
@@ -4828,14 +5034,99 @@
             </summary>
             <returns></returns>
         </member>
+        <member name="T:ZhonTai.Admin.Services.Auth.Dto.AuthChangePasswordByEmailInput">
+            <summary>
+            邮箱更改密码
+            </summary>
+        </member>
+        <member name="P:ZhonTai.Admin.Services.Auth.Dto.AuthChangePasswordByEmailInput.Email">
+            <summary>
+            邮箱地址
+            </summary>
+        </member>
+        <member name="P:ZhonTai.Admin.Services.Auth.Dto.AuthChangePasswordByEmailInput.Code">
+            <summary>
+            验证码
+            </summary>
+        </member>
+        <member name="P:ZhonTai.Admin.Services.Auth.Dto.AuthChangePasswordByEmailInput.CodeId">
+            <summary>
+            验证码Id
+            </summary>
+        </member>
+        <member name="P:ZhonTai.Admin.Services.Auth.Dto.AuthChangePasswordByEmailInput.NewPassword">
+            <summary>
+            新密码
+            </summary>
+        </member>
+        <member name="P:ZhonTai.Admin.Services.Auth.Dto.AuthChangePasswordByEmailInput.ConfirmPassword">
+            <summary>
+            确认新密码
+            </summary>
+        </member>
+        <member name="T:ZhonTai.Admin.Services.Auth.Dto.AuthChangePasswordByMobileInput">
+            <summary>
+            手机更改密码
+            </summary>
+        </member>
+        <member name="P:ZhonTai.Admin.Services.Auth.Dto.AuthChangePasswordByMobileInput.Mobile">
+            <summary>
+            手机号
+            </summary>
+        </member>
+        <member name="P:ZhonTai.Admin.Services.Auth.Dto.AuthChangePasswordByMobileInput.Code">
+            <summary>
+            验证码
+            </summary>
+        </member>
+        <member name="P:ZhonTai.Admin.Services.Auth.Dto.AuthChangePasswordByMobileInput.CodeId">
+            <summary>
+            验证码Id
+            </summary>
+        </member>
+        <member name="P:ZhonTai.Admin.Services.Auth.Dto.AuthChangePasswordByMobileInput.NewPassword">
+            <summary>
+            新密码
+            </summary>
+        </member>
+        <member name="P:ZhonTai.Admin.Services.Auth.Dto.AuthChangePasswordByMobileInput.ConfirmPassword">
+            <summary>
+            确认新密码
+            </summary>
+        </member>
+        <member name="T:ZhonTai.Admin.Services.Auth.Dto.AuthEmailLoginInput">
+            <summary>
+            邮箱登录信息
+            </summary>
+        </member>
+        <member name="P:ZhonTai.Admin.Services.Auth.Dto.AuthEmailLoginInput.Email">
+            <summary>
+            邮箱地址
+            </summary>
+        </member>
+        <member name="P:ZhonTai.Admin.Services.Auth.Dto.AuthEmailLoginInput.Code">
+            <summary>
+            验证码
+            </summary>
+        </member>
+        <member name="P:ZhonTai.Admin.Services.Auth.Dto.AuthEmailLoginInput.CodeId">
+            <summary>
+            验证码Id
+            </summary>
+        </member>
         <member name="P:ZhonTai.Admin.Services.Auth.Dto.AuthGetPasswordEncryptKeyOutput.Key">
             <summary>
             缓存键
             </summary>
         </member>
-        <member name="P:ZhonTai.Admin.Services.Auth.Dto.AuthGetPasswordEncryptKeyOutput.EncyptKey">
+        <member name="P:ZhonTai.Admin.Services.Auth.Dto.AuthGetPasswordEncryptKeyOutput.EncryptKey">
             <summary>
             密码加密密钥
+            </summary>
+        </member>
+        <member name="P:ZhonTai.Admin.Services.Auth.Dto.AuthGetPasswordEncryptKeyOutput.Iv">
+            <summary>
+            密码加密向量
             </summary>
         </member>
         <member name="P:ZhonTai.Admin.Services.Auth.Dto.AuthGetUserInfoOutput.User">
@@ -4851,11 +5142,6 @@
         <member name="P:ZhonTai.Admin.Services.Auth.Dto.AuthGetUserInfoOutput.Permissions">
             <summary>
             用户权限列表
-            </summary>
-        </member>
-        <member name="P:ZhonTai.Admin.Services.Auth.Dto.AuthGetUserPermissionsOutput.User">
-            <summary>
-            用户个人信息
             </summary>
         </member>
         <member name="P:ZhonTai.Admin.Services.Auth.Dto.AuthGetUserPermissionsOutput.Permissions">
@@ -4880,7 +5166,22 @@
         </member>
         <member name="P:ZhonTai.Admin.Services.Auth.Dto.AuthLoginInput.UserName">
             <summary>
-            账号
+            用户名
+            </summary>
+        </member>
+        <member name="P:ZhonTai.Admin.Services.Auth.Dto.AuthLoginInput.Mobile">
+            <summary>
+            手机号
+            </summary>
+        </member>
+        <member name="P:ZhonTai.Admin.Services.Auth.Dto.AuthLoginInput.Email">
+            <summary>
+            邮箱地址
+            </summary>
+        </member>
+        <member name="P:ZhonTai.Admin.Services.Auth.Dto.AuthLoginInput.AccountType">
+            <summary>
+            账号类型
             </summary>
         </member>
         <member name="P:ZhonTai.Admin.Services.Auth.Dto.AuthLoginInput.Password">
@@ -5083,6 +5384,11 @@
             姓名
             </summary>
         </member>
+        <member name="P:ZhonTai.Admin.Services.Auth.Dto.AuthUserProfileDto.Mobile">
+            <summary>
+            手机号
+            </summary>
+        </member>
         <member name="P:ZhonTai.Admin.Services.Auth.Dto.AuthUserProfileDto.NickName">
             <summary>
             昵称
@@ -5091,6 +5397,26 @@
         <member name="P:ZhonTai.Admin.Services.Auth.Dto.AuthUserProfileDto.Avatar">
             <summary>
             头像
+            </summary>
+        </member>
+        <member name="P:ZhonTai.Admin.Services.Auth.Dto.AuthUserProfileDto.CorpName">
+            <summary>
+            企业
+            </summary>
+        </member>
+        <member name="P:ZhonTai.Admin.Services.Auth.Dto.AuthUserProfileDto.Position">
+            <summary>
+            职位
+            </summary>
+        </member>
+        <member name="P:ZhonTai.Admin.Services.Auth.Dto.AuthUserProfileDto.DeptName">
+            <summary>
+            主属部门
+            </summary>
+        </member>
+        <member name="P:ZhonTai.Admin.Services.Auth.Dto.AuthUserProfileDto.WatermarkText">
+            <summary>
+            水印文案
             </summary>
         </member>
         <member name="T:ZhonTai.Admin.Services.Auth.IAuthService">
@@ -5199,6 +5525,38 @@
             </summary>
             <param name="input"></param>
             <returns></returns>
+        </member>
+        <member name="M:ZhonTai.Admin.Services.Cache.CaptchaService.SendEmailCodeAsync(ZhonTai.Admin.Services.Captcha.Dto.SendEmailCodeInput)">
+            <summary>
+            发送邮件验证码
+            </summary>
+            <param name="input"></param>
+            <returns></returns>
+        </member>
+        <member name="T:ZhonTai.Admin.Services.Captcha.Dto.SendEmailCodeInput">
+            <summary>
+            发送邮件验证码
+            </summary>
+        </member>
+        <member name="P:ZhonTai.Admin.Services.Captcha.Dto.SendEmailCodeInput.Email">
+            <summary>
+            邮件地址
+            </summary>
+        </member>
+        <member name="P:ZhonTai.Admin.Services.Captcha.Dto.SendEmailCodeInput.CodeId">
+            <summary>
+            验证码Id
+            </summary>
+        </member>
+        <member name="P:ZhonTai.Admin.Services.Captcha.Dto.SendEmailCodeInput.CaptchaId">
+            <summary>
+            验证码Id
+            </summary>
+        </member>
+        <member name="P:ZhonTai.Admin.Services.Captcha.Dto.SendEmailCodeInput.Track">
+            <summary>
+            滑动轨迹
+            </summary>
         </member>
         <member name="T:ZhonTai.Admin.Services.Captcha.Dto.SendSmsCodeInput">
             <summary>
@@ -5377,14 +5735,14 @@
         </member>
         <member name="M:ZhonTai.Admin.Services.Dict.DictService.GetListAsync(System.String[])">
             <summary>
-            查询列表
+            通过类型编码查询列表
             </summary>
             <param name="codes">字典类型编码列表</param>
             <returns></returns>
         </member>
         <member name="M:ZhonTai.Admin.Services.Dict.DictService.GetListByNamesAsync(System.String[])">
             <summary>
-            查询字典类型字典列表
+            通过类型名称查询列表
             </summary>
             <param name="names">字典类型名称列表</param>
             <returns></returns>
@@ -6087,49 +6445,86 @@
             <param name="input"></param>
             <returns></returns>
         </member>
-        <member name="M:ZhonTai.Admin.Services.Msg.EmailService.SingleSendAsync(ZhonTai.Admin.Services.Msg.Events.EamilSingleSendEvent)">
+        <member name="M:ZhonTai.Admin.Services.Msg.EmailService.SingleSendAsync(ZhonTai.Admin.Services.Msg.Events.EmailSingleSendEvent)">
             <summary>
             邮件单发
             </summary>
             <param name="event"></param>
             <returns></returns>
         </member>
-        <member name="T:ZhonTai.Admin.Services.Msg.Events.EamilSingleSendEvent">
+        <member name="M:ZhonTai.Admin.Services.Msg.EmailService.SendCodeAsync(ZhonTai.Admin.Services.Msg.Events.EmailSendCodeEvent)">
             <summary>
-            邮件单发
+            发送邮箱验证码
+            </summary>
+            <param name="event"></param>
+            <returns></returns>
+        </member>
+        <member name="T:ZhonTai.Admin.Services.Msg.Events.EmailSendCodeEvent">
+            <summary>
+            邮箱验证码
             </summary>
         </member>
-        <member name="T:ZhonTai.Admin.Services.Msg.Events.EamilSingleSendEvent.Models.EmailModel">
+        <member name="T:ZhonTai.Admin.Services.Msg.Events.EmailSendCodeEvent.Models.EmailModel">
             <summary>
             邮箱
             </summary>
         </member>
-        <member name="P:ZhonTai.Admin.Services.Msg.Events.EamilSingleSendEvent.Models.EmailModel.Name">
+        <member name="P:ZhonTai.Admin.Services.Msg.Events.EmailSendCodeEvent.Models.EmailModel.Name">
             <summary>
             名称
             </summary>
         </member>
-        <member name="P:ZhonTai.Admin.Services.Msg.Events.EamilSingleSendEvent.Models.EmailModel.Address">
+        <member name="P:ZhonTai.Admin.Services.Msg.Events.EmailSendCodeEvent.Models.EmailModel.Address">
             <summary>
             地址
             </summary>
         </member>
-        <member name="P:ZhonTai.Admin.Services.Msg.Events.EamilSingleSendEvent.FromEmail">
-            <summary>
-            发件人
-            </summary>
-        </member>
-        <member name="P:ZhonTai.Admin.Services.Msg.Events.EamilSingleSendEvent.ToEmail">
+        <member name="P:ZhonTai.Admin.Services.Msg.Events.EmailSendCodeEvent.ToEmail">
             <summary>
             收件人
             </summary>
         </member>
-        <member name="P:ZhonTai.Admin.Services.Msg.Events.EamilSingleSendEvent.Subject">
+        <member name="P:ZhonTai.Admin.Services.Msg.Events.EmailSendCodeEvent.Code">
+            <summary>
+            验证码
+            </summary>
+        </member>
+        <member name="T:ZhonTai.Admin.Services.Msg.Events.EmailSingleSendEvent">
+            <summary>
+            邮件单发
+            </summary>
+        </member>
+        <member name="T:ZhonTai.Admin.Services.Msg.Events.EmailSingleSendEvent.Models.EmailModel">
+            <summary>
+            邮箱
+            </summary>
+        </member>
+        <member name="P:ZhonTai.Admin.Services.Msg.Events.EmailSingleSendEvent.Models.EmailModel.Name">
+            <summary>
+            名称
+            </summary>
+        </member>
+        <member name="P:ZhonTai.Admin.Services.Msg.Events.EmailSingleSendEvent.Models.EmailModel.Address">
+            <summary>
+            地址
+            </summary>
+        </member>
+        <member name="P:ZhonTai.Admin.Services.Msg.Events.EmailSingleSendEvent.FromEmail">
+            <summary>
+            发件人
+            </summary>
+        </member>
+        <member name="P:ZhonTai.Admin.Services.Msg.Events.EmailSingleSendEvent.ToEmail">
+            <summary>
+            收件人
+            </summary>
+        </member>
+        <member name="P:ZhonTai.Admin.Services.Msg.Events.EmailSingleSendEvent.Subject">
             <summary>
             邮件标题
             </summary>
         </member>
-        <member name="P:ZhonTai.Admin.Services.Msg.Events.EamilSingleSendEvent.Body">
+        <member name="P:ZhonTai.Admin.Services.Msg.Events.EmailSingleSendEvent.Body">
             <summary>
             邮件内容
             </summary>
@@ -8086,6 +8481,11 @@
             邮箱地址
             </summary>
         </member>
+        <member name="P:ZhonTai.Admin.Services.Tenant.Dto.TenantAddInput.Domain">
+            <summary>
+            域名
+            </summary>
+        </member>
         <member name="P:ZhonTai.Admin.Services.Tenant.Dto.TenantAddInput.DbKey">
             <summary>
             数据库注册键
@@ -8497,6 +8897,36 @@
             创建时间
             </summary>
         </member>
+        <member name="T:ZhonTai.Admin.Services.User.Dto.UserGetPermissionOutput">
+            <summary>
+            用户权限
+            </summary>
+        </member>
+        <member name="T:ZhonTai.Admin.Services.User.Dto.UserGetPermissionOutput.Models.ApiModel">
+            <summary>
+            接口
+            </summary>
+        </member>
+        <member name="P:ZhonTai.Admin.Services.User.Dto.UserGetPermissionOutput.Models.ApiModel.HttpMethods">
+            <summary>
+            请求方法
+            </summary>
+        </member>
+        <member name="P:ZhonTai.Admin.Services.User.Dto.UserGetPermissionOutput.Models.ApiModel.Path">
+            <summary>
+            请求地址
+            </summary>
+        </member>
+        <member name="P:ZhonTai.Admin.Services.User.Dto.UserGetPermissionOutput.Apis">
+            <summary>
+            接口列表
+            </summary>
+        </member>
+        <member name="P:ZhonTai.Admin.Services.User.Dto.UserGetPermissionOutput.Codes">
+            <summary>
+            权限点编码列表
+            </summary>
+        </member>
         <member name="T:ZhonTai.Admin.Services.User.Dto.UserMemberFormInput">
             <summary>
             会员表单
@@ -8651,7 +9081,7 @@
             </summary>
             <returns></returns>
         </member>
-        <member name="M:ZhonTai.Admin.Services.User.UserService.GetPermissionsAsync">
+        <member name="M:ZhonTai.Admin.Services.User.UserService.GetPermissionAsync">
             <summary>
             查询用户权限信息
             </summary>

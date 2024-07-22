@@ -1,54 +1,51 @@
 <template>
   <div>
     <el-form ref="formRef" :model="state.ruleForm" size="large" class="login-content-form">
-      <div class="login-title"><span class="login-title-showy">手机验证码</span>登录</div>
+      <div class="login-title"><span class="login-title-showy">邮箱验证码</span>登录</div>
       <el-form-item
         class="login-animation1"
-        prop="mobile"
+        prop="email"
         :rules="[
-          { required: true, message: '请输入手机号', trigger: ['blur', 'change'] },
-          { validator: testMobile, trigger: ['blur', 'change'] },
+          { required: true, message: '请输入邮箱地址', trigger: ['blur', 'change'] },
+          { validator: testEmail, trigger: ['blur', 'change'] },
         ]"
       >
         <el-input
-          ref="phoneRef"
+          ref="emailRef"
           text
-          :placeholder="$t('message.mobile.placeholder1')"
-          maxlength="11"
-          v-model="state.ruleForm.mobile"
+          :placeholder="$t('message.email.placeholder1')"
+          v-model="state.ruleForm.email"
           clearable
           autocomplete="off"
           @keyup.enter="onSignIn"
         >
           <template #prefix>
-            <el-icon class="el-input__icon"><ele-Iphone /></el-icon>
+            <el-icon class="el-input__icon"><ele-Promotion /></el-icon>
           </template>
         </el-input>
       </el-form-item>
-      <el-form-item class="login-animation2" prop="code" :rules="[{ required: true, message: '请输入短信验证码', trigger: ['blur', 'change'] }]">
-        <MyInputCode v-model="state.ruleForm.code" @keyup.enter="onSignIn" :mobile="state.ruleForm.mobile" :validate="validate" @send="onSend" />
+      <el-form-item class="login-animation2" prop="code" :rules="[{ required: true, message: '请输入邮箱验证码', trigger: ['blur', 'change'] }]">
+        <MyInputCode v-model="state.ruleForm.code" @keyup.enter="onSignIn" :email="state.ruleForm.email" :validate="validate" @send="onSend" />
       </el-form-item>
-
       <el-form-item class="login-animation3 mb12">
         <el-button round type="primary" v-waves class="login-content-submit" @click="onSignIn" :loading="state.loading.signIn">
           <span>{{ $t('message.mobile.btnText') }}</span>
         </el-button>
       </el-form-item>
       <div class="login-animation4 f12 mt10">
-        <el-link :underline="false" type="primary" class="f12" @click="onLogin">手机密码登录</el-link>
+        <el-link :underline="false" type="primary" class="f12" @click="onLogin">邮箱密码登录</el-link>
       </div>
-      <!-- <div class="font12 mt30 login-animation4 login-msg">{{ $t('message.mobile.msgText') }}</div> -->
     </el-form>
   </div>
 </template>
 
-<script lang="ts" setup name="loginMobile">
+<script lang="ts" setup name="loginEmail">
 import { reactive, defineAsyncComponent, ref, computed } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { ElMessage } from 'element-plus'
-import { testMobile } from '/@/utils/test'
+import { testEmail } from '/@/utils/test'
 import { AuthApi } from '/@/api/admin/Auth'
-import { AuthMobileLoginInput } from '/@/api/admin/data-contracts'
+import { AuthEmailLoginInput } from '/@/api/admin/data-contracts'
 import { useUserInfo } from '/@/stores/userInfo'
 import { initBackEndControlRoutes } from '/@/router/backEnd'
 import { Session } from '/@/utils/storage'
@@ -67,24 +64,24 @@ const route = useRoute()
 const router = useRouter()
 
 const formRef = ref()
-const phoneRef = ref()
+const emailRef = ref()
 // 定义变量内容
 const state = reactive({
   ruleForm: {
-    mobile: '',
+    email: '',
     code: '',
     codeId: '',
-  } as AuthMobileLoginInput,
+  } as AuthEmailLoginInput,
   loading: {
     signIn: false,
   },
 })
 
-//验证手机号
+//验证邮箱
 const validate = (callback: Function) => {
-  formRef.value.validateField('mobile', (isValid: boolean) => {
+  formRef.value.validateField('email', (isValid: boolean) => {
     if (!isValid) {
-      phoneRef.value?.focus()
+      emailRef.value?.focus()
       return
     }
     callback?.()
@@ -99,7 +96,7 @@ const currentTime = computed(() => {
 //切换登录
 const onLogin = () => {
   loginComponentName.value = ComponentType.Account.name
-  accountType.value = AccountType.Mobile.value
+  accountType.value = AccountType.Email.value
 }
 
 //发送验证码
@@ -113,7 +110,7 @@ const onSignIn = async () => {
     if (!valid) return
 
     state.loading.signIn = true
-    const res = await new AuthApi().mobileLogin(state.ruleForm).catch(() => {
+    const res = await new AuthApi().emailLogin(state.ruleForm).catch(() => {
       state.loading.signIn = false
     })
     if (!res?.success) {

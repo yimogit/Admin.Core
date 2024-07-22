@@ -26,7 +26,7 @@ public static partial class CacheKeys
     /// 用户权限 admin:user:permissions:用户主键
     /// </summary>
     [Description("用户权限")]
-    public const string UserPermissions = "admin:user:permissions:";
+    public const string UserPermission = "admin:user:permission:";
 
     /// <summary>
     /// 数据权限 admin:user:data:permission:用户主键
@@ -41,12 +41,26 @@ public static partial class CacheKeys
     public const string SmsCode = "admin:sms:code:";
 
     /// <summary>
+    /// 邮箱验证码 admin:email:code:guid
+    /// </summary>
+    [Description("邮箱验证码")]
+    public const string EmailCode = "admin:email:code:";
+
+    /// <summary>
     /// 获取短信验证码缓存键
     /// </summary>
     /// <param name="mobile">手机号</param>
     /// <param name="code">唯一码</param>
     /// <returns></returns>
     public static string GetSmsCodeKey(string mobile, string code) => $"{SmsCode}{mobile}:{code}";
+
+    /// <summary>
+    /// 获取邮箱验证码缓存键
+    /// </summary>
+    /// <param name="email">邮件地址</param>
+    /// <param name="code">唯一码</param>
+    /// <returns></returns>
+    public static string GetEmailCodeKey(string email, string code) => $"{EmailCode}{email}:{code}";
 
     /// <summary>
     /// 获取数据权限缓存键
@@ -63,6 +77,13 @@ public static partial class CacheKeys
 
         return $"{DataPermission}{userId}{(apiPath.NotNull() ? (":" + apiPath) : "")}";
     }
+
+    /// <summary>
+    /// 获取数据权限缓存键
+    /// </summary>
+    /// <param name="userId">用户Id</param>
+    /// <returns></returns>
+    public static string GetUserPermissionKey(long userId) => $"{UserPermission}{userId}";
 
     /// <summary>
     /// 获取数据权限模板

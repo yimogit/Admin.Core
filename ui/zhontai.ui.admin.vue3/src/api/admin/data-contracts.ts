@@ -9,6 +9,12 @@
  * ---------------------------------------------------------------
  */
 
+/**
+ * 账号类型:UserName=1,Mobile=2,Email=3
+ * @format int32
+ */
+export type AccountType = 1 | 2 | 3
+
 /** 添加 */
 export interface ApiAddInput {
   /**
@@ -181,6 +187,14 @@ export interface ApiListOutput {
   enabled?: boolean
 }
 
+/** 接口 */
+export interface ApiModel {
+  /** 请求方法 */
+  httpMethods?: string | null
+  /** 请求地址 */
+  path?: string | null
+}
+
 /** 接口同步Dto */
 export interface ApiSyncDto {
   /** 接口名称 */
@@ -227,11 +241,78 @@ export interface ApiUpdateInput {
   id: number
 }
 
+/** 邮箱更改密码 */
+export interface AuthChangePasswordByEmailInput {
+  /** 邮箱地址 */
+  email?: string | null
+  /**
+   * 验证码
+   * @minLength 1
+   */
+  code: string
+  /**
+   * 验证码Id
+   * @minLength 1
+   */
+  codeId: string
+  /**
+   * 新密码
+   * @minLength 1
+   */
+  newPassword: string
+  /** 确认新密码 */
+  confirmPassword?: string | null
+}
+
+/** 手机更改密码 */
+export interface AuthChangePasswordByMobileInput {
+  /** 手机号 */
+  mobile?: string | null
+  /**
+   * 验证码
+   * @minLength 1
+   */
+  code: string
+  /**
+   * 验证码Id
+   * @minLength 1
+   */
+  codeId: string
+  /**
+   * 新密码
+   * @minLength 1
+   */
+  newPassword: string
+  /** 确认新密码 */
+  confirmPassword?: string | null
+}
+
+/** 邮箱登录信息 */
+export interface AuthEmailLoginInput {
+  /**
+   * 邮箱地址
+   * @minLength 1
+   */
+  email: string
+  /**
+   * 验证码
+   * @minLength 1
+   */
+  code: string
+  /**
+   * 验证码Id
+   * @minLength 1
+   */
+  codeId: string
+}
+
 export interface AuthGetPasswordEncryptKeyOutput {
   /** 缓存键 */
   key?: string | null
   /** 密码加密密钥 */
-  encyptKey?: string | null
+  encryptKey?: string | null
+  /** 密码加密向量 */
+  iv?: string | null
 }
 
 export interface AuthGetUserInfoOutput {
@@ -244,19 +325,20 @@ export interface AuthGetUserInfoOutput {
 }
 
 export interface AuthGetUserPermissionsOutput {
-  /** 用户个人信息 */
-  user?: AuthUserProfileDto
   /** 用户权限列表 */
   permissions?: string[] | null
 }
 
 /** 登录信息 */
 export interface AuthLoginInput {
-  /**
-   * 账号
-   * @minLength 1
-   */
-  userName: string
+  /** 用户名 */
+  userName?: string | null
+  /** 手机号 */
+  mobile?: string | null
+  /** 邮箱地址 */
+  email?: string | null
+  /** 账号类型:UserName=1,Mobile=2,Email=3 */
+  accountType?: AccountType
   /**
    * 密码
    * @minLength 1
@@ -341,10 +423,20 @@ export interface AuthUserProfileDto {
   userName?: string | null
   /** 姓名 */
   name?: string | null
+  /** 手机号 */
+  mobile?: string | null
   /** 昵称 */
   nickName?: string | null
   /** 头像 */
   avatar?: string | null
+  /** 企业 */
+  corpName?: string | null
+  /** 职位 */
+  position?: string | null
+  /** 主属部门 */
+  deptName?: string | null
+  /** 水印文案 */
+  watermarkText?: string | null
 }
 
 export interface CaptchaData {
@@ -2912,18 +3004,6 @@ export interface ResultOutputIEnumerableObject {
 }
 
 /** 结果输出 */
-export interface ResultOutputIListUserPermissionsOutput {
-  /** 是否成功标记 */
-  success?: boolean
-  /** 编码 */
-  code?: string | null
-  /** 消息 */
-  msg?: string | null
-  /** 数据 */
-  data?: UserPermissionsOutput[] | null
-}
-
-/** 结果输出 */
 export interface ResultOutputInt64 {
   /** 是否成功标记 */
   success?: boolean
@@ -3467,6 +3547,18 @@ export interface ResultOutputUserGetOutput {
 }
 
 /** 结果输出 */
+export interface ResultOutputUserGetPermissionOutput {
+  /** 是否成功标记 */
+  success?: boolean
+  /** 编码 */
+  code?: string | null
+  /** 消息 */
+  msg?: string | null
+  /** 用户权限 */
+  data?: UserGetPermissionOutput
+}
+
+/** 结果输出 */
 export interface ResultOutputValidateResult {
   /** 是否成功标记 */
   success?: boolean
@@ -3761,6 +3853,23 @@ export interface RoleUpdateInput {
   id: number
 }
 
+/** 发送邮件验证码 */
+export interface SendEmailCodeInput {
+  /**
+   * 邮件地址
+   * @minLength 1
+   */
+  email: string
+  /** 验证码Id */
+  codeId?: string | null
+  /**
+   * 验证码Id
+   * @minLength 1
+   */
+  captchaId: string
+  track: SlideTrack
+}
+
 /** 发送短信验证码 */
 export interface SendSmsCodeInput {
   /**
@@ -4012,6 +4121,8 @@ export interface TenantAddInput {
   phone?: string | null
   /** 邮箱地址 */
   email?: string | null
+  /** 域名 */
+  domain?: string | null
   /** 数据库注册键 */
   dbKey?: string | null
   /** MySql=0,SqlServer=1,PostgreSQL=2,Oracle=3,Sqlite=4,OdbcOracle=5,OdbcSqlServer=6,OdbcMySql=7,OdbcPostgreSQL=8,Odbc=9,OdbcDameng=10,MsAccess=11,Dameng=12,OdbcKingbaseES=13,ShenTong=14,KingbaseES=15,Firebird=16,Custom=17,ClickHouse=18,GBase=19,QuestDb=20,Xugu=21,CustomOracle=22,CustomSqlServer=23,CustomMySql=24,CustomPostgreSQL=25 */
@@ -4089,6 +4200,8 @@ export interface TenantEntity {
   org?: OrgEntity
   /** 租户类型:Platform=1,Tenant=2 */
   tenantType?: TenantType
+  /** 域名 */
+  domain?: string | null
   /** 数据库注册键 */
   dbKey?: string | null
   /** MySql=0,SqlServer=1,PostgreSQL=2,Oracle=3,Sqlite=4,OdbcOracle=5,OdbcSqlServer=6,OdbcMySql=7,OdbcPostgreSQL=8,Odbc=9,OdbcDameng=10,MsAccess=11,Dameng=12,OdbcKingbaseES=13,ShenTong=14,KingbaseES=15,Firebird=16,Custom=17,ClickHouse=18,GBase=19,QuestDb=20,Xugu=21,CustomOracle=22,CustomSqlServer=23,CustomMySql=24,CustomPostgreSQL=25 */
@@ -4130,6 +4243,8 @@ export interface TenantGetOutput {
   phone?: string | null
   /** 邮箱地址 */
   email?: string | null
+  /** 域名 */
+  domain?: string | null
   /** 数据库注册键 */
   dbKey?: string | null
   /** MySql=0,SqlServer=1,PostgreSQL=2,Oracle=3,Sqlite=4,OdbcOracle=5,OdbcSqlServer=6,OdbcMySql=7,OdbcPostgreSQL=8,Odbc=9,OdbcDameng=10,MsAccess=11,Dameng=12,OdbcKingbaseES=13,ShenTong=14,KingbaseES=15,Firebird=16,Custom=17,ClickHouse=18,GBase=19,QuestDb=20,Xugu=21,CustomOracle=22,CustomSqlServer=23,CustomMySql=24,CustomPostgreSQL=25 */
@@ -4239,6 +4354,8 @@ export interface TenantUpdateInput {
   phone?: string | null
   /** 邮箱地址 */
   email?: string | null
+  /** 域名 */
+  domain?: string | null
   /** 数据库注册键 */
   dbKey?: string | null
   /** MySql=0,SqlServer=1,PostgreSQL=2,Oracle=3,Sqlite=4,OdbcOracle=5,OdbcSqlServer=6,OdbcMySql=7,OdbcPostgreSQL=8,Odbc=9,OdbcDameng=10,MsAccess=11,Dameng=12,OdbcKingbaseES=13,ShenTong=14,KingbaseES=15,Firebird=16,Custom=17,ClickHouse=18,GBase=19,QuestDb=20,Xugu=21,CustomOracle=22,CustomSqlServer=23,CustomMySql=24,CustomPostgreSQL=25 */
@@ -4303,7 +4420,7 @@ export interface UserAddInput {
   /** 直属主管姓名 */
   managerUserName?: string | null
   /** 员工添加 */
-  staff?: StaffAddInput
+  staff: StaffAddInput
   /** 密码 */
   password?: string | null
   /** 启用 */
@@ -4503,7 +4620,7 @@ export interface UserGetOutput {
   /** 直属主管姓名 */
   managerUserName?: string | null
   /** 员工添加 */
-  staff?: StaffAddInput
+  staff: StaffAddInput
   /**
    * 主键Id
    * @format int64
@@ -4558,15 +4675,18 @@ export interface UserGetPageOutput {
   createdTime?: string | null
 }
 
+/** 用户权限 */
+export interface UserGetPermissionOutput {
+  /** 接口列表 */
+  apis?: ApiModel[] | null
+  /** 权限点编码列表 */
+  codes?: string[] | null
+}
+
 export interface UserGetRoleDto {
   /** @format int64 */
   id?: number
   name?: string | null
-}
-
-export interface UserPermissionsOutput {
-  httpMethods?: string | null
-  path?: string | null
 }
 
 /** 重置密码 */
@@ -4734,7 +4854,7 @@ export interface UserUpdateInput {
   /** 直属主管姓名 */
   managerUserName?: string | null
   /** 员工添加 */
-  staff?: StaffAddInput
+  staff: StaffAddInput
   /**
    * 主键Id
    * @format int64
