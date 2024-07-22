@@ -1,51 +1,11 @@
-﻿
-基于 Admin.Core 和 admin.ui.plus 的代码生成扩展程序
 
-可生成完整的 Entity、Repository、Service 后台代码
-可生成包含CURD操作的前端界面
-可将生成的实体类结构同步到数据库
-可自动添加视图、权限项
+## 模块介绍
+基于 Admin.Core 的代码生成模块，可生成完整的 Entity、Repository、Service 后台代码，及前台页面
 
-### 列属性说明
-列名：实体类字段名称  当字段名为 -_> 三个的任意一个字符时，此字段名不包含在实体中（一般在外联字段时使用，只生成外联字段名）
-类型：.Net数据类型
-标题：字段显示名称
-数据库类型：不使用FreeSql的默认类型映射时填写指定的数据库类型
-数据库列名：自定义数据库列名称
+## 下载使用
+如需二次开发，下载项目，运行前后端项目即可
+如需直接使用，可直接下载打包的win-x64包 [绿色版下载 win-x64.zip](https://github.com/yimogit/Admin.Core/raw/main/files/%E4%BB%A3%E7%A0%81%E7%94%9F%E6%88%90%E5%99%A8.zip)
 
-列顺序：调整列的显示序号与同步数据库结构时的列顺序
-
-列：GetList接口是否包含此字段
-表：GetPlage接口是否包含此字段
-增：控制该字段是否为新增时的写入字段
-改：控制该字段是否为更新时的写入字段
-查：控制该字段是否为查询条件
-
-字典编码：当字段的取值来源为字典时，填写字典编码，前端为el-select组件输入方式
-
-外联实体：外联到其它实体时填写（跟外联方式配合使用），可填写完成的实体名称（含命名空间）
-外联字段：外联实体的关联字段（留空时为FreeSql的默认关联）
-
-选中文本字段：
-选中值字段：
-
-- 编辑器 为 el-select 且  不是外联字段 时，可控制 选项的显示文本与选择值，多个之间用英文,分隔，当其中一方的数量少于另一方时，其对应位的取值为空
-
-- 前端的外联处理功能还未实现自动生成功能
-
-父级字段：预留
-
-### 基础配置说明
-
-表名：同步结构时的数据库表名称
-业务名：生成的服务、权限项的名称（会在内容扣加 管理 ）
-Api分区：AdminCore 的 Api Area
-命名空间：生成代码的 命名空间
-实体名：生成的实体类名称（会自动加入 Entity 后缀）
-基类：基础类型 -> EntityBase 和 租户基础类型 -> EntityTenant
-
-父菜单：生成权限项时的父级项
-
-命名导入：生成代码时包含的命名空间导入，多个用;分隔
-
-服务项包含：默认包含 Add、Update、Delete、Get、GetPage，这里可自已选择是否包含（GetList，BatchDelete、SoftDelete，BatchSoftDelete）
+## 相关文章
+- [代码生成器的添加及使用](https://www.cnblogs.com/morang/p/18261754/zhontai_admin_core_module_dev_gencode)
+- [用 Admin.Core 代码生成器生成通用代码生成器的模块代码](https://www.cnblogs.com/morang/p/18277156/zhontai_admin_core_module_dev_use_toproject)
