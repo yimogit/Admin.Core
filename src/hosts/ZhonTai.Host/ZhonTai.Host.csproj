@@ -67,5 +67,9 @@
 	  </Content>
 	</ItemGroup>
 
+	<ItemGroup>
+	  <Folder Include="InitData\Dev\" />
+	</ItemGroup>
+
 	<ProjectExtensions><VisualStudio><UserProperties /></VisualStudio></ProjectExtensions>
 </Project>
