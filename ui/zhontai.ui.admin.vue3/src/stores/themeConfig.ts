@@ -12,7 +12,7 @@ export const useThemeConfig = defineStore('themeConfig', {
       // 是否开启布局配置抽屉
       isDrawer: false,
       // 是否创建一个h5历史，否则创建一个 hash 历史记录
-      isCreateWebHistory: true,
+      isCreateWebHistory: import.meta.env.RouterUseMode !== 'hash',
 
       /**
        * 全局主题
