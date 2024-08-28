@@ -11,7 +11,7 @@ namespace ZhonTai.Admin.Core.Entities;
 /// <summary>
 /// 实体修改
 /// </summary>
-public class EntityUpdate<TKey> : EntityAdd, IEntityUpdate<TKey> where TKey : struct
+public class EntityUpdate<TKey> : EntityAdd<TKey>, IEntityUpdate<TKey> where TKey : struct
 {
     /// <summary>
     /// 修改者用户Id
@@ -47,7 +47,7 @@ public class EntityUpdate<TKey> : EntityAdd, IEntityUpdate<TKey> where TKey : st
     [JsonProperty(Order = 10002)]
     [JsonPropertyOrder(10002)]
     [Column(Position = -10)]
-    [ServerTime]
+    [ServerTime(CanInsert = false, CanUpdate = true)]
     public virtual DateTime? ModifiedTime { get; set; }
 }
 

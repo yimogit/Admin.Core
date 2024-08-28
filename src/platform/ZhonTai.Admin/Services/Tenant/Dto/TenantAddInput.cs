@@ -21,7 +21,6 @@ public class TenantAddInput
     /// <summary>
     /// 编码
     /// </summary>
-    [Required(ErrorMessage = "请输入编码")]
     public string Code { get; set; }
 
     /// <summary>
@@ -32,7 +31,6 @@ public class TenantAddInput
     /// <summary>
     /// 姓名
     /// </summary>
-    [Required(ErrorMessage = "请输入姓名")]
     public string RealName { get; set; }
 
     /// <summary>

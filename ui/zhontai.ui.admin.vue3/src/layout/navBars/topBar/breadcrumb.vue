@@ -1,11 +1,6 @@
 <template>
   <div v-if="isShowBreadcrumb" class="layout-navbars-breadcrumb">
-    <SvgIcon
-      class="layout-navbars-breadcrumb-icon"
-      :name="themeConfig.isCollapse ? 'ele-Expand' : 'ele-Fold'"
-      :size="16"
-      @click="onThemeConfigChange"
-    />
+    <SvgIcon class="layout-navbars-breadcrumb-icon" :name="getIconName" :size="16" @click="onThemeConfigChange" />
     <el-breadcrumb class="layout-navbars-breadcrumb-hide">
       <transition-group name="breadcrumb">
         <el-breadcrumb-item v-for="(v, k) in state.breadcrumbList" :key="v.path">
@@ -24,7 +19,7 @@
 </template>
 
 <script setup lang="ts" name="layoutBreadcrumb">
-import { reactive, computed, onMounted } from 'vue'
+import { reactive, computed, onMounted, watch, ref, onBeforeMount } from 'vue'
 import { onBeforeRouteUpdate, useRoute, useRouter, RouteLocationNormalized } from 'vue-router'
 import { Local } from '/@/utils/storage'
 import other from '/@/utils/other'
@@ -33,6 +28,7 @@ import { useThemeConfig } from '/@/stores/themeConfig'
 import { useRoutesList } from '/@/stores/routesList'
 import { filterTree, treeToList } from '/@/utils/tree'
 import { cloneDeep } from 'lodash-es'
+import mittBus from '/@/utils/mitt'
 
 // 定义变量内容
 const stores = useRoutesList()
@@ -47,10 +43,19 @@ const state = reactive<BreadcrumbState>({
   routeSplitFirst: '',
   routeSplitIndex: 1,
 })
+const isMobile = ref()
+isMobile.value = document.body.clientWidth < 1000
+
+const getIconName = computed(() => {
+  if (isMobile.value) {
+    return !themeConfig.value.isCollapse ? 'ele-Expand' : 'ele-Fold'
+  } else {
+    return themeConfig.value.isCollapse ? 'ele-Expand' : 'ele-Fold'
+  }
+})
 
 // 动态设置经典、横向布局不显示
 const isShowBreadcrumb = computed(() => {
-  initRouteSplit(route)
   const { layout, isBreadcrumb } = themeConfig.value
   if (layout === 'classic' || layout === 'transverse') return false
   else return isBreadcrumb ? true : false
@@ -118,14 +123,32 @@ const initRouteSplit = (toRoute: RouteLocationNormalized) => {
   if (state.breadcrumbList.length > 0)
     state.breadcrumbList[state.breadcrumbList.length - 1].meta.tagsViewName = other.setTagsViewNameI18n(<RouteToFrom>route)
 }
+
 // 页面加载时
 onMounted(() => {
   initRouteSplit(route)
 })
+
 // 路由更新时
 onBeforeRouteUpdate((to) => {
   initRouteSplit(to)
 })
+
+// 页面加载前
+onBeforeMount(() => {
+  // 监听窗口大小改变时(适配移动端)
+  mittBus.on('layoutMobileResize', (res: LayoutMobileResize) => {
+    // 判断是否是手机端
+    isMobile.value = res.clientWidth < 1000
+  })
+})
+
+watch(
+  () => themeConfig.value.isBreadcrumb,
+  () => {
+    route && initRouteSplit(route)
+  }
+)
 </script>
 
 <style scoped lang="scss">

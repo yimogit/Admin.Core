@@ -268,6 +268,21 @@
             SchemaId
             </summary>
         </member>
+        <member name="T:ZhonTai.Admin.Core.Attributes.ServerTimeAttribute">
+            <summary>
+            服务端时间
+            </summary>
+        </member>
+        <member name="P:ZhonTai.Admin.Core.Attributes.ServerTimeAttribute.CanUpdate">
+            <summary>
+            更新设置该字段服务器端时间，默认值false，指定为true更新时设置
+            </summary>
+        </member>
+        <member name="P:ZhonTai.Admin.Core.Attributes.ServerTimeAttribute.CanInsert">
+            <summary>
+            插入设置该字段服务器端时间，默认值true，指定为false插入时不设置
+            </summary>
+        </member>
         <member name="T:ZhonTai.Admin.Core.Attributes.SingleInstanceAttribute">
             <summary>
             单例注入
@@ -3699,6 +3714,16 @@
             报警邮件，多个邮件地址则逗号分隔
             </summary>
         </member>
+        <member name="P:ZhonTai.Admin.Domain.TaskInfoExt.FailRetryCount">
+            <summary>
+            失败重试次数
+            </summary>
+        </member>
+        <member name="P:ZhonTai.Admin.Domain.TaskInfoExt.FailRetryInterval">
+            <summary>
+            失败重试间隔（秒）
+            </summary>
+        </member>
         <member name="P:ZhonTai.Admin.Domain.TaskInfoExt.CreatedTime">
             <summary>
             添加时间
@@ -5020,6 +5045,20 @@
             <param name="input"></param>
             <returns></returns>
         </member>
+        <member name="M:ZhonTai.Admin.Services.Auth.AuthService.RegByEmailAsync(ZhonTai.Admin.Services.Auth.Dto.AuthRegByEmailInput)">
+            <summary>
+            邮箱注册
+            </summary>
+            <param name="input"></param>
+            <returns></returns>
+        </member>
+        <member name="M:ZhonTai.Admin.Services.Auth.AuthService.RegByMobileAsync(ZhonTai.Admin.Services.Auth.Dto.AuthRegByMobileInput)">
+            <summary>
+            手机号注册
+            </summary>
+            <param name="input"></param>
+            <returns></returns>
+        </member>
         <member name="M:ZhonTai.Admin.Services.Auth.AuthService.Refresh(System.String)">
             <summary>
             刷新Token
@@ -5282,6 +5321,66 @@
         <member name="P:ZhonTai.Admin.Services.Auth.Dto.AuthMobileLoginInput.CodeId">
             <summary>
             验证码Id
+            </summary>
+        </member>
+        <member name="T:ZhonTai.Admin.Services.Auth.Dto.AuthRegByEmailInput">
+            <summary>
+            邮箱注册
+            </summary>
+        </member>
+        <member name="P:ZhonTai.Admin.Services.Auth.Dto.AuthRegByEmailInput.Email">
+            <summary>
+            邮箱地址
+            </summary>
+        </member>
+        <member name="P:ZhonTai.Admin.Services.Auth.Dto.AuthRegByEmailInput.Code">
+            <summary>
+            验证码
+            </summary>
+        </member>
+        <member name="P:ZhonTai.Admin.Services.Auth.Dto.AuthRegByEmailInput.CodeId">
+            <summary>
+            验证码Id
+            </summary>
+        </member>
+        <member name="P:ZhonTai.Admin.Services.Auth.Dto.AuthRegByEmailInput.Password">
+            <summary>
+            密码
+            </summary>
+        </member>
+        <member name="P:ZhonTai.Admin.Services.Auth.Dto.AuthRegByEmailInput.CorpName">
+            <summary>
+            企业名称
+            </summary>
+        </member>
+        <member name="T:ZhonTai.Admin.Services.Auth.Dto.AuthRegByMobileInput">
+            <summary>
+            手机号注册
+            </summary>
+        </member>
+        <member name="P:ZhonTai.Admin.Services.Auth.Dto.AuthRegByMobileInput.Mobile">
+            <summary>
+            手机号
+            </summary>
+        </member>
+        <member name="P:ZhonTai.Admin.Services.Auth.Dto.AuthRegByMobileInput.Code">
+            <summary>
+            验证码
+            </summary>
+        </member>
+        <member name="P:ZhonTai.Admin.Services.Auth.Dto.AuthRegByMobileInput.CodeId">
+            <summary>
+            验证码Id
+            </summary>
+        </member>
+        <member name="P:ZhonTai.Admin.Services.Auth.Dto.AuthRegByMobileInput.Password">
+            <summary>
+            密码
+            </summary>
+        </member>
+        <member name="P:ZhonTai.Admin.Services.Auth.Dto.AuthRegByMobileInput.CorpName">
+            <summary>
+            企业名称
             </summary>
         </member>
         <member name="P:ZhonTai.Admin.Services.Auth.Dto.AuthUserMenuDto.Id">
@@ -8070,6 +8169,11 @@
             手机号
             </summary>
         </member>
+        <member name="P:ZhonTai.Admin.Services.Role.Dto.RoleGetRoleUserListOutput.Email">
+            <summary>
+            邮箱
+            </summary>
+        </member>
         <member name="T:ZhonTai.Admin.Services.Role.Dto.RoleSetDataScopeInput">
             <summary>
             设置数据范围
@@ -8249,6 +8353,16 @@
             报警邮件，多个邮件地址则逗号分隔
             </summary>
         </member>
+        <member name="P:ZhonTai.Admin.Services.TaskScheduler.Dto.TaskAddInput.FailRetryCount">
+            <summary>
+            失败重试次数
+            </summary>
+        </member>
+        <member name="P:ZhonTai.Admin.Services.TaskScheduler.Dto.TaskAddInput.FailRetryInterval">
+            <summary>
+            失败重试间隔（秒）
+            </summary>
+        </member>
         <member name="P:ZhonTai.Admin.Services.TaskScheduler.Dto.TaskListOutput.Id">
             <summary>
             主键
@@ -8332,6 +8446,13 @@
         <member name="M:ZhonTai.Admin.Services.TaskScheduler.TaskLogService.GetPage(ZhonTai.Admin.Core.Dto.PageInput{ZhonTai.Admin.Domain.Task.Dto.TaskLogGetPageDto})">
             <summary>
             查询分页
+            </summary>
+            <param name="input"></param>
+            <returns></returns>
+        </member>
+        <member name="M:ZhonTai.Admin.Services.TaskScheduler.TaskLogService.Add(FreeScheduler.TaskLog)">
+            <summary>
+            添加
             </summary>
             <param name="input"></param>
             <returns></returns>
@@ -8586,6 +8707,66 @@
             创建时间
             </summary>
         </member>
+        <member name="T:ZhonTai.Admin.Services.Tenant.Dto.TenantRegInput">
+            <summary>
+            注册
+            </summary>
+        </member>
+        <member name="P:ZhonTai.Admin.Services.Tenant.Dto.TenantRegInput.Id">
+            <summary>
+            租户Id
+            </summary>
+        </member>
+        <member name="P:ZhonTai.Admin.Services.Tenant.Dto.TenantRegInput.Name">
+            <summary>
+            企业名称
+            </summary>
+        </member>
+        <member name="P:ZhonTai.Admin.Services.Tenant.Dto.TenantRegInput.Code">
+            <summary>
+            编码
+            </summary>
+        </member>
+        <member name="P:ZhonTai.Admin.Services.Tenant.Dto.TenantRegInput.PkgIds">
+            <summary>
+            套餐Ids
+            </summary>
+        </member>
+        <member name="P:ZhonTai.Admin.Services.Tenant.Dto.TenantRegInput.RealName">
+            <summary>
+            姓名
+            </summary>
+        </member>
+        <member name="P:ZhonTai.Admin.Services.Tenant.Dto.TenantRegInput.UserName">
+            <summary>
+            账号
+            </summary>
+        </member>
+        <member name="P:ZhonTai.Admin.Services.Tenant.Dto.TenantRegInput.Password">
+            <summary>
+            密码
+            </summary>
+        </member>
+        <member name="P:ZhonTai.Admin.Services.Tenant.Dto.TenantRegInput.Mobile">
+            <summary>
+            手机号
+            </summary>
+        </member>
+        <member name="P:ZhonTai.Admin.Services.Tenant.Dto.TenantRegInput.Email">
+            <summary>
+            邮箱地址
+            </summary>
+        </member>
+        <member name="P:ZhonTai.Admin.Services.Tenant.Dto.TenantRegInput.Enabled">
+            <summary>
+            启用
+            </summary>
+        </member>
+        <member name="P:ZhonTai.Admin.Services.Tenant.Dto.TenantRegInput.Description">
+            <summary>
+            说明
+            </summary>
+        </member>
         <member name="T:ZhonTai.Admin.Services.Tenant.Dto.TenantSetEnableInput">
             <summary>
             设置启用
@@ -8638,6 +8819,13 @@
         <member name="M:ZhonTai.Admin.Services.Tenant.TenantService.AddAsync(ZhonTai.Admin.Services.Tenant.Dto.TenantAddInput)">
             <summary>
             新增
+            </summary>
+            <param name="input"></param>
+            <returns></returns>
+        </member>
+        <member name="M:ZhonTai.Admin.Services.Tenant.TenantService.RegAsync(ZhonTai.Admin.Services.Tenant.Dto.TenantRegInput)">
+            <summary>
+            注册
             </summary>
             <param name="input"></param>
             <returns></returns>
