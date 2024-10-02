@@ -32,11 +32,11 @@
 		<PackageReference Include="FreeSql.Provider.MySqlConnector" Version="3.2.833" />
 		<PackageReference Include="FreeSql.Provider.Sqlite" Version="3.2.833" />
 		-->
-		<PackageReference Include="DotNetCore.CAP.Dashboard" Version="8.2.0" />
-		<PackageReference Include="DotNetCore.CAP.InMemoryStorage" Version="8.2.0" />
-		<PackageReference Include="FreeSql.Provider.Sqlite" Version="3.2.833" />
-		<PackageReference Include="Savorboard.CAP.InMemoryMessageQueue" Version="8.2.1" />
-		<PackageReference Include="SkiaSharp.NativeAssets.Linux.NoDependencies" Version="2.88.8" />
+    <PackageReference Include="DotNetCore.CAP.Dashboard" Version="8.2.0" />
+    <PackageReference Include="DotNetCore.CAP.InMemoryStorage" Version="8.2.0" />
+    <PackageReference Include="FreeSql.Provider.Sqlite" Version="3.2.833" />
+    <PackageReference Include="Savorboard.CAP.InMemoryMessageQueue" Version="8.2.1" />
+    <PackageReference Include="SkiaSharp.NativeAssets.Linux.NoDependencies" Version="2.88.8" />
 	</ItemGroup>
 
 	<ItemGroup>
@@ -45,6 +45,7 @@
 
 	<ItemGroup>
 	  <ProjectReference Include="..\..\..\platform\ZhonTai.ApiUI\ZhonTai.ApiUI.csproj" />
+	  <ProjectReference Include="..\..\ZhonTai.Module.Dev\ZhonTai.Module.Dev.csproj" />
 	  <ProjectReference Include="..\ZhonTai.Admin\ZhonTai.Admin.csproj" />
 	</ItemGroup>
 

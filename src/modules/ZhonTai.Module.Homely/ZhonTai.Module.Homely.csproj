@@ -9,6 +9,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\platform\ZhonTai.Admin\ZhonTai.Admin.csproj" />
+    <ProjectReference Include="..\admin\ZhonTai.Admin\ZhonTai.Admin.csproj" />
   </ItemGroup>
 </Project>
