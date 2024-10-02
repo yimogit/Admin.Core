@@ -101,6 +101,10 @@ export interface ApiEntity {
   path?: string | null
   /** 接口提交方法 */
   httpMethods?: string | null
+  /** 启用请求参数 */
+  enabledParams?: boolean
+  /** 启用响应结果 */
+  enabledResult?: boolean
   /** 说明 */
   description?: string | null
   /**
@@ -122,6 +126,40 @@ export interface ApiGetEnumsOutput {
   desc?: string | null
   /** 选项列表 */
   options?: Options[] | null
+}
+
+export interface ApiGetListOutput {
+  /**
+   * 接口Id
+   * @format int64
+   */
+  id?: number
+  /**
+   * 接口父级
+   * @format int64
+   */
+  parentId?: number | null
+  /** 接口命名 */
+  name?: string | null
+  /** 接口名称 */
+  label?: string | null
+  /** 接口地址 */
+  path?: string | null
+  /** 接口提交方法 */
+  httpMethods?: string | null
+  /** 启用请求参数 */
+  enabledParams?: boolean
+  /** 启用响应结果 */
+  enabledResult?: boolean
+  /** 说明 */
+  description?: string | null
+  /**
+   * 排序
+   * @format int32
+   */
+  sort?: number
+  /** 启用 */
+  enabled?: boolean
 }
 
 export interface ApiGetOutput {
@@ -157,42 +195,34 @@ export interface ApiGetPageDto {
   label?: string | null
 }
 
-export interface ApiListOutput {
-  /**
-   * 接口Id
-   * @format int64
-   */
-  id?: number
-  /**
-   * 接口父级
-   * @format int64
-   */
-  parentId?: number | null
-  /** 接口命名 */
-  name?: string | null
-  /** 接口名称 */
-  label?: string | null
-  /** 接口地址 */
-  path?: string | null
-  /** 接口提交方法 */
-  httpMethods?: string | null
-  /** 说明 */
-  description?: string | null
-  /**
-   * 排序
-   * @format int32
-   */
-  sort?: number
-  /** 启用 */
-  enabled?: boolean
-}
-
 /** 接口 */
 export interface ApiModel {
   /** 请求方法 */
   httpMethods?: string | null
   /** 请求地址 */
   path?: string | null
+}
+
+/** 设置启用请求参数 */
+export interface ApiSetEnableParamsInput {
+  /**
+   * 接口Id
+   * @format int64
+   */
+  apiId?: number
+  /** 是否启用请求参数 */
+  enabledParams?: boolean
+}
+
+/** 设置启用请求参数 */
+export interface ApiSetEnableResultInput {
+  /**
+   * 接口Id
+   * @format int64
+   */
+  apiId?: number
+  /** 是否启用响应结果 */
+  enabledResult?: boolean
 }
 
 /** 接口同步Dto */
@@ -537,7 +567,7 @@ export interface DictAddInput {
   code?: string | null
   /** 字典值 */
   value?: string | null
-  /** 描述 */
+  /** 说明 */
   description?: string | null
   /** 启用 */
   enabled?: boolean
@@ -545,7 +575,7 @@ export interface DictAddInput {
    * 排序
    * @format int32
    */
-  sort?: number
+  sort?: number | null
 }
 
 export interface DictGetListDto {
@@ -581,7 +611,7 @@ export interface DictGetOutput {
   code?: string | null
   /** 字典值 */
   value?: string | null
-  /** 描述 */
+  /** 说明 */
   description?: string | null
   /** 启用 */
   enabled?: boolean
@@ -589,7 +619,7 @@ export interface DictGetOutput {
    * 排序
    * @format int32
    */
-  sort?: number
+  sort?: number | null
   /**
    * 主键Id
    * @format int64
@@ -597,7 +627,7 @@ export interface DictGetOutput {
   id: number
 }
 
-export interface DictGetPageDto {
+export interface DictGetPageInput {
   /**
    * 字典类型Id
    * @format int64
@@ -737,7 +767,7 @@ export interface DictUpdateInput {
   code?: string | null
   /** 字典值 */
   value?: string | null
-  /** 描述 */
+  /** 说明 */
   description?: string | null
   /** 启用 */
   enabled?: boolean
@@ -745,7 +775,7 @@ export interface DictUpdateInput {
    * 排序
    * @format int32
    */
-  sort?: number
+  sort?: number | null
   /**
    * 主键Id
    * @format int64
@@ -956,6 +986,15 @@ export type DynamicFilterLogic = 0 | 1
  */
 export type DynamicFilterOperator = 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12 | 13 | 14 | 15 | 16 | 17 | 18
 
+/** 导出信息输入 */
+export interface ExportInput {
+  dynamicFilter?: DynamicFilterInfo
+  /** 排序列表 */
+  sortList?: SortInput[] | null
+  /** 文件名 */
+  fileName?: string | null
+}
+
 export interface FileDeleteInput {
   /**
    * 文件Id
@@ -1089,9 +1128,23 @@ export interface FileGetPageOutput {
   modifiedTime?: string | null
 }
 
-export interface LogGetPageDto {
-  /** 创建者 */
-  createdUserName?: string | null
+/** 导入输出 */
+export interface ImportOutput {
+  /**
+   * 数据总数
+   * @format int64
+   */
+  total?: number
+  /**
+   * 新增数
+   * @format int64
+   */
+  insertCount?: number
+  /**
+   * 更新数
+   * @format int64
+   */
+  updateCount?: number
 }
 
 /** 添加 */
@@ -1105,14 +1158,14 @@ export interface LoginLogAddInput {
   name?: string | null
   /** IP */
   ip?: string | null
-  /** 浏览器 */
-  browser?: string | null
-  /** 操作系统 */
-  os?: string | null
-  /** 设备 */
-  device?: string | null
-  /** 浏览器信息 */
-  browserInfo?: string | null
+  /** 国家 */
+  country?: string | null
+  /** 省份 */
+  province?: string | null
+  /** 城市 */
+  city?: string | null
+  /** 网络服务商 */
+  isp?: string | null
   /**
    * 耗时（毫秒）
    * @format int64
@@ -1122,18 +1175,37 @@ export interface LoginLogAddInput {
   status?: boolean | null
   /** 操作消息 */
   msg?: string | null
-  /** 操作结果 */
-  result?: string | null
   /**
-   * 创建者Id
+   * 创建者用户Id
    * @format int64
    */
   createdUserId?: number | null
-  /** 创建者 */
+  /** 创建者用户名 */
   createdUserName?: string | null
+  /** 创建者姓名 */
+  createdUserRealName?: string | null
 }
 
-export interface LoginLogListOutput {
+export interface LoginLogGetPageInput {
+  /** 创建者 */
+  createdUserName?: string | null
+  /** 操作状态 */
+  status?: boolean | null
+  /** IP */
+  ip?: string | null
+  /**
+   * 创建开始时间
+   * @format date-time
+   */
+  addStartTime?: string | null
+  /**
+   * 创建结束时间
+   * @format date-time
+   */
+  addEndTime?: string | null
+}
+
+export interface LoginLogGetPageOutput {
   /**
    * 编号
    * @format int64
@@ -1145,6 +1217,14 @@ export interface LoginLogListOutput {
   createdUserName?: string | null
   /** IP */
   ip?: string | null
+  /** 国家 */
+  country?: string | null
+  /** 省份 */
+  province?: string | null
+  /** 城市 */
+  city?: string | null
+  /** 网络服务商 */
+  isp?: string | null
   /** 浏览器 */
   browser?: string | null
   /** 操作系统 */
@@ -1174,7 +1254,7 @@ export interface LoginLogListOutput {
 export type OSSProvider = 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7
 
 /** 添加 */
-export interface OprationLogAddInput {
+export interface OperationLogAddInput {
   /** 姓名 */
   name?: string | null
   /** 接口名称 */
@@ -1185,6 +1265,14 @@ export interface OprationLogAddInput {
   apiMethod?: string | null
   /** IP */
   ip?: string | null
+  /** 国家 */
+  country?: string | null
+  /** 省份 */
+  province?: string | null
+  /** 城市 */
+  city?: string | null
+  /** 网络服务商 */
+  isp?: string | null
   /** 浏览器 */
   browser?: string | null
   /** 操作系统 */
@@ -1204,11 +1292,37 @@ export interface OprationLogAddInput {
   msg?: string | null
   /** 操作参数 */
   params?: string | null
+  /**
+   * 状态码
+   * @format int32
+   */
+  statusCode?: number | null
   /** 操作结果 */
   result?: string | null
 }
 
-export interface OprationLogListOutput {
+export interface OperationLogGetPageInput {
+  /** 创建者 */
+  createdUserName?: string | null
+  /** 操作状态 */
+  status?: boolean | null
+  /** 操作接口 */
+  api?: string | null
+  /** IP */
+  ip?: string | null
+  /**
+   * 创建开始时间
+   * @format date-time
+   */
+  addStartTime?: string | null
+  /**
+   * 创建结束时间
+   * @format date-time
+   */
+  addEndTime?: string | null
+}
+
+export interface OperationLogGetPageOutput {
   /**
    * 编号
    * @format int64
@@ -1216,8 +1330,6 @@ export interface OprationLogListOutput {
   id?: number
   /** 昵称 */
   nickName?: string | null
-  /** 创建者 */
-  createdUserName?: string | null
   /** 接口名称 */
   apiLabel?: string | null
   /** 接口地址 */
@@ -1226,6 +1338,14 @@ export interface OprationLogListOutput {
   apiMethod?: string | null
   /** IP */
   ip?: string | null
+  /** 国家 */
+  country?: string | null
+  /** 省份 */
+  province?: string | null
+  /** 城市 */
+  city?: string | null
+  /** 网络服务商 */
+  isp?: string | null
   /** 浏览器 */
   browser?: string | null
   /** 操作系统 */
@@ -1239,8 +1359,21 @@ export interface OprationLogListOutput {
   elapsedMilliseconds?: number
   /** 操作状态 */
   status?: boolean
+  /**
+   * 状态码
+   * @format int32
+   */
+  statusCode?: number | null
   /** 操作消息 */
   msg?: string | null
+  /** 请求参数 */
+  params?: string | null
+  /** 响应结果 */
+  result?: string | null
+  /** 创建者 */
+  createdUserName?: string | null
+  /** 创建者姓名 */
+  createdUserRealName?: string | null
   /**
    * 创建时间
    * @format date-time
@@ -1466,6 +1599,9 @@ export interface OrgUpdateInput {
 
 /** 分页信息输入 */
 export interface PageInputApiGetPageDto {
+  dynamicFilter?: DynamicFilterInfo
+  /** 排序列表 */
+  sortList?: SortInput[] | null
   /**
    * 当前页标
    * @format int32
@@ -1476,12 +1612,14 @@ export interface PageInputApiGetPageDto {
    * @format int32
    */
   pageSize?: number
-  dynamicFilter?: DynamicFilterInfo
   filter?: ApiGetPageDto
 }
 
 /** 分页信息输入 */
-export interface PageInputDictGetPageDto {
+export interface PageInputDictGetPageInput {
+  dynamicFilter?: DynamicFilterInfo
+  /** 排序列表 */
+  sortList?: SortInput[] | null
   /**
    * 当前页标
    * @format int32
@@ -1492,12 +1630,14 @@ export interface PageInputDictGetPageDto {
    * @format int32
    */
   pageSize?: number
-  dynamicFilter?: DynamicFilterInfo
-  filter?: DictGetPageDto
+  filter?: DictGetPageInput
 }
 
 /** 分页信息输入 */
 export interface PageInputDictTypeGetPageDto {
+  dynamicFilter?: DynamicFilterInfo
+  /** 排序列表 */
+  sortList?: SortInput[] | null
   /**
    * 当前页标
    * @format int32
@@ -1508,12 +1648,14 @@ export interface PageInputDictTypeGetPageDto {
    * @format int32
    */
   pageSize?: number
-  dynamicFilter?: DynamicFilterInfo
   filter?: DictTypeGetPageDto
 }
 
 /** 分页信息输入 */
 export interface PageInputFileGetPageDto {
+  dynamicFilter?: DynamicFilterInfo
+  /** 排序列表 */
+  sortList?: SortInput[] | null
   /**
    * 当前页标
    * @format int32
@@ -1524,12 +1666,14 @@ export interface PageInputFileGetPageDto {
    * @format int32
    */
   pageSize?: number
-  dynamicFilter?: DynamicFilterInfo
   filter?: FileGetPageDto
 }
 
 /** 分页信息输入 */
-export interface PageInputLogGetPageDto {
+export interface PageInputLoginLogGetPageInput {
+  dynamicFilter?: DynamicFilterInfo
+  /** 排序列表 */
+  sortList?: SortInput[] | null
   /**
    * 当前页标
    * @format int32
@@ -1540,12 +1684,32 @@ export interface PageInputLogGetPageDto {
    * @format int32
    */
   pageSize?: number
+  filter?: LoginLogGetPageInput
+}
+
+/** 分页信息输入 */
+export interface PageInputOperationLogGetPageInput {
   dynamicFilter?: DynamicFilterInfo
-  filter?: LogGetPageDto
+  /** 排序列表 */
+  sortList?: SortInput[] | null
+  /**
+   * 当前页标
+   * @format int32
+   */
+  currentPage?: number
+  /**
+   * 每页大小
+   * @format int32
+   */
+  pageSize?: number
+  filter?: OperationLogGetPageInput
 }
 
 /** 分页信息输入 */
 export interface PageInputPkgGetPageDto {
+  dynamicFilter?: DynamicFilterInfo
+  /** 排序列表 */
+  sortList?: SortInput[] | null
   /**
    * 当前页标
    * @format int32
@@ -1556,12 +1720,14 @@ export interface PageInputPkgGetPageDto {
    * @format int32
    */
   pageSize?: number
-  dynamicFilter?: DynamicFilterInfo
   filter?: PkgGetPageDto
 }
 
 /** 分页信息输入 */
 export interface PageInputPkgGetPkgTenantListInput {
+  dynamicFilter?: DynamicFilterInfo
+  /** 排序列表 */
+  sortList?: SortInput[] | null
   /**
    * 当前页标
    * @format int32
@@ -1572,12 +1738,14 @@ export interface PageInputPkgGetPkgTenantListInput {
    * @format int32
    */
   pageSize?: number
-  dynamicFilter?: DynamicFilterInfo
   filter?: PkgGetPkgTenantListInput
 }
 
 /** 分页信息输入 */
 export interface PageInputRegionGetPageInput {
+  dynamicFilter?: DynamicFilterInfo
+  /** 排序列表 */
+  sortList?: SortInput[] | null
   /**
    * 当前页标
    * @format int32
@@ -1588,12 +1756,14 @@ export interface PageInputRegionGetPageInput {
    * @format int32
    */
   pageSize?: number
-  dynamicFilter?: DynamicFilterInfo
   filter?: RegionGetPageInput
 }
 
 /** 分页信息输入 */
 export interface PageInputRoleGetPageDto {
+  dynamicFilter?: DynamicFilterInfo
+  /** 排序列表 */
+  sortList?: SortInput[] | null
   /**
    * 当前页标
    * @format int32
@@ -1604,12 +1774,14 @@ export interface PageInputRoleGetPageDto {
    * @format int32
    */
   pageSize?: number
-  dynamicFilter?: DynamicFilterInfo
   filter?: RoleGetPageDto
 }
 
 /** 分页信息输入 */
 export interface PageInputTaskGetPageInput {
+  dynamicFilter?: DynamicFilterInfo
+  /** 排序列表 */
+  sortList?: SortInput[] | null
   /**
    * 当前页标
    * @format int32
@@ -1620,12 +1792,14 @@ export interface PageInputTaskGetPageInput {
    * @format int32
    */
   pageSize?: number
-  dynamicFilter?: DynamicFilterInfo
   filter?: TaskGetPageInput
 }
 
 /** 分页信息输入 */
 export interface PageInputTaskLogGetPageDto {
+  dynamicFilter?: DynamicFilterInfo
+  /** 排序列表 */
+  sortList?: SortInput[] | null
   /**
    * 当前页标
    * @format int32
@@ -1636,12 +1810,14 @@ export interface PageInputTaskLogGetPageDto {
    * @format int32
    */
   pageSize?: number
-  dynamicFilter?: DynamicFilterInfo
   filter?: TaskLogGetPageDto
 }
 
 /** 分页信息输入 */
 export interface PageInputTenantGetPageDto {
+  dynamicFilter?: DynamicFilterInfo
+  /** 排序列表 */
+  sortList?: SortInput[] | null
   /**
    * 当前页标
    * @format int32
@@ -1652,12 +1828,14 @@ export interface PageInputTenantGetPageDto {
    * @format int32
    */
   pageSize?: number
-  dynamicFilter?: DynamicFilterInfo
   filter?: TenantGetPageDto
 }
 
 /** 分页信息输入 */
 export interface PageInputUserGetPageDto {
+  dynamicFilter?: DynamicFilterInfo
+  /** 排序列表 */
+  sortList?: SortInput[] | null
   /**
    * 当前页标
    * @format int32
@@ -1668,7 +1846,6 @@ export interface PageInputUserGetPageDto {
    * @format int32
    */
   pageSize?: number
-  dynamicFilter?: DynamicFilterInfo
   /** 用户分页查询条件 */
   filter?: UserGetPageDto
 }
@@ -1718,25 +1895,25 @@ export interface PageOutputFileGetPageOutput {
 }
 
 /** 分页信息输出 */
-export interface PageOutputLoginLogListOutput {
+export interface PageOutputLoginLogGetPageOutput {
   /**
    * 数据总数
    * @format int64
    */
   total?: number
   /** 数据 */
-  list?: LoginLogListOutput[] | null
+  list?: LoginLogGetPageOutput[] | null
 }
 
 /** 分页信息输出 */
-export interface PageOutputOprationLogListOutput {
+export interface PageOutputOperationLogGetPageOutput {
   /**
    * 数据总数
    * @format int64
    */
   total?: number
   /** 数据 */
-  list?: OprationLogListOutput[] | null
+  list?: OperationLogGetPageOutput[] | null
 }
 
 /** 分页信息输出 */
@@ -2076,41 +2253,6 @@ export interface PermissionEntity {
   childs?: PermissionEntity[] | null
 }
 
-export interface PermissionGetApiOutput {
-  /**
-   * 父级节点
-   * @format int64
-   */
-  parentId?: number
-  /**
-   * 接口
-   * @format int64
-   */
-  apiId?: number | null
-  /** 权限名称 */
-  label?: string | null
-  /** 权限编码 */
-  code?: string | null
-  /** 说明 */
-  description?: string | null
-  /** 隐藏 */
-  hidden?: boolean
-  /** 图标 */
-  icon?: string | null
-  /**
-   * 排序
-   * @format int32
-   */
-  sort?: number
-  /** 启用 */
-  enabled?: boolean
-  /**
-   * 权限Id
-   * @format int64
-   */
-  id: number
-}
-
 export interface PermissionGetDotOutput {
   /**
    * 父级节点
@@ -2280,41 +2422,6 @@ export interface PermissionSaveTenantPermissionsInput {
  * @format int32
  */
 export type PermissionType = 1 | 2 | 3
-
-export interface PermissionUpdateApiInput {
-  /**
-   * 父级节点
-   * @format int64
-   */
-  parentId?: number
-  /**
-   * 接口
-   * @format int64
-   */
-  apiId?: number | null
-  /** 权限名称 */
-  label?: string | null
-  /** 权限编码 */
-  code?: string | null
-  /** 说明 */
-  description?: string | null
-  /** 隐藏 */
-  hidden?: boolean
-  /** 图标 */
-  icon?: string | null
-  /**
-   * 排序
-   * @format int32
-   */
-  sort?: number
-  /** 启用 */
-  enabled?: boolean
-  /**
-   * 权限Id
-   * @format int64
-   */
-  id: number
-}
 
 export interface PermissionUpdateDotInput {
   /**
@@ -3068,6 +3175,18 @@ export interface ResultOutputIEnumerableObject {
 }
 
 /** 结果输出 */
+export interface ResultOutputImportOutput {
+  /** 是否成功标记 */
+  success?: boolean
+  /** 编码 */
+  code?: string | null
+  /** 消息 */
+  msg?: string | null
+  /** 导入输出 */
+  data?: ImportOutput
+}
+
+/** 结果输出 */
 export interface ResultOutputInt64 {
   /** 是否成功标记 */
   success?: boolean
@@ -3095,7 +3214,7 @@ export interface ResultOutputListApiGetEnumsOutput {
 }
 
 /** 结果输出 */
-export interface ResultOutputListApiListOutput {
+export interface ResultOutputListApiGetListOutput {
   /** 是否成功标记 */
   success?: boolean
   /** 编码 */
@@ -3103,7 +3222,7 @@ export interface ResultOutputListApiListOutput {
   /** 消息 */
   msg?: string | null
   /** 数据 */
-  data?: ApiListOutput[] | null
+  data?: ApiGetListOutput[] | null
 }
 
 /** 结果输出 */
@@ -3358,7 +3477,7 @@ export interface ResultOutputPageOutputFileGetPageOutput {
 }
 
 /** 结果输出 */
-export interface ResultOutputPageOutputLoginLogListOutput {
+export interface ResultOutputPageOutputLoginLogGetPageOutput {
   /** 是否成功标记 */
   success?: boolean
   /** 编码 */
@@ -3366,11 +3485,11 @@ export interface ResultOutputPageOutputLoginLogListOutput {
   /** 消息 */
   msg?: string | null
   /** 分页信息输出 */
-  data?: PageOutputLoginLogListOutput
+  data?: PageOutputLoginLogGetPageOutput
 }
 
 /** 结果输出 */
-export interface ResultOutputPageOutputOprationLogListOutput {
+export interface ResultOutputPageOutputOperationLogGetPageOutput {
   /** 是否成功标记 */
   success?: boolean
   /** 编码 */
@@ -3378,7 +3497,7 @@ export interface ResultOutputPageOutputOprationLogListOutput {
   /** 消息 */
   msg?: string | null
   /** 分页信息输出 */
-  data?: PageOutputOprationLogListOutput
+  data?: PageOutputOperationLogGetPageOutput
 }
 
 /** 结果输出 */
@@ -3475,17 +3594,6 @@ export interface ResultOutputPageOutputUserGetPageOutput {
   msg?: string | null
   /** 分页信息输出 */
   data?: PageOutputUserGetPageOutput
-}
-
-/** 结果输出 */
-export interface ResultOutputPermissionGetApiOutput {
-  /** 是否成功标记 */
-  success?: boolean
-  /** 编码 */
-  code?: string | null
-  /** 消息 */
-  msg?: string | null
-  data?: PermissionGetApiOutput
 }
 
 /** 结果输出 */
@@ -3976,6 +4084,22 @@ export interface SlideTrack {
   /** @format float */
   percent?: number
 }
+
+/** 排序 */
+export interface SortInput {
+  /** 属性名称 */
+  propName?: string | null
+  /** 排序方式:Asc=0,Desc=1 */
+  order?: SortOrder
+  /** 是否升序 */
+  isAscending?: boolean | null
+}
+
+/**
+ * 排序方式:Asc=0,Desc=1
+ * @format int32
+ */
+export type SortOrder = 0 | 1
 
 /** 员工添加 */
 export interface StaffAddInput {
@@ -4641,6 +4765,19 @@ export interface UserEntity {
   status?: UserStatus
   /** 用户类型:Member=0,DefaultUser=1,TenantAdmin=10,PlatformAdmin=100 */
   type?: UserType
+  /**
+   * 最后登录时间
+   * @format date-time
+   */
+  lastLoginTime?: string | null
+  /** 最后登录IP */
+  lastLoginIP?: string | null
+  /** 最后登录国家 */
+  lastLoginCountry?: string | null
+  /** 最后登录省份 */
+  lastLoginProvince?: string | null
+  /** 最后登录城市 */
+  lastLoginCity?: string | null
   /** 启用 */
   enabled?: boolean
   /** 角色列表 */
@@ -4662,6 +4799,19 @@ export interface UserGetBasicOutput {
   mobile?: string | null
   /** 邮箱 */
   email?: string | null
+  /**
+   * 最后登录时间
+   * @format date-time
+   */
+  lastLoginTime?: string | null
+  /** 最后登录IP */
+  lastLoginIP?: string | null
+  /** 最后登录国家 */
+  lastLoginCountry?: string | null
+  /** 最后登录省份 */
+  lastLoginProvince?: string | null
+  /** 最后登录城市 */
+  lastLoginCity?: string | null
 }
 
 export interface UserGetOrgDto {

@@ -278,7 +278,10 @@ const closeCurrentTagsView = (path: string) => {
       }
     }
   })
+
   addBrowserSetSession(state.tagsViewList)
+
+  router.push({ path: state.tagsViewList.length > 0 ? state.tagsViewList[state.tagsViewList.length - 1].path : '/' })
 }
 // 4、关闭其它 tagsView：如果是设置了固定的（isAffix），不进行关闭
 const closeOtherTagsView = (path: string) => {
@@ -304,10 +307,10 @@ const closeAllTagsView = () => {
       if (v.meta?.isAffix && !v.meta.isHide) {
         v.url = setTagsViewHighlight(v)
         state.tagsViewList.push({ ...v })
-        router.push({ path: state.tagsViewList[state.tagsViewList.length - 1].path })
       }
     })
     addBrowserSetSession(state.tagsViewList)
+    router.push({ path: state.tagsViewList.length > 0 ? state.tagsViewList[state.tagsViewList.length - 1].path : '/' })
   }
 }
 // 6、开启当前页面全屏
@@ -387,7 +390,7 @@ const onTagsClick = (v: RouteItem, k: number) => {
   // 分栏布局时，收起/展开菜单
   if (getThemeConfig.value.layout === 'columns') {
     const item: RouteItem = routesList.value.find((r: RouteItem) => r.path.indexOf(`/${v.path.split('/')[1]}`) > -1)
-    !item.children ? (getThemeConfig.value.isCollapse = true) : (getThemeConfig.value.isCollapse = false)
+    !item.children || item.children?.length === 0 ? (getThemeConfig.value.isCollapse = true) : (getThemeConfig.value.isCollapse = false)
   }
   // if (getThemeConfig.value.layout === 'columns') {
   //   const item: RouteItem = routesList.value.find((r: RouteItem) => r.path.indexOf(`/${v.path.split('/')[1]}`) > -1)
